@@ -1,0 +1,16 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+	<Dialog title="Data Request" contentWidth="550px" contentHeight="300px" resizable="true">
+		<content>
+			<List id="idList"
+				items="{ path: 'data>/', sorter: { path: 'data>key', descending: false, group: true }, groupHeaderFactory: '.getGroupHeader' }">
+				<items>
+					<StandardListItem title="{data>Name}" description="{data>Description}" icon="{data>Icon}" info="{data>Value}" infoState="Information"
+						iconDensityAware="false" iconInset="false"/>
+				</items>
+			</List>
+		</content>
+		<endButton>
+			<Button text="OK" press='.pressOkButton'/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

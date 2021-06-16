@@ -1,5 +1,7 @@
+/*global QUnit*/
+
 sap.ui.define([
-	"workerslist/model/models",
+	"shapein/WorkersList/model/models",
 	"sap/ui/Device"
 ], function (models, Device) {
 	"use strict";

@@ -40,6 +40,7 @@ modules:
     EXIT: 1
   requires:
   - name: wd2pdsaascbg-uaa
+  - name: wd2pdsaascbg-theming
   - name: wd2pdsaascbg-registry
   - name: wd2pdsaascbg-sm
   - name: wd2pdsaascbg_portal
@@ -63,6 +64,7 @@ modules:
   #  TENANT_HOST_PATTERN: '^(.*)-shapeinsolutionsdev-${app-name}.cfapps.eu20.hana.ondemand.com'
   requires:
   - name: wd2pdsaascbg-uaa
+  - name: wd2pdsaascbg-theming
 #  - name: wd2pdsaas_destination
   - name: wd2pdsaascbg_portal
   - name: wd2pdsaascbg_html5_repo_runtime
@@ -101,6 +103,137 @@ modules:
     - npm install
     - npm run build:cf
     supported-platforms: []
+- name: configuringworkers
+  type: html5
+  path: app/configuringworkers
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: monitoringworkers
+  type: html5
+  path: app/monitoringworkers
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: runintegrationsplanningworkers
+  type: html5
+  path: app/runintegrationsplanningworkers
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: templatesconfiguration
+  type: html5
+  path: app/templatesconfiguration
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: documentsintegrationmonitor
+  type: html5
+  path: app/documentsintegrationmonitor
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: organizationslist
+  type: html5
+  path: app/organizationslist
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: configuringorganizations
+  type: html5
+  path: app/configuringorganizations
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: monitoringorganizations
+  type: html5
+  path: app/monitoringorganizations
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: runintegrationsplanningorganizations
+  type: html5
+  path: app/runintegrationsplanningorganizations
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: userslist
+  type: html5
+  path: app/userslist
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: configuringusers
+  type: html5
+  path: app/configuringusers
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: monitoringusers
+  type: html5
+  path: app/monitoringusers
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: runintegrationsplanningusers
+  type: html5
+  path: app/runintegrationsplanningusers
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+
 
   #
   #   ╔═══════════════════════════════════════╗   #
@@ -120,6 +253,58 @@ modules:
     - name: workerslist
       artifacts:
       - workerslist.zip   
+      target-path: resources/
+    - name: configuringworkers
+      artifacts:
+      - configuringworkers.zip   
+      target-path: resources/
+    - name: monitoringworkers
+      artifacts:
+      - monitoringworkers.zip   
+      target-path: resources/
+    - name: runintegrationsplanningworkers
+      artifacts:
+      - runintegrationsplanningworkers.zip   
+      target-path: resources/
+    - name: templatesconfiguration
+      artifacts:
+      - templatesconfiguration.zip   
+      target-path: resources/
+    - name: documentsintegrationmonitor
+      artifacts:
+      - documentsintegrationmonitor.zip   
+      target-path: resources/
+    - name: organizationslist
+      artifacts:
+      - organizationslist.zip   
+      target-path: resources/
+    - name: configuringorganizations
+      artifacts:
+      - configuringorganizations.zip   
+      target-path: resources/
+    - name: monitoringorganizations
+      artifacts:
+      - monitoringorganizations.zip   
+      target-path: resources/
+    - name: runintegrationsplanningorganizations
+      artifacts:
+      - runintegrationsplanningorganizations.zip   
+      target-path: resources/
+    - name: userslist
+      artifacts:
+      - userslist.zip   
+      target-path: resources/
+    - name: configuringusers
+      artifacts:
+      - configuringusers.zip   
+      target-path: resources/
+    - name: monitoringusers
+      artifacts:
+      - monitoringusers.zip   
+      target-path: resources/
+    - name: runintegrationsplanningusers
+      artifacts:
+      - runintegrationsplanningusers.zip   
       target-path: resources/
 
   #
@@ -260,6 +445,15 @@ resources:
   parameters:
     service: portal
     service-plan: standard
-
+ #
+  #   ┌─────────────────────────────────────┐   #
+  #   │            THEME                    │   #
+  #   └─────────────────────────────────────┘   #
+  #
+- name: wd2pdsaascbg-theming
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: theming
+    service-plan: standard
  
 

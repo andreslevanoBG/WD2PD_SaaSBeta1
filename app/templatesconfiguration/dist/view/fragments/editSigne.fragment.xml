@@ -1,0 +1,73 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	<Dialog id="editSigne" state="Warning" icon="sap-icon://user-edit" title="Edit Signer" contentHeight="450px" contentWidth="500px">
+		<VBox class="sapUiTinyMargin">
+			<f:SimpleForm id="SimpleForm3232" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="4" labelSpanL="4"
+				labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2"
+				columnsL="2" columnsM="1" singleContainerFullSize="false">
+				<f:content>
+					<!--<core:Title text="Configuration"/>-->
+					<Label labelFor="Signature_Type_Edit" text="Signature Type"/>
+					<Select id="Signature_Type_Edit" width="300px" change="changeSignType_Edit" selectedKey="{ path: 'signer>/type'}">
+						<core:Item key="organization" text="organization"/>
+						<core:Item key="employee" text="employee"/>
+						<core:Item key="manager" text="manager"/>
+						<core:Item key="external" text="external"/>
+					</Select>
+					<Label labelFor="Sign_Order_Edit" text="Signing Order"/>
+					<Input id="Sign_Order_Edit" type="Number" required="true" value="{ path: 'signer>/signing_order'}"/>
+					<Label labelFor="Pdf_Sign_Field_Edit" text="Pdf Sign Field"/>
+					<Input id="Pdf_Sign_Field_Edit" required="true" value="{ path: 'signer>/pdf_sign_field'}"/>
+					<Button id="btnCoord_Edit" type="Attention" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"
+					text="Select Sign Field Coordenates" press="selectCoordenates"/>
+					<Label text="Sign Field Page" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/>
+					<Input id="sfpage_Edit"  enabled="false" width="30%" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"
+					value="{ parts: [{path: 'signer>/generate_pdf_sign_field/page'}, { path: 'signer>/generate_pdf_sign_field/llx'}] ,formatter: '.formatter.lastPage' }"/>
+					<Label text="Lower Left Corner Coordenates" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/>
+					<HBox alignItems="Center" width="auto" height="auto" justifyContent="Start" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }" displayInline="false">
+						<items>
+							<Input id="llx_Edit" type="Number" enabled="false" width="60%" value="{ path: 'signer>/generate_pdf_sign_field/llx'}" class="sapUiSmallMarginEnd"/>
+							<Input id="lly_Edit" type="Number" enabled="false" width="60%" class="sapUiSmallMarginEnd" value="{ path: 'signer>/generate_pdf_sign_field/lly'}"/>
+						</items>
+					</HBox>
+					<Label text="Upper Right Corner Coordenates" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/>
+					<HBox alignItems="Center" width="auto" height="auto" justifyContent="Start" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }" displayInline="false">
+						<items>
+							<Input id="upx_Edit" type="Number" enabled="false" width="60%" class="sapUiSmallMarginEnd" value="{ path: 'signer>/generate_pdf_sign_field/urx'}"/>
+							<Input id="upy_Edit" type="Number" enabled="false" width="60%" class="sapUiSmallMarginEnd" value="{ path: 'signer>/generate_pdf_sign_field/ury'}"/>
+						</items>
+					</HBox>
+					<Label labelFor="Reg_Reference_Edit" text="Reg. Reference" />
+					<Input id="Reg_Reference_Edit"  required="false" visible="false" value="{ path: 'signer>/registration_reference'}"/>
+					<Label labelFor="Tech_Id_Edit" text="Technical Id"/>
+					<Input id="Tech_Id_Edit" required="false" visible="false" value="{ path: 'signer>/technical_id'}"/>
+					<Label labelFor="Email_address_Edit" text="Email Address"/>
+					<Input id="Email_address_Edit" required="true" value="{ path: 'signer>/email_address'}"/>
+					<Label labelFor="Phone_number_Edit" text="Phone Number"/>
+					<Input id="Phone_number_Edit" type="Number" required="false" visible="false" value="{ path: 'signer>/phone_number'}"/>
+					<Label labelFor="First_name_Edit" text="First Name" />
+					<Input id="First_name_Edit" required="false" visible="false" value="{ path: 'signer>/first_name'}"/>
+					<Label labelFor="Last_name_Edit" text="Last Name" />
+					<Input id="Last_name_Edit" required="false" visible="false" value="{ path: 'signer>/last_name'}"/>
+					<Label id="Language_label_Edit" labelFor="Language_Sign_Edit" text="Language" />
+					<Select id="Language_Sign_Edit" width="300px" visible="false" selectedKey="{ path: 'signer>/language'}">
+						<core:Item key="nl" text="Dutch"/>
+						<core:Item key="en" text="English"/>
+						<core:Item key="fr" text="French"/>
+						<core:Item key="de" text="German"/>
+						<core:Item key="it" text="Italian"/>
+						<core:Item key="nb" text="Norwegian"/>
+						<core:Item key="pt_BR" text="Portuguese (Brazil)"/>
+						<core:Item key="es" text="Spanish"/>
+					</Select>
+					<CheckBox id="checkSMSnot_Edit" text="With SMS Notification" select="selectSMS_Edit" selected="{ path: 'signer>/with_sms_notification'}"/>
+					<CheckBox id="checkSMSau_Edit" text="With SMS Authentication" select="selectSMS_Edit" selected="{ path: 'signer>/with_sms_authentication'}"/>
+					<CheckBox id="checkSMSsend_Edit" text="Send Signed Document" selected="{ path: 'signer>/send_signed_document'}"/>
+				</f:content>
+			</f:SimpleForm>
+		</VBox>
+		<buttons>
+			<Button text="Change" type="Accept" press="execEditSigner"/>
+			<Button text="Cancel" type="Reject" press="cancelEditSigner"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

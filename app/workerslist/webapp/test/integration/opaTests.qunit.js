@@ -6,7 +6,7 @@ sap.ui.getCore().attachInit(function() {
 	"use strict";
 
 	sap.ui.require([
-		"workerslist/test/integration/AllJourneys"
+		"shapein/WorkersList/test/integration/AllJourneys"
 	], function() {
 		QUnit.start();
 	});

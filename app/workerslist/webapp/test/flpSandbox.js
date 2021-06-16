@@ -54,15 +54,15 @@ sap.ui.define([
 							"WorkersList-display": {
 								"semanticObject": "WorkersList",
 								"action": "display",
-								"description": "A Fiori application.",
+
 								"title": "Workers List",
 								"signature": {
 									"parameters": {}
 								},
 								"resolutionResult": {
 									"applicationType": "SAPUI5",
-									"additionalInformation": "SAPUI5.Component=workerslist",
-									"url": sap.ui.require.toUrl("workerslist")
+									"additionalInformation": "SAPUI5.Component=shapein.WorkersList",
+									"url": sap.ui.require.toUrl("shapein/WorkersList")
 								}
 							}
 						}
@@ -81,7 +81,7 @@ sap.ui.define([
 		init: function () {
 			/**
 			 * Initializes the FLP sandbox
-			 * @returns {Promise} a promise that is resolved when the sandbox bootstrap has finished
+			 * @returns {Promise} a promise that is resolved when the sandbox bootstrap has finshed
 			 */
 
 			// sandbox is a singleton, so we can start it only once

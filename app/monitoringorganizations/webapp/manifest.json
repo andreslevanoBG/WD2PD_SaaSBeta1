@@ -1,0 +1,159 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "shapein.MonitoringOrganizations",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"resources": "resources.json",
+		"dataSources": {
+			"mainService": {
+				"uri": "/v2/integration/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/metadata.xml"
+				}
+			}
+		},
+		"sourceTemplate": {
+			"id": "sap.ui.ui5-template-plugin.2masterdetailmodule",
+			"version": "1.71.26"
+		},
+		"crossNavigation": {
+			"inbounds": {
+				"intent1": {
+					"signature": {
+						"parameters": {},
+						"additionalParameters": "allowed"
+					},
+					"semanticObject": "Organization",
+					"action": "Monitoring",
+					"title": "Organizations",
+					"info": "Processes in Past 24 Hours",
+					"subTitle": "Integration Monitor",
+					"icon": "sap-icon://org-chart",
+					"indicatorDataSource": {
+						"dataSource": "mainService",
+						"refresh": 8000,
+						"path": "Integrations/$count?$filter=pck_code eq  'SYN_ORG'"
+					}
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://detail-view",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "shapein.MonitoringOrganizations.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.66.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.f": {},
+				"sap.ushell": {},
+				"sap.collaboration": {
+					"lazy": true
+				}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "shapein.MonitoringOrganizations.i18n.i18n"
+				}
+			},
+			"": {
+				"dataSource": "mainService",
+				"preload": true
+			},
+			"items": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/items.json"
+			},
+			"parametros": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/parametros.json"
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.f.routing.Router",
+				"viewType": "XML",
+				"viewPath": "shapein.MonitoringOrganizations.view",
+				"controlId": "layout",
+				"controlAggregation": "beginColumnPages",
+				"bypassed": {
+					"target": "notFound"
+				},
+				"async": true
+			},
+			"routes": [{
+				"pattern": "",
+				"name": "master",
+				"target": "master"
+			}, {
+				"pattern": "Organizations/{objectId}",
+				"name": "object",
+				"target": ["master", "object"]
+			}],
+			"targets": {
+				"master": {
+					"viewName": "Master",
+					"viewLevel": 1,
+					"viewId": "master"
+				},
+				"object": {
+					"viewName": "Detail",
+					"viewId": "detail",
+					"viewLevel": 1,
+					"controlAggregation": "midColumnPages"
+				},
+				"detailObjectNotFound": {
+					"viewName": "DetailObjectNotFound",
+					"viewId": "detailObjectNotFound",
+					"controlAggregation": "midColumnPages"
+				},
+				"notFound": {
+					"viewName": "NotFound",
+					"viewId": "notFound"
+				}
+			}
+		},
+		"flexEnabled": true
+	},
+	"sap.platform.cf": {
+		"oAuthScopes": [
+			"$XSAPPNAME.Organizations"
+		]
+	}
+}

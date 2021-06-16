@@ -20,6 +20,18 @@
         {
             "name": "$XSAPPNAME.Service",
             "description": "Service Access "
+        },
+        {
+            "name": "$XSAPPNAME.Workers",
+            "description": "Workers"
+        },
+        {
+            "name": "$XSAPPNAME.Organizations",
+            "description": "Organizations"
+        },
+        {
+            "name": "$XSAPPNAME.Users",
+            "description": "Users"
         }
     ],
     "role-templates": [
@@ -37,6 +49,27 @@
                 "$XSAPPNAME.Service"
             ],
             "attribute-references": []
+        },
+        {
+            "name": "Workers",
+            "description": "Role for Workers Integrations",
+            "scope-references": [
+                "$XSAPPNAME.Workers"
+            ]
+        },
+        {
+            "name": "Organizations",
+            "description": "Role for Organizations Integrations",
+            "scope-references": [
+                "$XSAPPNAME.Organizations"
+            ]
+        },
+        {
+            "name": "Users",
+            "description": "Role for Users Integrations",
+            "scope-references": [
+                "$XSAPPNAME.Users"
+            ]
         }
     ],
     "role-collections": [
@@ -45,6 +78,27 @@
             "description": "Service access",
             "role-template-references": [
                 "$XSAPPNAME.Service"
+            ]
+        },
+        {
+            "name": "wd2pdsaascbg_Workers",
+            "description": "Workers apps Access",
+            "role-template-references": [
+                "$XSAPPNAME.Workers"
+            ]
+        },
+        {
+            "name": "wd2pdsaascbg_Organizations",
+            "description": "Organizations apps Access",
+            "role-template-references": [
+                "$XSAPPNAME.Organizations"
+            ]
+        },
+        {
+            "name": "wd2pdsaascbg_Users",
+            "description": "Users apps Access",
+            "role-template-references": [
+                "$XSAPPNAME.Users"
             ]
         }
     ],

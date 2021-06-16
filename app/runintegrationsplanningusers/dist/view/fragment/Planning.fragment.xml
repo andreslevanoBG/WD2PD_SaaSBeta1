@@ -1,0 +1,108 @@
+<core:FragmentDefinition xmlns="sap.uxap" xmlns:m="sap.m" xmlns:mc="sap.suite.ui.microchart" xmlns:core="sap.ui.core">
+	<!--<ObjectPageSection id="Planning01"  title="Section">-->
+	<!--, filters : [ { path : 'editForm>Tline', operator : 'EQ', value1 : 'OBJ'}, { path : 'editForm>Tline', operator : 'EQ', value1 : 'IND'} ] -->
+	<!--<ObjectPageSubSection title="Sub" class="customPageSubSection">-->
+	<!--	<blocks>-->
+	<m:Dialog id="PlanningD" title="New Planning D" contentHeight="260px" contentWidth="800px">
+		<m:HBox alignItems="Start" class="sapUiTinyMargin">
+			<m:VBox class="sapUiSmallMargin" width="150px">
+				<m:Label labelFor="rbg1" text="Execution"/>
+				<m:RadioButtonGroup id="rbg1" columns="1" width="100%" select="selExecute" selectedIndex="{path: 'newPlan>/execute',formatter: '.formatter.executePlan' }"
+					class="sapUiTinyMarginBottom">
+					<m:RadioButton id="RB1-1" text="Include"/>
+					<m:RadioButton id="RB1-2" text="Exclude"/>
+				</m:RadioButtonGroup>
+				<m:Label labelFor="begda" text="Begin Date"/>
+				<m:DatePicker id="begda" required="true" value="{path: 'newPlan>/begda',formatter: '.formatter.datePlan' }" valueFormat="yyyy-MM-dd"
+					class="sapUiTinyMarginBottom" change="changeBegda"/>
+				<m:Label labelFor="endda" text="End Date"/>
+				<m:DatePicker id="endda" required="true" value="{path: 'newPlan>/endda',formatter: '.formatter.datePlan' }" valueFormat="yyyy-MM-dd" change="changeEndda"/>
+			</m:VBox>
+			<m:VBox direction="Column" alignItems="Start" class="sapUiSmallMargin" width="100px">
+				<m:Label text="Schedule to Recur" labelFor="period"/>
+				<m:Select id="periodType" change="changePeriodType" forceSelection="true" selectedKey="{path: 'newPlan>/periodicity_type'}">
+					<core:Item key="D" text="Daily"/>
+					<core:Item key="W" text="Weekly"/>
+					<core:Item key="M" text="Monthly"/>
+				</m:Select>
+				<m:RadioButtonGroup id="rbg2" columns="1" enabled="false" width="100%" class="sapUiMediumMarginBottom"
+					selectedIndex="{path: 'newPlan>/ontime',formatter: '.formatter.ontimePlan' }">
+					<m:RadioButton id="RB2-1" text="On Time"/>
+					<m:RadioButton id="RB2-2" text="Every" select="true"/>
+				</m:RadioButtonGroup>
+				<m:Label text="Time Zone" class="sapUiTinyMarginTop"/>
+			</m:VBox>
+			<m:VBox class="sapUiMediumMarginBegin" width="500px">
+				<m:HBox id="days" class="sapUiMediumMarginTop" visible="{path: 'newPlan>/periodicity_type',formatter: '.formatter.visDays' }">
+					<m:CheckBox text="Mon" select="selectCheck" name="1"
+						selected="{parts: [{path:'newPlan>/periodicity_type'}, {path:'newPlan>/periodicity_values'},{ value: '1' }],formatter: '.formatter.checkPlan' }"/>
+					<m:CheckBox text="Tue" select="selectCheck" name="2"
+						selected="{parts: [{path:'newPlan>/periodicity_type'}, {path:'newPlan>/periodicity_values'}, { value: '2' }],formatter: '.formatter.checkPlan' }"/>
+					<m:CheckBox text="Wed" select="selectCheck" name="3"
+						selected="{parts: [{path:'newPlan>/periodicity_type'}, {path:'newPlan>/periodicity_values'}, { value: '3' }],formatter: '.formatter.checkPlan' }"/>
+					<m:CheckBox text="Thu" select="selectCheck" name="4"
+						selected="{parts: [{path:'newPlan>/periodicity_type'}, {path:'newPlan>/periodicity_values'}, { value: '4' }],formatter: '.formatter.checkPlan' }"/>
+					<m:CheckBox text="Fri" select="selectCheck" name="5"
+						selected="{parts: [{path:'newPlan>/periodicity_type'}, {path:'newPlan>/periodicity_values'}, { value: '5' }],formatter: '.formatter.checkPlan' }"/>
+					<m:CheckBox text="Sat" select="selectCheck" name="6"
+						selected="{parts: [{path:'newPlan>/periodicity_type'}, {path:'newPlan>/periodicity_values'}, { value: '6' }],formatter: '.formatter.checkPlan' }"/>
+					<m:CheckBox text="Sun" select="selectCheck" name="0"
+						selected="{parts: [{path:'newPlan>/periodicity_type'}, {path:'newPlan>/periodicity_values'}, { value: '0' }],formatter: '.formatter.checkPlan' }"/>
+				</m:HBox>
+				<m:HBox id="days2" class="sapUiMediumMarginTop" visible="{path: 'newPlan>/periodicity_type',formatter: '.formatter.visDays2' }">
+					<m:MultiComboBox id="MC1" selectionChange="handleSelectionChange" selectionFinish="handleSelectionFinish"
+						items="{ path: 'days>/', sorter: { path: 'days>text' } }">
+						<core:Item key="{days>key}" text="{days>text}"/>
+					</m:MultiComboBox>
+				</m:HBox>
+				<m:HBox id="days3" class="sapUiMediumMarginTop" visible="{path: 'newPlan>/periodicity_type',formatter: '.formatter.visDays3' }">
+					<core:InvisibleText id="invText1" text=""/>
+				</m:HBox>
+				<m:HBox id="days4" class="sapUiMediumMarginTop" visible="{path: 'newPlan>/periodicity_type',formatter: '.formatter.visDays3' }">
+					<core:InvisibleText id="invText2" text=""/>
+				</m:HBox>
+				<m:TimePicker id="TP3" value="19:15" valueFormat="HH:mm" enabled="{path: 'newPlan>/ontime'}"
+				displayFormat="HH:mm" change="handleChangeTP3"
+					class="sapUiTinyMarginTopBottom"/>
+				<m:HBox>
+					<m:Select forceSelection="true" selectedKey="{path: 'newPlan>/time_frecuency'}" enabled="{path: 'newPlan>/ontime',formatter: '.formatter.enablePlan' }">
+						<core:Item key="1m" text="1 min"/>
+						<core:Item key="5m" text="5 min"/>
+						<core:Item key="10m" text="10 min"/>
+						<core:Item key="15m" text="15 min"/>
+						<core:Item key="20m" text="20 min"/>
+						<core:Item key="30m" text="30 min"/>
+						<core:Item key="1h" text="1 hour"/>
+						<core:Item key="2h" text="2 hour"/>
+						<core:Item key="3h" text="3 hour"/>
+						<core:Item key="4h" text="4 hour"/>
+						<core:Item key="6h" text="6 hour"/>
+						<core:Item key="8h" text="8 hour"/>
+						<core:Item key="12h" text="12 hour"/>
+					</m:Select>
+					<m:Label  labelFor="TP1" text="Between" class="sapUiTinyMargin"/>
+					<m:TimePicker id="TP1" required="true" value="{path: 'newPlan>/time_start',formatter: '.formatter.timePlan' }" 
+					enabled="{path: 'newPlan>/ontime',formatter: '.formatter.enablePlan' }" valueFormat="HH:mm" displayFormat="HH:mm"
+						change="timeChange"/>
+					<m:Label labelFor="TP2" text="and" class="sapUiTinyMargin"/>
+					<m:TimePicker id="TP2" required="true" value="{path: 'newPlan>/time_end',formatter: '.formatter.timePlan' }" 
+					enabled="{path: 'newPlan>/ontime',formatter: '.formatter.enablePlan' }" valueFormat="HH:mm" displayFormat="HH:mm"
+						change="timeChange"/>
+				</m:HBox>
+				<m:Select id="TimeZone" items="{ path: 'timezones>/timezones', sorter: { path: 'Name', descending: false }}" 
+				class="sapUiMediumMarginTop" selectedKey="{newPlan>/time_zone}">
+					<core:Item key="{timezones>Key}" text="{timezones>Name}"/>
+				</m:Select>
+			</m:VBox>
+			<!--<m:Label text="{F03lb}" visible="{path: 'F03vi', formatter:'.formatter.toBoolean'}"/>-->
+		</m:HBox>
+		<m:buttons>
+			<m:Button id="saveBut" text="Save" type="Accept" press="execPlan"/>
+			<m:Button id="createBut" text="Create" type="Accept" press="execPlan"/>
+			<m:Button text="Cancel" type="Reject" press="cancelPlan"/>
+		</m:buttons>
+	</m:Dialog>
+	<!--		</blocks>-->
+	<!--	</ObjectPageSubSection>-->
+	<!--</ObjectPageSection>-->
+</core:FragmentDefinition>

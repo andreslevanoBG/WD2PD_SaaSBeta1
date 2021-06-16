@@ -1,0 +1,22 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	<Dialog id="editAttribute" state="Success" icon="sap-icon://request" title="Edit Attribute" contentHeight="250px" contentWidth="680px">
+		<VBox class="sapUiTinyMargin">
+			<Label labelFor="NameAttribuEdit" text="Attribute Name" class="sapUiTinyMargin"/>
+			<Input id="NameAttribuEdit" required="true" value="{editAttr>/name}" class="sapUiTinyMarginBeginEnd" width="98%"/>
+			<Label labelFor="DescAttribuEdit" text="Attribute Description" class="sapUiTinyMargin"/>
+			<Input id="DescAttribuEdit" required="true" value="{editAttr>/description}" class="sapUiTinyMarginBeginEnd" width="98%"/>
+			<Label labelFor="PathAttribuEdit" text="Select Xpath" class="sapUiTinyMargin"/>
+			<HBox class="sapUiTinyMarginBeginEnd" alignItems="Stretch"  direction="Row" width="auto" height="auto"
+				 renderType="Div" visible="true" displayInline="false">
+				<items>
+					<Input id="PathAttribuEdit" textAlign="Right" width="465px" class="sapUiTinyMarginEnd" valueLiveUpdate="false" enabled="false" value="{editAttr>/path}" />
+					<Button id="ButPathEditAttri" text="Field Mapping" type="Emphasized" icon="sap-icon://sys-find" class="sapUiTinyMarginBegin" press="pathAtributte"/>
+				</items>
+			</HBox>
+		</VBox>
+		<buttons>
+			<Button text="Save" type="Accept" press="saveEditAttr"/>
+			<Button text="Cancel" type="Reject" press="cancelEditAttr"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

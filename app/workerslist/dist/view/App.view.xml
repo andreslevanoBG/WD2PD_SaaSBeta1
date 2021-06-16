@@ -1,9 +1,11 @@
 <mvc:View
-	controllerName="workerslist.controller.App"
+	controllerName="shapein.WorkersList.controller.App"
 	displayBlock="true"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-
-	<App id="app"/>
+	<App
+		id="app"
+		busy="{appView>/busy}"
+		busyIndicatorDelay="{appView>/delay}"/>
 
 </mvc:View>

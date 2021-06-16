@@ -1,7 +1,7 @@
 {
-    "_version": "1.32.0",
+    "_version": "1.12.0",
     "sap.app": {
-        "id": "workerslist",
+        "id": "shapein.WorkersList",
         "type": "application",
         "i18n": "i18n/i18n.properties",
         "title": "{{appTitle}}",
@@ -12,26 +12,35 @@
         "resources": "resources.json",
         "dataSources": {
             "mainService": {
-                "uri": "/integration/",
+                "uri": "/v2/integration/",
                 "type": "OData",
                 "settings": {
-                    "odataVersion": "4.0",
+                    "odataVersion": "2.0",
                     "localUri": "localService/metadata.xml"
                 }
             }
         },
+        "sourceTemplate": {
+            "id": "sap.ui.ui5-template-plugin.1worklistmodule",
+            "version": "1.71.26"
+        },
         "crossNavigation": {
             "inbounds": {
-                "workerslist-inbound": {
+                "intent1": {
                     "signature": {
                         "parameters": {},
                         "additionalParameters": "allowed"
                     },
                     "semanticObject": "Worker",
-                    "action": "List",
+                    "action": "Manage",
                     "title": "Workers",
-                    "subTitle": "",
-                    "icon": ""
+                    "subTitle": "Data Management",
+                    "icon": "sap-icon://collaborate",
+                    "indicatorDataSource": {
+                        "dataSource": "mainService",
+                        "refresh": 8000,
+                        "path": "Workers/$count"
+                    }
                 }
             }
         }
@@ -54,7 +63,7 @@
     },
     "sap.ui5": {
         "rootView": {
-            "viewName": "workerslist.view.App",
+            "viewName": "shapein.WorkersList.view.App",
             "type": "XML",
             "async": true,
             "id": "app"
@@ -64,7 +73,11 @@
             "libs": {
                 "sap.ui.core": {},
                 "sap.m": {},
-                "sap.f": {}
+                "sap.f": {},
+                "sap.ushell": {},
+                "sap.collaboration": {
+                    "lazy": true
+                }
             }
         },
         "contentDensities": {
@@ -75,17 +88,24 @@
             "i18n": {
                 "type": "sap.ui.model.resource.ResourceModel",
                 "settings": {
-                    "bundleName": "workerslist.i18n.i18n"
+                    "bundleName": "shapein.WorkersList.i18n.i18n"
                 }
+            },
+            "items": {
+                "type": "sap.ui.model.json.JSONModel",
+                "uri": "model/items.json"
             },
             "": {
                 "dataSource": "mainService",
-                "preload": true,
+                "preload": true
+            }
+        },
+        "services": {
+            "ShellUIService": {
+                "factoryName": "sap.ushell.ui5service.ShellUIService",
+                "lazy": false,
                 "settings": {
-                    "operationMode": "Server",
-                    "groupId": "$direct",
-                    "synchronizationMode": "None",
-                    "autoExpandSelect": true
+                    "setTitle": "auto"
                 }
             }
         },
@@ -93,7 +113,7 @@
             "config": {
                 "routerClass": "sap.m.routing.Router",
                 "viewType": "XML",
-                "viewPath": "workerslist.view",
+                "viewPath": "shapein.WorkersList.view",
                 "controlId": "app",
                 "controlAggregation": "pages",
                 "bypassed": {
@@ -112,7 +132,7 @@
                     ]
                 },
                 {
-                    "pattern": "Workers{objectId}",
+                    "pattern": "Workers/{objectId}",
                     "name": "object",
                     "target": [
                         "object"
@@ -141,6 +161,12 @@
                     "viewId": "notFound"
                 }
             }
-        }
+        },
+        "flexEnabled": true
+    },
+    "sap.platform.cf": {
+        "oAuthScopes": [
+            "$XSAPPNAME.Workers"
+        ]
     }
 }

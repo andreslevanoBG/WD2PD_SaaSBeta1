@@ -8,7 +8,7 @@ sap.ui.define([
 	// shortcut for sap.m.URLHelper
 	var URLHelper = mobileLibrary.URLHelper;
 
-	return Controller.extend("workerslist.controller.BaseController", {
+	return Controller.extend("shapein.WorkersList.controller.BaseController", {
 		/**
 		 * Convenience method for accessing the router.
 		 * @public
@@ -47,6 +47,7 @@ sap.ui.define([
 		getResourceBundle : function () {
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
 		},
+
 		/**
 		 * Event handler when the share by E-Mail button has been clicked
 		 * @public
@@ -58,6 +59,35 @@ sap.ui.define([
 				oViewModel.getProperty("/shareSendEmailSubject"),
 				oViewModel.getProperty("/shareSendEmailMessage")
 			);
-		}	});
+		},
+
+		/**
+		* Adds a history entry in the FLP page history
+		* @public
+		* @param {object} oEntry An entry object to add to the hierachy array as expected from the ShellUIService.setHierarchy method
+		* @param {boolean} bReset If true resets the history before the new entry is added
+		*/
+		addHistoryEntry: (function() {
+			var aHistoryEntries = [];
+
+			return function(oEntry, bReset) {
+				if (bReset) {
+					aHistoryEntries = [];
+				}
+
+				var bInHistory = aHistoryEntries.some(function(oHistoryEntry) {
+					return oHistoryEntry.intent === oEntry.intent;
+				});
+
+				if (!bInHistory) {
+					aHistoryEntries.push(oEntry);
+					this.getOwnerComponent().getService("ShellUIService").then(function(oService) {
+						oService.setHierarchy(aHistoryEntries);
+					});
+				}
+			};
+		})()
+
+	});
 
 });

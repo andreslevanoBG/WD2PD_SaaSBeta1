@@ -27,9 +27,83 @@
 			},
 			"payload": {
 				"viz": [{
-					"id": "workerslist-0-1623256901871",
-					"appId": "workerslist",
-					"vizId": "Worker-List"
+					"id": "shapein.MonitoringWorkers-0-1602607160077",
+					"appId": "shapein.MonitoringWorkers",
+					"vizId": "Worker-Monitoring"
+				}, {
+					"id": "shapein.ConfiguringWorkers-0-1602253434910",
+					"appId": "shapein.ConfiguringWorkers",
+					"vizId": "Workers-Configuration"
+				}, {
+					"id": "shapein.WorkersList-0-1602255991207",
+					"appId": "shapein.WorkersList",
+					"vizId": "Worker-Manage"
+				}, {
+					"id": "shapein.RunIntegrationPlanningWorkers-3-1607690267937",
+					"appId": "shapein.RunIntegrationPlanningWorkers",
+					"vizId": "Worker-RunIntegration"
+				}, {
+					"id": "shapein.TemplatesConfiguration-4-1613386960554",
+					"appId": "shapein.TemplatesConfiguration",
+					"vizId": "Worker-TemplateConfig"
+				}, {
+					"id": "shapein.DocumentsIntegrationMonitor-5-1619770733328",
+					"appId": "shapein.DocumentsIntegrationMonitor",
+					"vizId": "Workers-monitorDocs"
+				}]
+			}
+		}, {
+			"_version": "3.0.0",
+			"identification": {
+				"id": "configuration",
+				"title": "{{title}}",
+				"entityType": "group",
+				"i18n": "i18n/configuration.properties"
+			},
+			"payload": {
+				"viz": [{
+					"id": "shapein.MonitoringOrganizations-1-1602607160077",
+					"appId": "shapein.MonitoringOrganizations",
+					"vizId": "Organization-Monitoring"
+				}, {
+					"id": "shapein.ConfiguringOrganizations-1-1602518580854",
+					"appId": "shapein.ConfiguringOrganizations",
+					"vizId": "Organization-Configuration"
+				}, {
+					"id": "shapein.OrganizationsList-1-1602518933592",
+					"appId": "shapein.OrganizationsList",
+					"vizId": "Organization-Manage"
+				}, {
+					"id": "shapein.RunIntegrationPlanningOrganizations-3-1610455741677",
+					"appId": "shapein.RunIntegrationPlanningOrganizations",
+					"vizId": "Organization-RunIntegration"
+				}]
+			}
+		}, {
+			"_version": "3.0.0",
+			"identification": {
+				"id": "management-data",
+				"title": "{{title}}",
+				"entityType": "group",
+				"i18n": "i18n/management-data.properties"
+			},
+			"payload": {
+				"viz": [{
+					"id": "shapein.UsersMonitoring-2-1602607160077",
+					"appId": "shapein.UsersMonitoring",
+					"vizId": "User-Monitoring"
+				}, {
+					"id": "shapein.ConfiguringUsers-2-1602519584976",
+					"appId": "shapein.ConfiguringUsers",
+					"vizId": "User-Configuration"
+				}, {
+					"id": "shapein.UsersList-2-1602519584976",
+					"appId": "shapein.UsersList",
+					"vizId": "User-Manage"
+				}, {
+					"id": "shapein.RunIntegrationPlanningUsers-3-1608738533795",
+					"appId": "shapein.RunIntegrationPlanningUsers",
+					"vizId": "User-RunIntegration"
 				}]
 			}
 		}],
@@ -57,11 +131,11 @@
 						}
 					}
 				},
-				"groupsOrder": ["defaultGroupId"],
+				"groupsOrder": ["defaultGroupId", "configuration", "management-data"],
 				"sap.cloud.portal": {
 					"config": {
 						"theme.id": "sap_fiori_3",
-						"theme.active": ["sap_fiori_3", "sap_fiori_3_dark", "sap_belize_hcb", "sap_belize_hcw"]
+						"theme.active": ["sap_fiori_3", "sap_fiori_3_dark", "sap_belize_hcb", "sap_belize_hcw", "custom_shapein", "custom_shapein_2"]
 					}
 				}
 			}

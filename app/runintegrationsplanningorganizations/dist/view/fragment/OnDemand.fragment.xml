@@ -1,0 +1,65 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	<Dialog id="ondemand" state="Information" icon="sap-icon://action" title="New Execution On Demand" contentHeight="450px"
+		contentWidth="600px">
+		<VBox class="sapUiSmallMargin">
+			<Label text="Algorithm Top Down"/>
+			<f:SimpleForm id="SimpleFormChange480_12120" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="4" labelSpanL="4"
+				labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2"
+				columnsL="2" columnsM="1" singleContainerFullSize="false">
+				<f:content>
+					<core:Title text="Updated"/>
+					<Label labelFor="DTP1" text="From"/>
+					<DateTimePicker id="DTP11" required="true" change="changeDatesDemand" value="{path:'newExec>/fromUpd', formatter: '.formatter.Demanddate' }"/>
+					<Label labelFor="DTP12" text="To"/>
+					<DateTimePicker id="DTP12" required="true" change="changeDatesDemand" value="{path:'newExec>/toUpd', formatter: '.formatter.Demanddate' }"/>
+					<core:Title text="Effective"/>
+					<Label labelFor="DTP13" text="From"/>
+					<DateTimePicker id="DTP13" required="true" change="changeDatesDemand"
+						value="{path:'newExec>/fromEffec', formatter: '.formatter.Demanddate' }"/>
+					<Label labelFor="DTP14" text="To"/>
+					<DateTimePicker id="DTP14" required="true" change="changeDatesDemand" value="{path:'newExec>/toEffec', formatter: '.formatter.Demanddate' }"/>
+					<core:Title text="Organizations"/>
+					<Label labelFor="multiInput1" text="Orgs.List"/>
+					<MultiInput id="multiInput1" width="auto" showValueHelp="false"/>
+					<Label labelFor="tableOrgs" text="Mappings Top Level"/>
+					<Table items="{newExec>/orgsTopLevel}" mode="SingleSelectMaster" noDataText="No Organization Mapping" id="tableOrgs">
+						<headerToolbar>
+							<Toolbar>
+								<Button icon="sap-icon://add" press="addRow_toplevel"/>
+								<Button icon="sap-icon://delete" press="deleteRow_toplevel"/>
+							</Toolbar>
+						</headerToolbar>
+						<items>
+							<ColumnListItem type="Active">
+								<cells>
+									<Input value="{newExec>organization}"/>
+									<Input value="{newExec>pd_parent}"/>
+								</cells>
+							</ColumnListItem>
+						</items>
+						<columns>
+							<Column>
+								<header>
+									<Label text="Organization"/>
+								</header>
+							</Column>
+							<Column>
+								<header>
+									<Label text="PD Parent"/>
+								</header>
+							</Column>
+						</columns>
+					</Table>
+				</f:content>
+			</f:SimpleForm>
+			<!--<Label text="Supervisories" labelFor="multiInput2" class="sapUiLargeMarginBegin"/>-->
+			<!--<MultiInput id="multiInput1" width="300px" showValueHelp="false"/>-->
+			<!--<Label text="Workers" labelFor="multiInput2" class="sapUiLargeMarginBegin"/>-->
+			<!--<MultiInput id="multiInput2" width="300px" showValueHelp="false"/>-->
+		</VBox>
+		<buttons>
+			<Button text="Execute" type="Accept" press="execOnDemand"/>
+			<Button text="Cancel" type="Reject" press="cancelOnDemand"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

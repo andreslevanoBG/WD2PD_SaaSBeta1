@@ -1,0 +1,188 @@
+<mvc:View controllerName="shapein.RunIntegrationPlanningOrganizations.controller.Detail" xmlns="sap.m" xmlns:semantic="sap.f.semantic"
+	xmlns:footerbar="sap.ushell.ui.footerbar" xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout">
+	<semantic:SemanticPage id="detailPage" busy="{detailView>/busy}" busyIndicatorDelay="{detailView>/delay}">
+		<semantic:titleHeading>
+			<Title id="title" text="{uuid}" level="H2"/>
+		</semantic:titleHeading>
+		<semantic:headerContent>
+			<layout:HorizontalLayout allowWrapping="true">
+				<!--<layout:Grid defaultSpan="XL6 L6 M6 S12">>-->
+				<!--	<layout:content>-->
+				<layout:VerticalLayout class="sapUiTinyMargin">
+					<Text id="comDisplay" width="350px" text="Integration Job: {path:'comments' }" visible="true" class="sapUiSmallMargin"/>
+					<Input id="comChange" width="350px" value="{path:'comments' }" visible="false" class="sapUiSmallMargin"/>
+					<ObjectAttribute text="{path:'processing_type', formatter: '.formatter.processType' }" active="false" class="sapUiSmallMargin"
+						visible="true"/>
+					<ObjectAttribute text="{path:'last_execution', formatter: '.formatter.Startdate' }" active="false" class="sapUiSmallMargin" visible="true"/>
+					<!--<layoutData>-->
+					<!--	<layout:GridData span="XL6 L6 M6 S12" indent="XL0 L0 M0 S0" visibleS="false"/>-->
+					<!--</layoutData>-->
+				</layout:VerticalLayout>
+				<layout:VerticalLayout>
+					<SegmentedButton id="segButton" selectedKey="{path:'enable', formatter: '.formatter.enableKey' }" enabled="false" class="sapUiMediumMargin">
+						<items>
+							<SegmentedButtonItem text="Active" key="A"/>
+							<SegmentedButtonItem text="Inactive" key="U"/>
+						</items>
+					</SegmentedButton>
+					<!--<layoutData>-->
+					<!--	<layout:GridData span="XL6 L6 M6 S12" indent="XL0 L0 M0 S0" visibleS="false"/>-->
+					<!--</layoutData>-->
+				</layout:VerticalLayout>
+				<!--	</layout:content>-->
+				<!--</layout:Grid>-->
+			</layout:HorizontalLayout>
+		</semantic:headerContent>
+		<semantic:content>
+			<IconTabBar id="idIconTabBarSeparatorNoIcon" expanded="false" class="sapUiResponsiveContentPadding">
+				<items>
+					<IconTabFilter key="dates" icon="sap-icon://date-time" iconColor="Positive">
+						<Table id="lineItemsList" width="auto" items="{ path: 'integs_plan_d', sorter: { path: 'begda', descending: false } }"
+							updateFinished=".onListUpdateFinished" noDataText="{i18n>detailLineItemTableNoDataText}"
+							busyIndicatorDelay="{detailView>/lineItemTableDelay}">
+							<headerToolbar>
+								<OverflowToolbar width="auto" height="auto" design="Transparent" visible="true" enabled="true">
+									<content>
+										<Title id="lineItemsTitle" text="{detailView>/lineItemListTitle}" titleStyle="H3" level="H3"/>
+										<ToolbarSpacer width=""/>
+										<SearchField id="search" search="searchFilters" placeholder="Search" showSearchButton="true" visible="true" width="auto"/>
+										<OverflowToolbarButton id="sortButton1" text="Sort" type="Transparent" icon="sap-icon://add" iconFirst="true" width="auto" enabled="true"
+											visible="true" iconDensityAware="false" press=".onAddPlanD"/>
+									</content>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column hAlign="Center">
+									<Text text="Execution"/>
+								</Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center">
+									<Text text="Begin Date"/>
+								</Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center">
+									<Text text="End Date"/>
+								</Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center">
+									<Text text="Periodicity"/>
+								</Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center">
+									<Text text="Frecuency"/>
+								</Column>
+								<Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+									<Text text="Interval"/>
+								</Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center">
+									<Text text="Actions"/>
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<cells>
+										<ObjectStatus icon="{ path: 'execute', formatter: '.formatter.ExecStatusIcon' }"
+											state="{ path: 'execute', formatter: '.formatter.ExecStatus' }" visible="true" class="sapUiSmallMarginTop"/>
+										<Text text="{ path: 'begda', formatter: '.formatter.tableDate' }"/>
+										<Text text="{ path: 'endda', formatter: '.formatter.tableDate' }"/>
+										<ObjectIdentifier title="{ path: 'periodicity_type', formatter: '.formatter.periodType' }"
+											text="{ parts:[{path:'periodicity_values'},{path:'periodicity_type'}], formatter: '.formatter.periodValue' }"/>
+										<Text text="{ parts:[{path:'time_frecuency'},{path:'time_measure'}], formatter: '.formatter.frecuency' }"/>
+										<Text text="{ parts:[{path:'time_start'},{path:'time_end'}], formatter: '.formatter.interval' }"/>
+										<layout:HorizontalLayout class="sapUiContentPadding">
+											<Button icon="sap-icon://edit" press="editPlanD"/>
+											<Button icon="sap-icon://delete" press="deletePlanD"/>
+										</layout:HorizontalLayout>
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</IconTabFilter>
+					<IconTabSeparator icon=""/>
+					<IconTabFilter id="icontabData" key="datas" icon="sap-icon://provision">
+						<Bar id="bar">
+							<contentRight>
+								<Button id="edit" text="Edit" enabled="false" press="handleEditPress"/>
+								<Button id="save" text="Save" type="Emphasized" visible="false" press="handleSavePress"/>
+								<Button id="cancel" text="Cancel" visible="false" press="handleCancelPress"/>
+							</contentRight>
+						</Bar>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</semantic:content>
+		<!--<semantic:sendEmailAction>-->
+		<!--	<semantic:SendEmailAction id="shareEmail" press=".onSendEmailPress"/>-->
+		<!--</semantic:sendEmailAction>-->
+		<!--<semantic:shareInJamAction>-->
+		<!--	<semantic:ShareInJamAction id="shareInJam" visible="{FLP>/isShareInJamActive}" press=".onShareInJamPress"/>-->
+		<!--</semantic:shareInJamAction>-->
+		<!--<semantic:saveAsTileAction>-->
+		<!--	<footerbar:AddBookmarkButton id="shareTile" title="{detailView>/saveAsTileTitle}"/>-->
+		<!--</semantic:saveAsTileAction>-->
+		<semantic:closeAction>
+			<semantic:CloseAction id="closeColumn" press=".onCloseDetailPress"/>
+		</semantic:closeAction>
+		<semantic:titleMainAction></semantic:titleMainAction>
+		<!-- Semantic Footer Buttons -->
+		<!--<semantic:footerMainAction>-->
+		<!--	<semantic:FooterMainAction text="Save" press="onSave"/>-->
+		<!--</semantic:footerMainAction>-->
+		<semantic:titleCustomIconActions>
+			<Button icon="sap-icon://edit" id="editAction" text="Edit" press="onEdit"/>
+			<Button icon="sap-icon://delete" id="deleteAction" text="Delete" press="onDelete"/>
+			<Button id="saveAction" icon="sap-icon://save" text="Save" press="onSave"/>
+			<Button id="cancelAction" icon="sap-icon://cancel" text="Cancel" press="onCancel"/>
+		</semantic:titleCustomIconActions>
+		<semantic:fullScreenAction>
+			<semantic:FullScreenAction id="enterFullScreen"
+				visible="{= !${device>/system/phone} &amp;&amp; !${appView>/actionButtonsInfo/midColumn/fullScreen}}" press=".toggleFullScreen"/>
+		</semantic:fullScreenAction>
+		<semantic:exitFullScreenAction>
+			<semantic:ExitFullScreenAction id="exitFullScreen"
+				visible="{= !${device>/system/phone} &amp;&amp; ${appView>/actionButtonsInfo/midColumn/fullScreen}}" press=".toggleFullScreen"/>
+		</semantic:exitFullScreenAction>
+	</semantic:SemanticPage>
+</mvc:View>
+<!--<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:tnt="sap.tnt" xmlns:mc="sap.suite.ui.microchart"-->
+<!--	controllerName="shapein.RunIntegrationPlanningWorkers.controller.Detail" xmlns:layout="sap.ui.layout" displayBlock="true" xmlns:m="sap.m"-->
+<!--	height="100%">-->
+<!--	<m:Page title="{i18n>MisObjetivos}">-->
+<!--		<m:headerContent>-->
+<!--			<m:Button icon="sap-icon://message-information" text="{i18n>Info}" type="Emphasized" press="onPressInfo"-->
+<!--				visible="{path: 'editForm>/InfoText', formatter:'.formatter.visibleInfo'}"/>-->
+<!--		</m:headerContent>-->
+<!--		<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" showFooter="true" useIconTabBar="true"-->
+<!--			backgroundDesignAnchorBar="Translucent" sections="{path: 'integs_plan_d', factory: '.SectionsFactory'}" navigate="onNavigate">-->
+<!--			<dependents>-->
+<!--				<core:Fragment fragmentName="shapein.RunIntegrationPlanningWorkers.view.fragment.Planning" type="XML"/>-->
+<!--			</dependents>-->
+<!--			<headerTitle>-->
+<!--<ObjectPageHeader objectTitle="{editForm>/AppeeName}" titleSelectorPress="onPressTitleSelector" showTitleSelector="true"-->
+<!--	isObjectIconAlwaysVisible="false" isObjectTitleAlwaysVisible="false">-->
+<!--	<titleSelectorTooltip>-->
+<!--		<core:TooltipBase visible="false"/>-->
+<!--	</titleSelectorTooltip>-->
+<!--	<actions>-->
+<!--<ObjectPageHeaderActionButton hideText="false" icon="sap-icon://message-information" text="Información" type="Emphasized"-->
+<!--	press="onPressInfo"/>-->
+<!--	</actions>-->
+<!--</ObjectPageHeader>-->
+<!--				<ObjectPageHeader objectImageURI="/webapp/resources/logo.png" objectTitle="Integration Workday-PeopleDoc"-->
+<!--					objectSubtitle="Workers iFlow Configurations" headerDesign="Light" objectImageShape="Square" isObjectIconAlwaysVisible="false"-->
+<!--					isObjectTitleAlwaysVisible="false" isObjectSubtitleAlwaysVisible="false" isActionAreaAlwaysVisible="false"></ObjectPageHeader>-->
+<!--			</headerTitle>-->
+<!--			<headerContent>-->
+<!--<m:ObjectAttribute title="{i18n>priceTitle}"/>-->
+<!--			</headerContent>-->
+<!--			<sections>-->
+<!--<ObjectPageSection id="sect01" title="{editForm>/Txtab01}"-->
+<!--	subSections="{ path: 'editForm>/FormDetails', factory: '.SectionsFactory', filters : [ { path : 'Tabidx', operator : 'EQ', value1 : '01'} ] }">-->
+<!--, filters : [ { path : 'editForm>Tline', operator : 'EQ', value1 : 'OBJ'}, { path : 'editForm>Tline', operator : 'EQ', value1 : 'IND'} ] -->
+<!--	<subSections></subSections>-->
+<!--</ObjectPageSection>-->
+<!--			</sections>-->
+<!--			<footer>-->
+<!--				<m:OverflowToolbar id="overToolBar" active="true">-->
+<!--					<m:content></m:content>-->
+<!--				</m:OverflowToolbar>-->
+<!--			</footer>-->
+<!--		</ObjectPageLayout>-->
+<!--	</m:Page>-->
+<!--</mvc:View>-->

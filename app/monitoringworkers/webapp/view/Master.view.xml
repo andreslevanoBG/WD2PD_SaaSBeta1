@@ -1,0 +1,57 @@
+<mvc:View controllerName="shapein.MonitoringWorkers.controller.Master" xmlns="sap.m" xmlns:semantic="sap.f.semantic"
+	xmlns:mvc="sap.ui.core.mvc">
+	<semantic:SemanticPage id="masterPage" preserveHeaderStateOnScroll="true" toggleHeaderOnTitleClick="false">
+		<semantic:titleHeading>
+			<Title id="masterPageTitle" text="{masterView>/title}" level="H2"/>
+		</semantic:titleHeading>
+		<semantic:content>
+			<!-- For client side filtering add this to the items attribute: parameters: {operationMode: 'Client'}}" -->
+			<!--items="{ path: '/Integrations', parameters:{expand: 'integ_items'}, filters: { path: 'pck_code', operator: 'EQ', value1: 'SYN_WORKER' }, sorter: { path: 'timestamp_start', descending: true }, groupHeaderFactory: '.createGroupHeader' }"-->
+			<List id="list" width="auto" class="sapFDynamicPageAlignContent"
+				items="{ path: '/Integrations', parameters:{expand: 'error'}, filters: { path: 'pck_code', operator: 'EQ', value1: 'SYN_WORKER' }, sorter: { path: 'timestamp_start', descending: true }, groupHeaderFactory: '.createGroupHeader' }"
+				busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" growingThreshold="100"
+				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" growing="true" growingScrollToLoad="true"
+				updateFinished=".onUpdateFinished" selectionChange=".onSelectionChange">
+				<headerToolbar>
+					<OverflowToolbar>
+						<SearchField id="searchField" showRefreshButton="true" tooltip="{i18n>masterSearchTooltip}" search=".onSearch" width="auto">
+							<layoutData>
+								<OverflowToolbarLayoutData minWidth="150px" maxWidth="240px" shrinkable="true" priority="NeverOverflow"/>
+							</layoutData>
+						</SearchField>
+						<ToolbarSpacer/>
+						<!--<Button text="{i18n>ExecDate}" type="Default" icon="sap-icon://date-time" iconFirst="true" width="auto" enabled="true" visible="true"-->
+						<!--	iconDensityAware="false" press="_onButtonDays"/>-->
+						<Button id="sortButton" text="{i18n>Sort}" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true"
+							visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
+						<Button id="filterButton" text="{i18n>Filter}" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto" enabled="true"
+							visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
+					</OverflowToolbar>
+				</headerToolbar>
+				<infoToolbar>
+					<Toolbar active="true" id="filterBar" visible="{masterView>/isFilterBarVisible}" press="onOpenViewSettings">
+						<Title id="filterBarLabel" text="{masterView>/filterBarLabel}"/>
+					</Toolbar>
+				</infoToolbar>
+				<items>
+					<ObjectListItem type="Navigation" press=".onSelectionChange" number="{ path: 'numberOfItems'}"
+						numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }" intro="Process ID: Worker Integration" title="{id}"
+						numberState="{ path: 'status_code', formatter: '.formatter.IntegStatus' }" icon="sap-icon://collaborate">
+						<!--visible="{ parts:[{path:'integ_items'},{path:'status_code'}], formatter: '.formatter.visibleInteg' }"-->
+						<attributes>
+							<ObjectAttribute text="{ parts:[{path:'timestamp_start'},{path:'status_code'}], formatter: '.formatter.Startdate' }" active="false"
+								visible="true"/>
+							<ObjectAttribute text="{ parts:[{path:'timestamp_end'},{path:'status_code'}], formatter: '.formatter.Enddate' }" active="false"
+								visible="true"/>
+							<ObjectAttribute text="{ path:'numberOfSeconds', formatter: '.formatter.duration' }" active="false" visible="true"/>
+						</attributes>
+						<firstStatus>
+							<ObjectStatus text="{path:'status_code', formatter: '.formatter.ItemStatusTex' }"
+								state="{path:'status_code', formatter: '.formatter.IntegStatus' }"/>
+						</firstStatus>
+					</ObjectListItem>
+				</items>
+			</List>
+		</semantic:content>
+	</semantic:SemanticPage>
+</mvc:View>

@@ -1,0 +1,308 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:u="sap.ui.unified" xmlns:uxap="sap.uxap" xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core" controllerName="shapein.ConfiguringUsers.controller.Configuration" displayBlock="true">
+	<uxap:ObjectPageLayout showTitleInHeaderContent="true" showHeaderContent="true" showAnchorBar="true" showFooter="true" subSectionLayout="TitleOnTop">
+		<uxap:headerContent/>
+		<uxap:headerTitle>
+			<uxap:ObjectPageHeader objectImageURI="/webapp/resources/logo.png" objectTitle="Workday to PeopleDoc Integration" objectSubtitle="Configuration Settings" headerDesign="Light" objectImageShape="Square" isObjectIconAlwaysVisible="false" isObjectTitleAlwaysVisible="false" isObjectSubtitleAlwaysVisible="false" isActionAreaAlwaysVisible="false">
+				<uxap:actions/>
+				<uxap:breadCrumbsLinks/>
+				<uxap:navigationBar/>
+			</uxap:ObjectPageHeader>
+		</uxap:headerTitle>
+		<uxap:sections>
+			<uxap:ObjectPageSection showTitle="true" title="Page Section Title" titleUppercase="true" visible="true">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="Selection Data" mode="Expanded">
+						<uxap:blocks>
+							<form:Form width="100%" editable="true" visible="true">
+								<form:title/>
+								<form:formContainers>
+									<form:FormContainer visible="true">
+										<form:formElements>
+											<form:FormElement visible="true">
+												<form:label>
+													<Label text="Exclude Contingent Workers" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+												</form:label>
+												<form:fields>
+													<RadioButtonGroup id="sap_uxap_ObjectPageLayout_0-sections-sap_uxap_ObjectPageSection-1-subSections-sap_uxap_ObjectPageSubSection-1-blocks-build_simple_form_Form-1600070272249-formContainers-build_simple_form_FormContainer-1-formElements-build_simple_form_FormElement-2-fields-sap_m_RadioButtonGroup-1600077158601" columns="8" selectedIndex="0" valueState="None" width="auto" editable="true" enabled="true" textDirection="Inherit" select="_onRadioButtonGroupSelect">
+														<buttons>
+															<RadioButton id="rb001" text="Yes" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_contingent_workers', formatter:'.booleanTrans'}"/>
+															<RadioButton id="rb002" text="No" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_contingent_workers', formatter:'.booleanTransOp'}"/>
+														</buttons>
+													</RadioButtonGroup>
+												</form:fields>
+											</form:FormElement>
+											<form:FormElement visible="true">
+												<form:label>
+													<Label text="Exclude Employees" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+												</form:label>
+												<form:fields>
+													<RadioButtonGroup id="sap_uxap_ObjectPageLayout_0-sections-sap_uxap_ObjectPageSection-1-subSections-sap_uxap_ObjectPageSubSection-1-blocks-build_simple_form_Form-1600070272249-formContainers-build_simple_form_FormContainer-1-formElements-build_simple_form_FormElement-1600077208298-fields-sap_m_RadioButtonGroup-1" columns="8" selectedIndex="0" valueState="None" width="auto" editable="true" enabled="true" textDirection="Inherit" select="_onRadioButtonGroupSelect1">
+														<buttons>
+															<RadioButton id="rb003" text="Yes" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_employees', formatter:'.booleanTrans'}"/>
+															<RadioButton id="rb004" text="No" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_employees', formatter:'.booleanTransOp'}"/>
+														</buttons>
+													</RadioButtonGroup>
+												</form:fields>
+											</form:FormElement>
+											<form:FormElement visible="true">
+												<form:label>
+													<Label text="Exclude Inactive Workers" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+												</form:label>
+												<form:fields>
+													<RadioButtonGroup id="sap_uxap_ObjectPageLayout_0-sections-sap_uxap_ObjectPageSection-1-subSections-sap_uxap_ObjectPageSubSection-1-blocks-build_simple_form_Form-1600070272249-formContainers-build_simple_form_FormContainer-1-formElements-build_simple_form_FormElement-1600251652154-fields-sap_m_RadioButtonGroup-1" columns="8" selectedIndex="0" valueState="None" width="auto" editable="true" enabled="true" textDirection="Inherit" select="_onRadioButtonGroupSelect2">
+														<buttons>
+															<RadioButton id="rb005" text="Yes" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_inactive_workers', formatter:'.booleanTrans'}"/>
+															<RadioButton id="rb006" text="No" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_inactive_workers', formatter:'.booleanTransOp'}"/>
+														</buttons>
+													</RadioButtonGroup>
+												</form:fields>
+											</form:FormElement>
+											<form:FormElement label="Workday Custom ID (User Detection)" id="element3_1607010524963">
+												<form:fields>
+													<Text width="100%" text="" id="text001" visible="true" textAlign="Left"/>
+												</form:fields>
+											</form:FormElement>
+											<form:FormElement label="Name" id="element3_1606905030628">
+												<form:fields>
+													<Input width="100%" id="input0" value="{ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/custom_id/object_name}"/>
+												</form:fields>
+											</form:FormElement>
+											<form:FormElement label="Value" id="element4">
+												<form:fields>
+													<Input width="100%" id="input1" value="{ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/custom_id/object_value}"/>
+												</form:fields>
+											</form:FormElement>
+										</form:formElements>
+										<form:title>
+											<core:Title text="Request Filter" level="H4" icon="sap-icon://filter"/>
+										</form:title>
+									</form:FormContainer>
+								</form:formContainers>
+								<form:layout>
+									<form:ResponsiveGridLayout adjustLabelSpan="false" columnsL="2" labelSpanL="3" columnsM="1" labelSpanM="2" labelSpanS="12"/>
+								</form:layout>
+							</form:Form>
+						</uxap:blocks>
+						<uxap:moreBlocks/>
+						<uxap:actions/>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+				<uxap:customAnchorBarButton/>
+			</uxap:ObjectPageSection>
+			<uxap:ObjectPageSection showTitle="true" title="Page Section Title" titleUppercase="true" visible="true">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="Mapping Configuration" mode="Expanded">
+						<uxap:blocks>
+							<form:Form width="100%" editable="true" visible="true">
+								<form:title/>
+								<form:formContainers>
+									<form:FormContainer visible="true">
+										<form:formElements>
+											<form:FormElement id="element10_1603812780297">
+												<form:fields>
+													<Table items="{path:'ModelJSON>/global_configuration/mappings/email/filters/filter'}" mode="SingleSelectMaster" noDataText="Drop column list items here and columns in the area above" id="table0_1603812787387">
+														<headerToolbar>
+															<Toolbar>
+																<Button icon="sap-icon://add" press="addRow_email"/>
+																<Button icon="sap-icon://delete" press="deleteRow_email"/>
+															</Toolbar>
+														</headerToolbar>
+														<items>
+															<ColumnListItem type="Active" id="item15_1603812787384">
+																<cells>
+																	<ComboBox id="combo03" items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_USER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PUBLIC'}]}" selectedKey="{ModelJSON>usage_public}">
+																		<core:Item key="{Base64>value}" text="{Base64>text}"/>
+																	</ComboBox>
+																	<ComboBox id="combo04" items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_USER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PRIMARY'}]}" selectedKey="{ModelJSON>type_data_primary}">
+																		<core:Item key="{Base64>value}" text="{Base64>text}"/>
+																	</ComboBox>
+																	<ComboBox id="combo05" items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_USER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'TYPE'}]}" selectedKey="{ModelJSON>type_reference}">
+																		<core:Item key="{Base64>value}" text="{Base64>text}"/>
+																	</ComboBox>
+																	<MaskInput value="{ModelJSON>_secuence}" mask="99" id="text7"/>
+																</cells>
+															</ColumnListItem>
+														</items>
+														<columns>
+															<Column id="column0_1603812787385">
+																<header>
+																	<Label text="Visibility" id="label11_1603812787385"/>
+																</header>
+															</Column>
+															<Column id="column1_1603812787386">
+																<header>
+																	<Label text="Primary / Secondary Email" id="label12_1603812787386"/>
+																</header>
+															</Column>
+															<Column id="column2_1603812787386">
+																<header>
+																	<Label text="Usage" id="label13_1603812787386"/>
+																</header>
+															</Column>
+															<Column id="column3_1603812787386">
+																<header>
+																	<Label text="Sequence" id="label10_1603812787385"/>
+																</header>
+															</Column>
+														</columns>
+													</Table>
+												</form:fields>
+											</form:FormElement>
+										</form:formElements>
+										<form:title>
+											<core:Title text="Email" level="H4" icon="sap-icon://email"/>
+										</form:title>
+									</form:FormContainer>
+									<form:FormContainer title="Roles" id="container3">
+										<form:formElements>
+											<form:FormElement id="element3">
+												<form:fields>
+													<Table items="{path:'ModelJSON>/global_configuration/mappings/roles/pd_role'}" mode="SingleSelectMaster" noDataText="Drop column list items here and columns in the area above" id="table0">
+														<headerToolbar>
+															<Toolbar>
+																<Button icon="sap-icon://add" press="addRow_roles"/>
+																<Button icon="sap-icon://delete" press="deleteRow_roles"/>
+															</Toolbar>
+														</headerToolbar>
+														<items>
+															<ColumnListItem type="Active" id="item10">
+																<cells>
+																	<!--<Text text="Row 1 Cell 1" id="text4"/>-->
+																	<!--<Text text="Row 1 Cell 2" id="text5"/>-->
+																	<Input value="{ModelJSON>_wd_role}" id="text4"/>
+																	<Input value="{ModelJSON>text}" id="text5"/>
+																</cells>
+															</ColumnListItem>
+														</items>
+														<columns>
+															<Column id="column0">
+																<header>
+																	<Label text="Workday Role" id="label3"/>
+																</header>
+															</Column>
+															<Column id="column1">
+																<header>
+																	<Label text="PeopleDoc Role" id="label4_1606751204652"/>
+																</header>
+															</Column>
+														</columns>
+													</Table>
+												</form:fields>
+											</form:FormElement>
+										</form:formElements>
+										<form:title>
+											<core:Title xmlns:core="sap.ui.core" text="Role Mapping" level="H4" icon="sap-icon://role" id="title15"/>
+										</form:title>
+									</form:FormContainer>
+									<form:FormContainer xmlns:u="sap.ui.unified" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" visible="true" id="container8">
+										<form:formElements>
+											<form:FormElement visible="true" id="element6">
+												<form:label>
+													<Label xmlns="sap.m" text="Default Language" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true" id="label4"/>
+												</form:label>
+												<form:fields>
+													<!--items="{ path: 'Base64>/Pd_Languages'}" -->
+													<ComboBox xmlns="sap.m" id="combo01" items="{Language>/}" selectedKey="{ModelJSON>/global_configuration/mappings/language/default_values/BPC7_default_code}">
+														<core:Item xmlns:core="sap.ui.core" key="{Language>code}" text="{Language>text}"/>
+													</ComboBox>
+												</form:fields>
+											</form:FormElement>
+										</form:formElements>
+										<form:title>
+											<core:Title xmlns:core="sap.ui.core" text="Language" level="H4" icon="sap-icon://education" id="title14"/>
+										</form:title>
+									</form:FormContainer>
+								</form:formContainers>
+								<form:layout>
+									<form:ResponsiveGridLayout adjustLabelSpan="false" columnsL="2" labelSpanL="3" columnsM="1" labelSpanM="2" labelSpanS="12"/>
+								</form:layout>
+							</form:Form>
+						</uxap:blocks>
+						<uxap:moreBlocks/>
+						<uxap:actions/>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+				<uxap:customAnchorBarButton/>
+			</uxap:ObjectPageSection>
+			<uxap:ObjectPageSection showTitle="true" title="Page Section Title" titleUppercase="true" visible="true">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="Transformations" mode="Expanded">
+						<uxap:blocks>
+							<form:Form width="100%" editable="true" visible="true">
+								<form:title/>
+								<form:formContainers>
+									<form:FormContainer visible="true">
+										<form:formElements>
+											<form:FormElement id="element11">
+												<form:fields>
+													<Table items="{path:'ModelJSON>/global_configuration/transformations/organization_code/transformation'}" mode="SingleSelectMaster" noDataText="Drop column list items here and columns in the area above" id="table1">
+														<headerToolbar>
+															<Toolbar>
+																<Button icon="sap-icon://add" press="addRow_trans"/>
+																<Button icon="sap-icon://delete" press="deleteRow_trans"/>
+															</Toolbar>
+														</headerToolbar>
+														<items>
+															<ColumnListItem type="Active" id="item16">
+																<cells>
+																	<Input value="{ModelJSON>characters}" id="text8"/>
+																	<Input value="{ModelJSON>separator}" id="text9"/>
+																	<Input value="{ModelJSON>replace_by}" id="text01"/>
+																	<!--<Input value="{DataModel>@attributes/secuence}" id="text211"/>-->
+																	<!--<MaskInput value="{ModelJSON>_secuence}" mask="99" id="text5_copy2_table1212"/>-->
+																</cells>
+															</ColumnListItem>
+														</items>
+														<columns>
+															<Column id="column3">
+																<header>
+																	<Label text="Characters" id="label12"/>
+																</header>
+															</Column>
+															<Column id="column4">
+																<header>
+																	<Label text="Separator" id="label13"/>
+																</header>
+															</Column>
+															<Column id="column5">
+																<header>
+																	<Label text="Replace by" id="label14"/>
+																</header>
+															</Column>
+															<!--<Column id="column6">-->
+															<!--	<header>-->
+															<!--		<Label text="Sequential" id="label18"/>-->
+															<!--	</header>-->
+															<!--</Column>-->
+														</columns>
+													</Table>
+												</form:fields>
+											</form:FormElement>
+										</form:formElements>
+										<form:title>
+											<core:Title text="Special Characters" level="H4" icon="sap-icon://translate"/>
+										</form:title>
+									</form:FormContainer>
+								</form:formContainers>
+								<form:layout>
+									<form:ResponsiveGridLayout adjustLabelSpan="false" columnsL="2" labelSpanL="3" columnsM="1" labelSpanM="2" labelSpanS="12"/>
+								</form:layout>
+							</form:Form>
+						</uxap:blocks>
+						<uxap:moreBlocks/>
+						<uxap:actions/>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+				<uxap:customAnchorBarButton/>
+			</uxap:ObjectPageSection>
+		</uxap:sections>
+		<uxap:footer>
+			<OverflowToolbar width="100%" height="46px" design="Auto" enabled="true" visible="true">
+				<content>
+					<ToolbarSpacer width=""/>
+					<Button text="Save" press="saveConfiguration" type="Accept" iconFirst="true" width="auto" enabled="true" visible="true" iconDensityAware="false"/>
+				</content>
+			</OverflowToolbar>
+		</uxap:footer>
+	</uxap:ObjectPageLayout>
+</mvc:View>

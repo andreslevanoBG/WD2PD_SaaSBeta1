@@ -1,0 +1,885 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+		<edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+	</edmx:Reference>
+	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+		Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+		<edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+	</edmx:Reference>
+	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+		<edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+	</edmx:Reference>
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="IntegrationService">
+			<EntityContainer Name="EntityContainer" m:IsDefaultEntityContainer="true">
+				<EntitySet Name="Configuration_Types" EntityType="IntegrationService.Configuration_Types"/>
+				<EntitySet Name="Configuration_Types_texts" EntityType="IntegrationService.Configuration_Types_texts"/>
+				<EntitySet Name="Configurations" EntityType="IntegrationService.Configurations"/>
+				<EntitySet Name="Integration_Items" EntityType="IntegrationService.Integration_Items"/>
+				<EntitySet Name="Integration_Pck" EntityType="IntegrationService.Integration_Pck"/>
+				<EntitySet Name="Integration_Pck_texts" EntityType="IntegrationService.Integration_Pck_texts"/>
+				<EntitySet Name="Integrations" EntityType="IntegrationService.Integrations"/>
+				<EntitySet Name="Messages" EntityType="IntegrationService.Messages"/>
+				<EntitySet Name="Messages_Categories" EntityType="IntegrationService.Messages_Categories"/>
+				<EntitySet Name="Messages_Categories_texts" EntityType="IntegrationService.Messages_Categories_texts"/>
+				<EntitySet Name="Messages_texts" EntityType="IntegrationService.Messages_texts"/>
+				<EntitySet Name="Organizations" EntityType="IntegrationService.Organizations"/>
+				<EntitySet Name="Reprocess" EntityType="IntegrationService.Reprocess"/>
+				<EntitySet Name="Status" EntityType="IntegrationService.Status"/>
+				<EntitySet Name="Status_texts" EntityType="IntegrationService.Status_texts"/>
+				<EntitySet Name="Workers" EntityType="IntegrationService.Workers"/>
+				<AssociationSet Name="Configuration_Types_configurations" Association="IntegrationService.Configuration_Types_configurations">
+					<End Role="Configuration_Types" EntitySet="Configuration_Types"/>
+					<End Role="Configurations" EntitySet="Configurations"/>
+				</AssociationSet>
+				<AssociationSet Name="Configuration_Types_texts_1" Association="IntegrationService.Configuration_Types_texts_1">
+					<End Role="Configuration_Types" EntitySet="Configuration_Types"/>
+					<End Role="Configuration_Types_texts" EntitySet="Configuration_Types_texts"/>
+				</AssociationSet>
+				<AssociationSet Name="Configuration_Types_localized" Association="IntegrationService.Configuration_Types_localized">
+					<End Role="Configuration_Types" EntitySet="Configuration_Types"/>
+					<End Role="Configuration_Types_texts" EntitySet="Configuration_Types_texts"/>
+				</AssociationSet>
+				<AssociationSet Name="Configurations_int_pck" Association="IntegrationService.Configurations_int_pck">
+					<End Role="Configurations" EntitySet="Configurations"/>
+					<End Role="Integration_Pck" EntitySet="Integration_Pck"/>
+				</AssociationSet>
+				<AssociationSet Name="Configurations_conf_type" Association="IntegrationService.Configurations_conf_type">
+					<End Role="Configurations" EntitySet="Configurations"/>
+					<End Role="Configuration_Types" EntitySet="Configuration_Types"/>
+				</AssociationSet>
+				<AssociationSet Name="Integration_Items_status" Association="IntegrationService.Integration_Items_status">
+					<End Role="Integration_Items" EntitySet="Integration_Items"/>
+					<End Role="Status" EntitySet="Status"/>
+				</AssociationSet>
+				<AssociationSet Name="Integration_Items_error" Association="IntegrationService.Integration_Items_error">
+					<End Role="Integration_Items" EntitySet="Integration_Items"/>
+					<End Role="Messages" EntitySet="Messages"/>
+				</AssociationSet>
+				<AssociationSet Name="Integration_Items_integration" Association="IntegrationService.Integration_Items_integration">
+					<End Role="Integration_Items" EntitySet="Integration_Items"/>
+					<End Role="Integrations" EntitySet="Integrations"/>
+				</AssociationSet>
+				<AssociationSet Name="Integration_Items_reprocess" Association="IntegrationService.Integration_Items_reprocess">
+					<End Role="Integration_Items" EntitySet="Integration_Items"/>
+					<End Role="Reprocess" EntitySet="Reprocess"/>
+				</AssociationSet>
+				<AssociationSet Name="Integration_Pck_integrations" Association="IntegrationService.Integration_Pck_integrations">
+					<End Role="Integration_Pck" EntitySet="Integration_Pck"/>
+					<End Role="Integrations" EntitySet="Integrations"/>
+				</AssociationSet>
+				<AssociationSet Name="Integration_Pck_configurations" Association="IntegrationService.Integration_Pck_configurations">
+					<End Role="Integration_Pck" EntitySet="Integration_Pck"/>
+					<End Role="Configurations" EntitySet="Configurations"/>
+				</AssociationSet>
+				<AssociationSet Name="Integration_Pck_texts_1" Association="IntegrationService.Integration_Pck_texts_1">
+					<End Role="Integration_Pck" EntitySet="Integration_Pck"/>
+					<End Role="Integration_Pck_texts" EntitySet="Integration_Pck_texts"/>
+				</AssociationSet>
+				<AssociationSet Name="Integration_Pck_localized" Association="IntegrationService.Integration_Pck_localized">
+					<End Role="Integration_Pck" EntitySet="Integration_Pck"/>
+					<End Role="Integration_Pck_texts" EntitySet="Integration_Pck_texts"/>
+				</AssociationSet>
+				<AssociationSet Name="Integrations_error" Association="IntegrationService.Integrations_error">
+					<End Role="Integrations" EntitySet="Integrations"/>
+					<End Role="Messages" EntitySet="Messages"/>
+				</AssociationSet>
+				<AssociationSet Name="Integrations_status" Association="IntegrationService.Integrations_status">
+					<End Role="Integrations" EntitySet="Integrations"/>
+					<End Role="Status" EntitySet="Status"/>
+				</AssociationSet>
+				<AssociationSet Name="Integrations_pck" Association="IntegrationService.Integrations_pck">
+					<End Role="Integrations" EntitySet="Integrations"/>
+					<End Role="Integration_Pck" EntitySet="Integration_Pck"/>
+				</AssociationSet>
+				<AssociationSet Name="Integrations_integ_items" Association="IntegrationService.Integrations_integ_items">
+					<End Role="Integrations" EntitySet="Integrations"/>
+					<End Role="Integration_Items" EntitySet="Integration_Items"/>
+				</AssociationSet>
+				<AssociationSet Name="Integrations_reprocess" Association="IntegrationService.Integrations_reprocess">
+					<End Role="Integrations" EntitySet="Integrations"/>
+					<End Role="Reprocess" EntitySet="Reprocess"/>
+				</AssociationSet>
+				<AssociationSet Name="Messages_categor" Association="IntegrationService.Messages_categor">
+					<End Role="Messages" EntitySet="Messages"/>
+					<End Role="Messages_Categories" EntitySet="Messages_Categories"/>
+				</AssociationSet>
+				<AssociationSet Name="Messages_integrations" Association="IntegrationService.Messages_integrations">
+					<End Role="Messages" EntitySet="Messages"/>
+					<End Role="Integrations" EntitySet="Integrations"/>
+				</AssociationSet>
+				<AssociationSet Name="Messages_integration_items" Association="IntegrationService.Messages_integration_items">
+					<End Role="Messages" EntitySet="Messages"/>
+					<End Role="Integration_Items" EntitySet="Integration_Items"/>
+				</AssociationSet>
+				<AssociationSet Name="Messages_texts_1" Association="IntegrationService.Messages_texts_1">
+					<End Role="Messages" EntitySet="Messages"/>
+					<End Role="Messages_texts" EntitySet="Messages_texts"/>
+				</AssociationSet>
+				<AssociationSet Name="Messages_localized" Association="IntegrationService.Messages_localized">
+					<End Role="Messages" EntitySet="Messages"/>
+					<End Role="Messages_texts" EntitySet="Messages_texts"/>
+				</AssociationSet>
+				<AssociationSet Name="Messages_Categories_messages" Association="IntegrationService.Messages_Categories_messages">
+					<End Role="Messages_Categories" EntitySet="Messages_Categories"/>
+					<End Role="Messages" EntitySet="Messages"/>
+				</AssociationSet>
+				<AssociationSet Name="Messages_Categories_texts_1" Association="IntegrationService.Messages_Categories_texts_1">
+					<End Role="Messages_Categories" EntitySet="Messages_Categories"/>
+					<End Role="Messages_Categories_texts" EntitySet="Messages_Categories_texts"/>
+				</AssociationSet>
+				<AssociationSet Name="Messages_Categories_localized" Association="IntegrationService.Messages_Categories_localized">
+					<End Role="Messages_Categories" EntitySet="Messages_Categories"/>
+					<End Role="Messages_Categories_texts" EntitySet="Messages_Categories_texts"/>
+				</AssociationSet>
+				<AssociationSet Name="Organizations_status" Association="IntegrationService.Organizations_status">
+					<End Role="Organizations" EntitySet="Organizations"/>
+					<End Role="Status" EntitySet="Status"/>
+				</AssociationSet>
+				<AssociationSet Name="Organizations_last_integ_item" Association="IntegrationService.Organizations_last_integ_item">
+					<End Role="Organizations" EntitySet="Organizations"/>
+					<End Role="Integration_Items" EntitySet="Integration_Items"/>
+				</AssociationSet>
+				<AssociationSet Name="Reprocess_integration" Association="IntegrationService.Reprocess_integration">
+					<End Role="Reprocess" EntitySet="Reprocess"/>
+					<End Role="Integrations" EntitySet="Integrations"/>
+				</AssociationSet>
+				<AssociationSet Name="Reprocess_integration_item" Association="IntegrationService.Reprocess_integration_item">
+					<End Role="Reprocess" EntitySet="Reprocess"/>
+					<End Role="Integration_Items" EntitySet="Integration_Items"/>
+				</AssociationSet>
+				<AssociationSet Name="Status_integrations" Association="IntegrationService.Status_integrations">
+					<End Role="Status" EntitySet="Status"/>
+					<End Role="Integrations" EntitySet="Integrations"/>
+				</AssociationSet>
+				<AssociationSet Name="Status_integrations_items" Association="IntegrationService.Status_integrations_items">
+					<End Role="Status" EntitySet="Status"/>
+					<End Role="Integration_Items" EntitySet="Integration_Items"/>
+				</AssociationSet>
+				<AssociationSet Name="Status_texts_1" Association="IntegrationService.Status_texts_1">
+					<End Role="Status" EntitySet="Status"/>
+					<End Role="Status_texts" EntitySet="Status_texts"/>
+				</AssociationSet>
+				<AssociationSet Name="Status_localized" Association="IntegrationService.Status_localized">
+					<End Role="Status" EntitySet="Status"/>
+					<End Role="Status_texts" EntitySet="Status_texts"/>
+				</AssociationSet>
+				<AssociationSet Name="Workers_status" Association="IntegrationService.Workers_status">
+					<End Role="Workers" EntitySet="Workers"/>
+					<End Role="Status" EntitySet="Status"/>
+				</AssociationSet>
+				<AssociationSet Name="Workers_last_integ_item" Association="IntegrationService.Workers_last_integ_item">
+					<End Role="Workers" EntitySet="Workers"/>
+					<End Role="Integration_Items" EntitySet="Integration_Items"/>
+				</AssociationSet>
+			</EntityContainer>
+			<EntityType Name="Configuration_Types">
+				<Key>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+				<Property Name="text" Type="Edm.String"/>
+				<NavigationProperty Name="configurations" Relationship="IntegrationService.Configuration_Types_configurations"
+					FromRole="Configuration_Types" ToRole="Configurations"/>
+				<NavigationProperty Name="texts" Relationship="IntegrationService.Configuration_Types_texts_1" FromRole="Configuration_Types"
+					ToRole="Configuration_Types_texts"/>
+				<NavigationProperty Name="localized" Relationship="IntegrationService.Configuration_Types_localized" FromRole="Configuration_Types"
+					ToRole="Configuration_Types_texts"/>
+			</EntityType>
+			<EntityType Name="Configuration_Types_texts">
+				<Key>
+					<PropertyRef Name="locale"/>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+				<Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+				<Property Name="text" Type="Edm.String"/>
+			</EntityType>
+			<EntityType Name="Configurations">
+				<Key>
+					<PropertyRef Name="pck_code"/>
+					<PropertyRef Name="conf_code"/>
+				</Key>
+				<Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="pck_code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+				<Property Name="conf_code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+				<Property Name="value" Type="Edm.String"/>
+				<NavigationProperty Name="int_pck" Relationship="IntegrationService.Configurations_int_pck" FromRole="Configurations"
+					ToRole="Integration_Pck"/>
+				<NavigationProperty Name="conf_type" Relationship="IntegrationService.Configurations_conf_type" FromRole="Configurations"
+					ToRole="Configuration_Types"/>
+			</EntityType>
+			<EntityType Name="Integration_Items">
+				<Key>
+					<PropertyRef Name="item_id"/>
+				</Key>
+				<Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="item_id" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="integ_id" Type="Edm.String" MaxLength="32"/>
+				<Property Name="external_id" Type="Edm.String"/>
+				<Property Name="status_code" Type="Edm.String" MaxLength="10"/>
+				<Property Name="request_format" Type="Edm.String" MaxLength="10"/>
+				<Property Name="request" Type="Edm.String"/>
+				<Property Name="error_code" Type="Edm.String" MaxLength="10"/>
+				<Property Name="error_http_code" Type="Edm.String" MaxLength="10"/>
+				<Property Name="error_message" Type="Edm.String"/>
+				<Property Name="error_details_format" Type="Edm.String" MaxLength="10"/>
+				<Property Name="error_details" Type="Edm.String"/>
+				<Property Name="timestamp" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="timezone" Type="Edm.String" MaxLength="10"/>
+				<NavigationProperty Name="status" Relationship="IntegrationService.Integration_Items_status" FromRole="Integration_Items" ToRole="Status"/>
+				<NavigationProperty Name="error" Relationship="IntegrationService.Integration_Items_error" FromRole="Integration_Items" ToRole="Messages"/>
+				<NavigationProperty Name="integration" Relationship="IntegrationService.Integration_Items_integration" FromRole="Integration_Items"
+					ToRole="Integrations"/>
+				<NavigationProperty Name="reprocess" Relationship="IntegrationService.Integration_Items_reprocess" FromRole="Integration_Items"
+					ToRole="Reprocess"/>
+			</EntityType>
+			<EntityType Name="Integration_Pck">
+				<Key>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+				<Property Name="text" Type="Edm.String"/>
+				<NavigationProperty Name="integrations" Relationship="IntegrationService.Integration_Pck_integrations" FromRole="Integration_Pck"
+					ToRole="Integrations"/>
+				<NavigationProperty Name="configurations" Relationship="IntegrationService.Integration_Pck_configurations" FromRole="Integration_Pck"
+					ToRole="Configurations"/>
+				<NavigationProperty Name="texts" Relationship="IntegrationService.Integration_Pck_texts_1" FromRole="Integration_Pck"
+					ToRole="Integration_Pck_texts"/>
+				<NavigationProperty Name="localized" Relationship="IntegrationService.Integration_Pck_localized" FromRole="Integration_Pck"
+					ToRole="Integration_Pck_texts"/>
+			</EntityType>
+			<EntityType Name="Integration_Pck_texts">
+				<Key>
+					<PropertyRef Name="locale"/>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+				<Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+				<Property Name="text" Type="Edm.String"/>
+			</EntityType>
+			<EntityType Name="Integrations">
+				<Key>
+					<PropertyRef Name="id"/>
+				</Key>
+				<Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="id" Type="Edm.String" MaxLength="32" Nullable="false"/>
+				<Property Name="pck_code" Type="Edm.String" MaxLength="10"/>
+				<Property Name="status_code" Type="Edm.String" MaxLength="10"/>
+				<Property Name="reference_id" Type="Edm.String" MaxLength="50"/>
+				<Property Name="error_code" Type="Edm.String" MaxLength="10"/>
+				<Property Name="error_http_code" Type="Edm.String" MaxLength="100"/>
+				<Property Name="error_message" Type="Edm.String"/>
+				<Property Name="timezone" Type="Edm.String" MaxLength="10"/>
+				<Property Name="timestamp_start" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="timestamp_end" Type="Edm.DateTimeOffset" Precision="7"/>
+				<NavigationProperty Name="error" Relationship="IntegrationService.Integrations_error" FromRole="Integrations" ToRole="Messages"/>
+				<NavigationProperty Name="status" Relationship="IntegrationService.Integrations_status" FromRole="Integrations" ToRole="Status"/>
+				<NavigationProperty Name="pck" Relationship="IntegrationService.Integrations_pck" FromRole="Integrations" ToRole="Integration_Pck"/>
+				<NavigationProperty Name="integ_items" Relationship="IntegrationService.Integrations_integ_items" FromRole="Integrations"
+					ToRole="Integration_Items"/>
+				<NavigationProperty Name="reprocess" Relationship="IntegrationService.Integrations_reprocess" FromRole="Integrations" ToRole="Reprocess"/>
+				<Property Name="numberOfItems" Type="Edm.Int32"/>
+				<Property Name="numberOfSeconds" Type="Edm.Decimal" sap:variable-scale="true"/>
+			</EntityType>
+			<EntityType Name="Messages">
+				<Key>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+				<Property Name="text" Type="Edm.String"/>
+				<Property Name="categor_code" Type="Edm.String" MaxLength="10"/>
+				<NavigationProperty Name="categor" Relationship="IntegrationService.Messages_categor" FromRole="Messages" ToRole="Messages_Categories"/>
+				<NavigationProperty Name="integrations" Relationship="IntegrationService.Messages_integrations" FromRole="Messages" ToRole="Integrations"/>
+				<NavigationProperty Name="integration_items" Relationship="IntegrationService.Messages_integration_items" FromRole="Messages"
+					ToRole="Integration_Items"/>
+				<NavigationProperty Name="texts" Relationship="IntegrationService.Messages_texts_1" FromRole="Messages" ToRole="Messages_texts"/>
+				<NavigationProperty Name="localized" Relationship="IntegrationService.Messages_localized" FromRole="Messages" ToRole="Messages_texts"/>
+			</EntityType>
+			<EntityType Name="Messages_Categories">
+				<Key>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+				<Property Name="text" Type="Edm.String"/>
+				<NavigationProperty Name="messages" Relationship="IntegrationService.Messages_Categories_messages" FromRole="Messages_Categories"
+					ToRole="Messages"/>
+				<NavigationProperty Name="texts" Relationship="IntegrationService.Messages_Categories_texts_1" FromRole="Messages_Categories"
+					ToRole="Messages_Categories_texts"/>
+				<NavigationProperty Name="localized" Relationship="IntegrationService.Messages_Categories_localized" FromRole="Messages_Categories"
+					ToRole="Messages_Categories_texts"/>
+			</EntityType>
+			<EntityType Name="Messages_Categories_texts">
+				<Key>
+					<PropertyRef Name="locale"/>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+				<Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+				<Property Name="text" Type="Edm.String"/>
+			</EntityType>
+			<EntityType Name="Messages_texts">
+				<Key>
+					<PropertyRef Name="locale"/>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+				<Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+				<Property Name="text" Type="Edm.String"/>
+			</EntityType>
+			<EntityType Name="Organizations">
+				<Key>
+					<PropertyRef Name="uuid"/>
+				</Key>
+				<Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="uuid" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="external_id" Type="Edm.String"/>
+				<Property Name="reference_id" Type="Edm.String" MaxLength="32"/>
+				<Property Name="name" Type="Edm.String" MaxLength="50"/>
+				<Property Name="corporate_name" Type="Edm.String" MaxLength="50"/>
+				<Property Name="last_item_id" Type="Edm.Guid"/>
+				<Property Name="last_status" Type="Edm.String" MaxLength="10"/>
+				<NavigationProperty Name="status" Relationship="IntegrationService.Organizations_status" FromRole="Organizations" ToRole="Status"/>
+				<NavigationProperty Name="last_integ_item" Relationship="IntegrationService.Organizations_last_integ_item" FromRole="Organizations"
+					ToRole="Integration_Items"/>
+			</EntityType>
+			<EntityType Name="Reprocess">
+				<Key>
+					<PropertyRef Name="id"/>
+				</Key>
+				<Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="id" Type="Edm.String" MaxLength="32" Nullable="false"/>
+				<Property Name="type" Type="Edm.String" MaxLength="1"/>
+				<Property Name="integ_id" Type="Edm.String" MaxLength="32"/>
+				<Property Name="item_id" Type="Edm.Guid"/>
+				<NavigationProperty Name="integration" Relationship="IntegrationService.Reprocess_integration" FromRole="Reprocess" ToRole="Integrations"/>
+				<NavigationProperty Name="integration_item" Relationship="IntegrationService.Reprocess_integration_item" FromRole="Reprocess"
+					ToRole="Integration_Items"/>
+			</EntityType>
+			<EntityType Name="Status">
+				<Key>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+				<Property Name="text" Type="Edm.String"/>
+				<Property Name="type" Type="Edm.String" MaxLength="1"/>
+				<NavigationProperty Name="integrations" Relationship="IntegrationService.Status_integrations" FromRole="Status" ToRole="Integrations"/>
+				<NavigationProperty Name="integrations_items" Relationship="IntegrationService.Status_integrations_items" FromRole="Status"
+					ToRole="Integration_Items"/>
+				<NavigationProperty Name="texts" Relationship="IntegrationService.Status_texts_1" FromRole="Status" ToRole="Status_texts"/>
+				<NavigationProperty Name="localized" Relationship="IntegrationService.Status_localized" FromRole="Status" ToRole="Status_texts"/>
+			</EntityType>
+			<EntityType Name="Status_texts">
+				<Key>
+					<PropertyRef Name="locale"/>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+				<Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+				<Property Name="text" Type="Edm.String"/>
+			</EntityType>
+			<EntityType Name="Workers">
+				<Key>
+					<PropertyRef Name="uuid"/>
+				</Key>
+				<Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="uuid" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="external_id" Type="Edm.String"/>
+				<Property Name="employee_number" Type="Edm.String" MaxLength="50"/>
+				<Property Name="firstname" Type="Edm.String" MaxLength="50"/>
+				<Property Name="lastname" Type="Edm.String" MaxLength="50"/>
+				<Property Name="email" Type="Edm.String" MaxLength="64"/>
+				<Property Name="last_status" Type="Edm.String" MaxLength="10"/>
+				<NavigationProperty Name="status" Relationship="IntegrationService.Workers_status" FromRole="Workers" ToRole="Status"/>
+				<Property Name="last_item_id" Type="Edm.Guid"/>
+				<NavigationProperty Name="last_integ_item" Relationship="IntegrationService.Workers_last_integ_item" FromRole="Workers"
+					ToRole="Integration_Items"/>
+			</EntityType>
+			<Association Name="Configuration_Types_configurations">
+				<End Role="Configuration_Types" Type="IntegrationService.Configuration_Types" Multiplicity="*"/>
+				<End Role="Configurations" Type="IntegrationService.Configurations" Multiplicity="*"/>
+			</Association>
+			<Association Name="Configuration_Types_texts_1">
+				<End Role="Configuration_Types" Type="IntegrationService.Configuration_Types" Multiplicity="*"/>
+				<End Role="Configuration_Types_texts" Type="IntegrationService.Configuration_Types_texts" Multiplicity="*">
+					<OnDelete Action="Cascade"/>
+				</End>
+			</Association>
+			<Association Name="Configuration_Types_localized">
+				<End Role="Configuration_Types" Type="IntegrationService.Configuration_Types" Multiplicity="*"/>
+				<End Role="Configuration_Types_texts" Type="IntegrationService.Configuration_Types_texts" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Configuration_Types_texts">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Configuration_Types">
+						<PropertyRef Name="code"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Configurations_int_pck">
+				<End Role="Configurations" Type="IntegrationService.Configurations" Multiplicity="*"/>
+				<End Role="Integration_Pck" Type="IntegrationService.Integration_Pck" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Integration_Pck">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Configurations">
+						<PropertyRef Name="pck_code"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Configurations_conf_type">
+				<End Role="Configurations" Type="IntegrationService.Configurations" Multiplicity="*"/>
+				<End Role="Configuration_Types" Type="IntegrationService.Configuration_Types" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Configuration_Types">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Configurations">
+						<PropertyRef Name="conf_code"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Integration_Items_status">
+				<End Role="Integration_Items" Type="IntegrationService.Integration_Items" Multiplicity="*"/>
+				<End Role="Status" Type="IntegrationService.Status" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Status">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Integration_Items">
+						<PropertyRef Name="status_code"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Integration_Items_error">
+				<End Role="Integration_Items" Type="IntegrationService.Integration_Items" Multiplicity="*"/>
+				<End Role="Messages" Type="IntegrationService.Messages" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Messages">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Integration_Items">
+						<PropertyRef Name="error_code"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Integration_Items_integration">
+				<End Role="Integration_Items" Type="IntegrationService.Integration_Items" Multiplicity="*"/>
+				<End Role="Integrations" Type="IntegrationService.Integrations" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Integrations">
+						<PropertyRef Name="id"/>
+					</Principal>
+					<Dependent Role="Integration_Items">
+						<PropertyRef Name="integ_id"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Integration_Items_reprocess">
+				<End Role="Integration_Items" Type="IntegrationService.Integration_Items" Multiplicity="*"/>
+				<End Role="Reprocess" Type="IntegrationService.Reprocess" Multiplicity="*"/>
+			</Association>
+			<Association Name="Integration_Pck_integrations">
+				<End Role="Integration_Pck" Type="IntegrationService.Integration_Pck" Multiplicity="*"/>
+				<End Role="Integrations" Type="IntegrationService.Integrations" Multiplicity="*"/>
+			</Association>
+			<Association Name="Integration_Pck_configurations">
+				<End Role="Integration_Pck" Type="IntegrationService.Integration_Pck" Multiplicity="*"/>
+				<End Role="Configurations" Type="IntegrationService.Configurations" Multiplicity="*"/>
+			</Association>
+			<Association Name="Integration_Pck_texts_1">
+				<End Role="Integration_Pck" Type="IntegrationService.Integration_Pck" Multiplicity="*"/>
+				<End Role="Integration_Pck_texts" Type="IntegrationService.Integration_Pck_texts" Multiplicity="*">
+					<OnDelete Action="Cascade"/>
+				</End>
+			</Association>
+			<Association Name="Integration_Pck_localized">
+				<End Role="Integration_Pck" Type="IntegrationService.Integration_Pck" Multiplicity="*"/>
+				<End Role="Integration_Pck_texts" Type="IntegrationService.Integration_Pck_texts" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Integration_Pck_texts">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Integration_Pck">
+						<PropertyRef Name="code"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Integrations_error">
+				<End Role="Integrations" Type="IntegrationService.Integrations" Multiplicity="*"/>
+				<End Role="Messages" Type="IntegrationService.Messages" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Messages">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Integrations">
+						<PropertyRef Name="error_code"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Integrations_status">
+				<End Role="Integrations" Type="IntegrationService.Integrations" Multiplicity="*"/>
+				<End Role="Status" Type="IntegrationService.Status" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Status">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Integrations">
+						<PropertyRef Name="status_code"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Integrations_pck">
+				<End Role="Integrations" Type="IntegrationService.Integrations" Multiplicity="*"/>
+				<End Role="Integration_Pck" Type="IntegrationService.Integration_Pck" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Integration_Pck">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Integrations">
+						<PropertyRef Name="pck_code"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Integrations_integ_items">
+				<End Role="Integrations" Type="IntegrationService.Integrations" Multiplicity="*"/>
+				<End Role="Integration_Items" Type="IntegrationService.Integration_Items" Multiplicity="*">
+					<OnDelete Action="Cascade"/>
+				</End>
+			</Association>
+			<Association Name="Integrations_reprocess">
+				<End Role="Integrations" Type="IntegrationService.Integrations" Multiplicity="*"/>
+				<End Role="Reprocess" Type="IntegrationService.Reprocess" Multiplicity="*"/>
+			</Association>
+			<Association Name="Messages_categor">
+				<End Role="Messages" Type="IntegrationService.Messages" Multiplicity="*"/>
+				<End Role="Messages_Categories" Type="IntegrationService.Messages_Categories" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Messages_Categories">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Messages">
+						<PropertyRef Name="categor_code"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Messages_integrations">
+				<End Role="Messages" Type="IntegrationService.Messages" Multiplicity="*"/>
+				<End Role="Integrations" Type="IntegrationService.Integrations" Multiplicity="*"/>
+			</Association>
+			<Association Name="Messages_integration_items">
+				<End Role="Messages" Type="IntegrationService.Messages" Multiplicity="*"/>
+				<End Role="Integration_Items" Type="IntegrationService.Integration_Items" Multiplicity="*"/>
+			</Association>
+			<Association Name="Messages_texts_1">
+				<End Role="Messages" Type="IntegrationService.Messages" Multiplicity="*"/>
+				<End Role="Messages_texts" Type="IntegrationService.Messages_texts" Multiplicity="*">
+					<OnDelete Action="Cascade"/>
+				</End>
+			</Association>
+			<Association Name="Messages_localized">
+				<End Role="Messages" Type="IntegrationService.Messages" Multiplicity="*"/>
+				<End Role="Messages_texts" Type="IntegrationService.Messages_texts" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Messages_texts">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Messages">
+						<PropertyRef Name="code"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Messages_Categories_messages">
+				<End Role="Messages_Categories" Type="IntegrationService.Messages_Categories" Multiplicity="*"/>
+				<End Role="Messages" Type="IntegrationService.Messages" Multiplicity="*"/>
+			</Association>
+			<Association Name="Messages_Categories_texts_1">
+				<End Role="Messages_Categories" Type="IntegrationService.Messages_Categories" Multiplicity="*"/>
+				<End Role="Messages_Categories_texts" Type="IntegrationService.Messages_Categories_texts" Multiplicity="*">
+					<OnDelete Action="Cascade"/>
+				</End>
+			</Association>
+			<Association Name="Messages_Categories_localized">
+				<End Role="Messages_Categories" Type="IntegrationService.Messages_Categories" Multiplicity="*"/>
+				<End Role="Messages_Categories_texts" Type="IntegrationService.Messages_Categories_texts" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Messages_Categories_texts">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Messages_Categories">
+						<PropertyRef Name="code"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Organizations_status">
+				<End Role="Organizations" Type="IntegrationService.Organizations" Multiplicity="*"/>
+				<End Role="Status" Type="IntegrationService.Status" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Status">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Organizations">
+						<PropertyRef Name="last_status"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Organizations_last_integ_item">
+				<End Role="Organizations" Type="IntegrationService.Organizations" Multiplicity="*"/>
+				<End Role="Integration_Items" Type="IntegrationService.Integration_Items" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Integration_Items">
+						<PropertyRef Name="item_id"/>
+					</Principal>
+					<Dependent Role="Organizations">
+						<PropertyRef Name="last_item_id"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Reprocess_integration">
+				<End Role="Reprocess" Type="IntegrationService.Reprocess" Multiplicity="*"/>
+				<End Role="Integrations" Type="IntegrationService.Integrations" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Integrations">
+						<PropertyRef Name="id"/>
+					</Principal>
+					<Dependent Role="Reprocess">
+						<PropertyRef Name="integ_id"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Reprocess_integration_item">
+				<End Role="Reprocess" Type="IntegrationService.Reprocess" Multiplicity="*"/>
+				<End Role="Integration_Items" Type="IntegrationService.Integration_Items" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Integration_Items">
+						<PropertyRef Name="item_id"/>
+					</Principal>
+					<Dependent Role="Reprocess">
+						<PropertyRef Name="item_id"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Status_integrations">
+				<End Role="Status" Type="IntegrationService.Status" Multiplicity="*"/>
+				<End Role="Integrations" Type="IntegrationService.Integrations" Multiplicity="*"/>
+			</Association>
+			<Association Name="Status_integrations_items">
+				<End Role="Status" Type="IntegrationService.Status" Multiplicity="*"/>
+				<End Role="Integration_Items" Type="IntegrationService.Integration_Items" Multiplicity="*"/>
+			</Association>
+			<Association Name="Status_texts_1">
+				<End Role="Status" Type="IntegrationService.Status" Multiplicity="*"/>
+				<End Role="Status_texts" Type="IntegrationService.Status_texts" Multiplicity="*">
+					<OnDelete Action="Cascade"/>
+				</End>
+			</Association>
+			<Association Name="Status_localized">
+				<End Role="Status" Type="IntegrationService.Status" Multiplicity="*"/>
+				<End Role="Status_texts" Type="IntegrationService.Status_texts" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Status_texts">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Status">
+						<PropertyRef Name="code"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Workers_status">
+				<End Role="Workers" Type="IntegrationService.Workers" Multiplicity="*"/>
+				<End Role="Status" Type="IntegrationService.Status" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Status">
+						<PropertyRef Name="code"/>
+					</Principal>
+					<Dependent Role="Workers">
+						<PropertyRef Name="last_status"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="Workers_last_integ_item">
+				<End Role="Workers" Type="IntegrationService.Workers" Multiplicity="*"/>
+				<End Role="Integration_Items" Type="IntegrationService.Integration_Items" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Integration_Items">
+						<PropertyRef Name="item_id"/>
+					</Principal>
+					<Dependent Role="Workers">
+						<PropertyRef Name="last_item_id"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Configurations/createdAt">
+				<Annotation Term="Common.Label" String="Fecha de creación"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Configurations/createdBy">
+				<Annotation Term="Common.Label" String="Creado por"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="ID único de usuario"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Configurations/modifiedAt">
+				<Annotation Term="Common.Label" String="Modificado el"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Configurations/modifiedBy">
+				<Annotation Term="Common.Label" String="Modificado por"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="ID único de usuario"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Integration_Items/createdAt">
+				<Annotation Term="Common.Label" String="Fecha de creación"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Integration_Items/createdBy">
+				<Annotation Term="Common.Label" String="Creado por"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="ID único de usuario"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Integration_Items/modifiedAt">
+				<Annotation Term="Common.Label" String="Modificado el"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Integration_Items/modifiedBy">
+				<Annotation Term="Common.Label" String="Modificado por"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="ID único de usuario"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Integrations/createdAt">
+				<Annotation Term="Common.Label" String="Fecha de creación"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Integrations/createdBy">
+				<Annotation Term="Common.Label" String="Creado por"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="ID único de usuario"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Integrations/modifiedAt">
+				<Annotation Term="Common.Label" String="Modificado el"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Integrations/modifiedBy">
+				<Annotation Term="Common.Label" String="Modificado por"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="ID único de usuario"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Integrations/numberOfItems">
+				<Annotation Term="Core.Computed" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Integrations/numberOfSeconds">
+				<Annotation Term="Core.Computed" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Organizations/createdAt">
+				<Annotation Term="Common.Label" String="Fecha de creación"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Organizations/createdBy">
+				<Annotation Term="Common.Label" String="Creado por"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="ID único de usuario"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Organizations/modifiedAt">
+				<Annotation Term="Common.Label" String="Modificado el"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Organizations/modifiedBy">
+				<Annotation Term="Common.Label" String="Modificado por"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="ID único de usuario"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Reprocess/createdAt">
+				<Annotation Term="Common.Label" String="Fecha de creación"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Reprocess/createdBy">
+				<Annotation Term="Common.Label" String="Creado por"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="ID único de usuario"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Reprocess/modifiedAt">
+				<Annotation Term="Common.Label" String="Modificado el"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Reprocess/modifiedBy">
+				<Annotation Term="Common.Label" String="Modificado por"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="ID único de usuario"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Workers/createdAt">
+				<Annotation Term="Common.Label" String="Fecha de creación"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Workers/createdBy">
+				<Annotation Term="Common.Label" String="Creado por"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="ID único de usuario"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Workers/modifiedAt">
+				<Annotation Term="Common.Label" String="Modificado el"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="IntegrationService.Workers/modifiedBy">
+				<Annotation Term="Common.Label" String="Modificado por"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="ID único de usuario"/>
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

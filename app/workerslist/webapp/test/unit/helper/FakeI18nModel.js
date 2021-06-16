@@ -3,7 +3,7 @@ sap.ui.define([
 ], function (Model) {
 	"use strict";
 
-	return Model.extend("workerslist.test.unit.helper.FakeI18nModel", {
+	return Model.extend("shapein.WorkersList.test.unit.helper.FakeI18nModel", {
 
 		constructor : function (mTexts) {
 			Model.call(this);
@@ -17,6 +17,7 @@ sap.ui.define([
 				}.bind(this)
 			};
 		}
+
 	});
 
 });

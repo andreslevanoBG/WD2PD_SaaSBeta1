@@ -1,0 +1,28 @@
+{
+    "welcomeFile": "/index.html",
+    "authenticationMethod": "route",
+    "routes": [
+        {
+            "source": "^/integration/(.*)$",
+            "target": "$1",
+            "authenticationType": "xsuaa",
+            "destination": "srv",
+            "scope": "$XSAPPNAME.Service"
+        },
+        {
+            "source": "^/v2/integration/(.*)$",
+            "target": "$1",
+            "authenticationType": "xsuaa",
+            "scope": "$XSAPPNAME.Service",
+            "destination": "srv"
+        },
+
+        {
+            "source": "^(.*)$",
+            "target": "$1",
+            "service": "html5-apps-repo-rt",
+            "authenticationType": "xsuaa",
+            "scope": "$XSAPPNAME.Service"
+        }
+    ]
+}

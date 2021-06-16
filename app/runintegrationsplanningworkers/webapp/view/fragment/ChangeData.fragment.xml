@@ -1,0 +1,34 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core">
+	<VBox class="sapUiSmallMargin">
+		<f:SimpleForm id="SimpleFormChangeData" editable="true" layout="ResponsiveGridLayout" title="Integration Plan Details" labelSpanXL="6" labelSpanL="6"
+			labelSpanM="6" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="1" emptySpanL="1" emptySpanM="1" emptySpanS="0" columnsXL="1"
+			columnsL="1" columnsM="1" singleContainerFullSize="false">
+			<f:content>
+				<Label text="Time Zone"/> 
+				<Select id="TimeZone" items="{ path: 'timezones>/timezones', sorter: { path: 'Name', descending: false }}" selectedKey="{adata>/time_zone}">
+					<core:Item key="{timezones>Key}" text="{timezones>Name}"/>
+				</Select>
+				<Label text="Initial Date From "/>
+				<DateTimePicker id="dp1" value="{adata>/initial_date_from}" editable="{path:'last_execution', formatter: '.formatter.editInitDate' }"
+				valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
+				<Label text="Timestamp for Retroactive Changes (From)"/>
+				<DateTimePicker id="dp2" value="{adata>/retro_effec_from}" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
+				<Label text="Timestamp Date for Future Changes (To)"/>
+				<DateTimePicker id="dp3" value="{adata>/fut_upd_from}" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
+				<Label text="Next Execution - Next Updated From"/>
+				<DateTimePicker id="dp4" value="{adata>/next_upd_from}" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
+				<Label text="Reference ID"/>
+				<Select id="RefId" selectedKey="{adata>/ref_id}">
+						<core:Item key="WID" text="WID"/>
+						<core:Item key="Organization_Reference_ID" text="Organization Reference ID"/>
+					</Select>
+				<Label labelFor="multiInput11" text="Supervisory Organizations"/>
+				<MultiInput id="multiInput11" tokens="{adata>/supervisories}" width="auto" showValueHelp="false">
+					<tokens>
+						<Token key="{adata>Uuid}" text="{adata>Name}"/>
+					</tokens>
+				</MultiInput>
+			</f:content>
+		</f:SimpleForm>
+	</VBox>
+</core:FragmentDefinition>

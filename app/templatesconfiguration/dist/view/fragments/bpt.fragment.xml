@@ -1,0 +1,29 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	<Dialog id="bpt" state="Success" icon="sap-icon://add-activity-2" title="New Business Process Type" contentHeight="250px"
+		contentWidth="500px">
+		<VBox class="sapUiTinyMargin">
+			<f:SimpleForm id="SimpleFormChange46432234" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="4" labelSpanL="4"
+				labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2"
+				columnsL="2" columnsM="1" singleContainerFullSize="false">
+				<f:content>
+					<Label labelFor="Name_bpt" text="Name"/>
+					<Select id="Name_bpt" width="300px" selectedKey="{ path: 'bpt>/name'}" change="changeTypeProcessing" items="{ path: 'BProcessWD>/', sorter: { path: 'description', descending: false } }">
+						<core:Item key="{BProcessWD>code}" text="{BProcessWD>description} ({BProcessWD>code}) "/>
+					</Select>
+					<!--<Input id="Name_bpt" required="true" value="{ path: 'bpt>/name'}"/>-->
+					<Label labelFor="Desc_bpt" text="Description"/>
+					<Input id="Desc_bpt" required="true" value="{ path: 'bpt>/description'}"/>
+					<CheckBox id="retry_bpt" text="Retry Employee" selected="{ path: 'bpt>/retry_employee_exist'}"/>
+					<Label text="Retries Number" labelFor="retnum_bpt"/>
+					<Input id="retnum_bpt" type="Number" required="true" enabled="{ path: 'bpt>/retry_employee_exist'}" width="50%"
+						value="{ path: 'bpt>/retries_number'}"/>
+				</f:content>
+			</f:SimpleForm>
+		</VBox>
+		<buttons>
+			<Button id="btonAddBpt" text="Add" type="Accept" press="execNewBpt"/>
+			<Button id="btonEditBpt" text="Change" type="Accept" press="execChangeBpt"/>
+			<Button text="Cancel" type="Reject" press="cancelBpt"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

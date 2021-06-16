@@ -1,5 +1,7 @@
+/*global QUnit*/
+
 sap.ui.define([
-"workerslist/model/formatter"
+	"shapein/WorkersList/model/formatter"
 ], function (formatter) {
 	"use strict";
 

@@ -1,0 +1,164 @@
+<mvc:View controllerName="shapein.UsersList.controller.Object" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.m.semantic"
+	xmlns:footerbar="sap.ushell.ui.footerbar">
+	<semantic:DetailPage id="page" headerPinnable="false" toggleHeaderOnTitleClick="false" busy="{objectView>/busy}"
+		busyIndicatorDelay="{objectView>/delay}">
+		<!--<semantic:titleHeading>-->
+		<!--	<Title visible="false" text="{ parts:[{path:'firstname'},{path:'lastname'}], formatter: '.formatter.workName' }" level="H2"/>-->
+		<!--</semantic:titleHeading>-->
+		<!--<semantic:headerContent>-->
+		<semantic:content>
+			<ObjectHeader intro="User Id: {employee_number}"
+				title="{ parts:[{path:'firstname'},{path:'lastname'}], formatter: '.formatter.workName' }" icon="sap-icon://employee-lookup"
+				number="{ path: 'numberOfItems'}" numberUnit="" class="sapUiResponsiveMargin"
+				numberState="{ path: 'last_status', formatter: '.formatter.statusType' }" titleActive="true" backgroundDesign="Translucent"
+				condensed="false" visible="true">
+				<attributes>
+					<ObjectAttribute text="{path:'email'}" active="false" visible="true"/>
+					<ObjectAttribute text="{path:'organization_id'}" active="false" visible="true"/>
+					<ObjectAttribute text="{ path: 'last_timestamp', formatter: '.formatter.timestamp' }" active="false" visible="true"/>
+				</attributes>
+				<statuses>
+					<ObjectStatus text="{ path: 'last_status', formatter: '.formatter.statusNumb' }"
+						state="{ path: 'last_status', formatter: '.formatter.statusType' }"/>
+				</statuses>
+				<markers/>
+			</ObjectHeader>
+			<!--</semantic:headerContent>-->
+			<!--<OverflowToolbar width="auto" height="46px" design="Solid" visible="true" enabled="true">-->
+			<!--	<content>-->
+			<!--		<Title text="Integrations" titleStyle="H2" width="auto" textAlign="Center" visible="true" wrapping="false" class="sapUiMediumMarginBegin"/>-->
+			<!--		<ToolbarSpacer width=""/>-->
+			<!--		<SearchField placeholder="Search" showSearchButton="true" visible="true" width="auto"/>-->
+			<!--	</content>-->
+			<!--</OverflowToolbar>-->
+			<!--<List width="auto" headerText="" items="{ path: 'integ_items', sorter: { path: 'timestamp_start', descending: true }}" footerText=""-->
+			<!--	backgroundDesign="Solid" growing="true" growingThreshold="20" growingScrollToLoad="true" visible="true">-->
+			<!--	<items>-->
+			<!--		<NotificationListItem title="{path: 'integ_id', formatter: '.formatter.IntegId' }"-->
+			<!--			description="{ parts:[{path:'timestamp_start'},{path:'timestamp_start'},{path:'status_code'}], formatter: '.formatter.date' }" authorName=""-->
+			<!--			authorPicture="sap-icon://collaborate" datetime="" priority="" unread="true" truncate="true" hideShowMoreButton="false"-->
+			<!--			showCloseButton="false" visible="true" close="_onNotificationListItemClose">-->
+			<!--			<buttons>-->
+			<!--				<Button text="Details" type="Emphasized" icon="sap-icon://detail-view" iconFirst="true" width="auto" enabled="true" visible="true"-->
+			<!--					iconDensityAware="false"/>-->
+			<!--			</buttons>-->
+			<!--			<processingMessage>-->
+			<!--				<MessageStrip text="{parts: [{path: 'status_code'},{path: 'error_message'}] , formatter: '.formatter.statusMess' }"-->
+			<!--					type="{path: 'status_code', formatter: '.formatter.statusType' }" customIcon="" showIcon="true" showCloseButton="true" visible="true">-->
+			<!--					<link/>-->
+			<!--				</MessageStrip>-->
+			<!--			</processingMessage>-->
+			<!--		</NotificationListItem>-->
+			<!--	</items>-->
+			<!--</List>-->
+			<IconTabBar id="iconTab" expandable="false" expanded="true" applyContentPadding="false" backgroundDesign="Solid" upperCase="false"
+				visible="true" selectedKey="Ok" select="searchFilters" class="sapUiResponsiveMargin">
+				<items>
+					<IconTabFilter icon="sap-icon://drop-down-list" iconColor="Default" text="All Items" count="{numberOfItems}" design="Vertical"
+						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+						<content></content>
+					</IconTabFilter>
+					<IconTabSeparator icon="" iconDensityAware="false"/>
+					<IconTabFilter id="tabfSuc" key="Suc" icon="sap-icon://accept" iconColor="Positive" text="Success" count="" design="Vertical"
+						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+						<content></content>
+					</IconTabFilter>
+					<IconTabSeparator icon="" iconDensityAware="false"/>
+					<IconTabFilter id="tabfErr" key="Err" icon="sap-icon://decline" iconColor="Negative" text="Error" count="" design="Vertical" showAll="false"
+						textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+						<content></content>
+					</IconTabFilter>
+					<IconTabSeparator icon="" iconDensityAware="false"/>
+				</items>
+				<content>
+					<Table id="lineItemsList" width="auto" noDataText="No data" mode="SingleSelectMaster" showSeparators="All" growing="true"
+						growingThreshold="20" growingScrollToLoad="true" class="sapUiResponsiveMargin"
+						items="{ path: 'items>/integ_items', sorter: { path: 'timestamp_start', descending: true }}">
+						<infoToolbar/>
+						<headerToolbar>
+							<OverflowToolbar width="auto" height="auto" design="Transparent" visible="true" enabled="true">
+								<content>
+									<Title text="" titleStyle="Auto" width="auto" textAlign="Begin" visible="true" wrapping="false"/>
+									<ToolbarSpacer width=""/>
+									<SearchField id="search" search="searchFilters" placeholder="Search" showSearchButton="true" visible="true" width="auto"/>
+									<OverflowToolbarButton id="sortButton1" text="Sort" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true"
+										visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
+									<OverflowToolbarButton id="filterButton1" text="Filter" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto"
+										enabled="true" visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
+								</content>
+							</OverflowToolbar>
+						</headerToolbar>
+						<columns>
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Phone" demandPopin="true" popinDisplay="Inline" mergeDuplicates="false">
+								<header>
+									<Text text="Integ. Item" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
+								mergeDuplicates="false">
+								<header>
+									<Text text="Status" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
+								mergeDuplicates="false">
+								<header>
+									<Text text="Message" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
+								mergeDuplicates="false">
+								<header>
+									<Text text="Duration" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
+								mergeDuplicates="false">
+								<header>
+									<Text text="Details" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text text="Timestamp" width="auto" maxLines="1" wrapping="false" textAlign="Center" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem type="Active" visible="true">
+								<cells>
+									<Text text="{path: 'items>integ_id'}"/>
+									<ObjectStatus text="{ path: 'items>status_code', formatter: '.formatter.ItemStatus' }"
+										state="{ path: 'items>status_code', formatter: '.formatter.ItemStatus' }" visible="true" class="sapUiSmallMarginTop"/>
+									<Button text="" type="Default" icon="sap-icon://message-error" iconFirst="true" width="60px"
+										enabled="{ path: 'items>status_code', formatter: '.formatter.ItemButEnabled' }" visible="true" iconDensityAware="false"
+										press="handleMessagePopoverPress"/>
+									<Text text="{path: 'items>duration'}"/>
+									<Button text="" type="Default" icon="sap-icon://detail-view" iconFirst="true" width="60px" enabled="true" visible="true"
+										iconDensityAware="false" press="onDataDialogPress"/>
+									<Text text="{ path: 'items>timestamp_start', formatter: '.formatter.timestamp' }" width="auto" maxLines="1" wrapping="false"
+										textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</content>
+			</IconTabBar>
+		</semantic:content>
+		<!--<semantic:sendEmailAction>-->
+		<!--	<semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>-->
+		<!--</semantic:sendEmailAction>-->
+		<!--<semantic:shareInJamAction>-->
+		<!--	<semantic:ShareInJamAction id="shareInJam" visible="{FLP>/isShareInJamActive}" press=".onShareInJamPress"/>-->
+		<!--</semantic:shareInJamAction>-->
+		<!--<semantic:saveAsTileAction>-->
+		<!--	<footerbar:AddBookmarkButton id ="shareTile" title="{objectView>/saveAsTileTitle}"/>-->
+		<!--</semantic:saveAsTileAction>-->
+	</semantic:DetailPage>
+</mvc:View>

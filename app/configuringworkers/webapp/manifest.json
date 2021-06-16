@@ -1,0 +1,155 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"id": "shapein.ConfiguringWorkers",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"sourceTemplate": {
+			"id": "servicecatalog.connectivityComponentForManifest",
+			"version": "0.0.0"
+		},
+		"crossNavigation": {
+			"inbounds": {
+				"intent1": {
+					"signature": {
+						"parameters": {},
+						"additionalParameters": "allowed"
+					},
+					"semanticObject": "Workers",
+					"action": "Configuration",
+					"icon": "sap-icon://settings",
+					"title": "Workers",
+					"info": "",
+					"subTitle": "Settings"
+				}
+			}
+		},
+		"dataSources": {
+			"mainService": {
+				"uri": "/v2/integration/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/Integration/metadata.xml"
+				}
+			},
+			"my_global_json_model_data_source": {
+				"uri": "localService/ALtest2.json",
+				"type": "JSON"
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_hcb",
+			"sap_bluecrystal"
+		]
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "shapein.ConfiguringWorkers.view.Configuring",
+			"type": "XML"
+		},
+		"dependencies": {
+			"minUI5Version": "1.65.6",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.ui.layout": {},
+				"sap.ushell": {},
+				"sap.collaboration": {},
+				"sap.ui.comp": {},
+				"sap.uxap": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "shapein.ConfiguringWorkers.i18n.i18n"
+				}
+			},
+			"my_global_json_model": {
+				"type": "sap.ui.model.json.JSONModel",
+				"dataSource": "my_global_json_model_data_source"
+			},
+			"": {
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"settings": {
+					"defaultOperationMode": "Server",
+					"defaultBindingMode": "OneWay",
+					"defaultCountMode": "Request"
+				},
+				"dataSource": "mainService",
+				"preload": true
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"async": true,
+				"viewPath": "shapein.ConfiguringWorkers.view",
+				"controlAggregation": "pages",
+				"controlId": "idAppControl",
+				"clearControlAggregation": false
+			},
+			"routes": [
+				{
+					"name": "TargetConfiguring",
+					"pattern": "RouteConfiguring",
+					"target": [
+						"TargetConfiguring"
+					]
+				}
+			],
+			"targets": {
+				"TargetConfiguring": {
+					"viewType": "XML",
+					"transition": "slide",
+					"clearControlAggregation": false,
+					"viewName": "Configuring"
+				}
+			}
+		}
+	},
+	"sap.platform.hcp": {
+		"uri": "webapp",
+		"_version": "1.1.0"
+    },
+    "sap.platform.cf": {
+		"oAuthScopes": [
+			"$XSAPPNAME.Workers"
+		]
+	}
+}

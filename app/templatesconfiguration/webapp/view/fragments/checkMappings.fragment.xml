@@ -1,0 +1,65 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	<Dialog id="checkMap" state="Success" icon="sap-icon://check-availability" title="Check Mappings" contentHeight="600px" contentWidth="700px">
+		<VBox class="sapUiTinyMargin">
+			<f:SimpleForm id="SimpleFormChange787867" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="4" labelSpanL="4"
+				labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2"
+				columnsL="2" columnsM="1" singleContainerFullSize="false">
+				<f:toolbar>
+					<Toolbar id="TBChecks">
+						<Title id="TitleFormChecks" text="Mockdata"/>
+						<ToolbarSpacer/>
+						<Button text="Check" type="Accept" press="checkMappings" icon="sap-icon://overview-chart"/>
+					</Toolbar>
+				</f:toolbar>
+				<f:content>
+					<Label labelFor="CheckEmployee" text="Employee ID"/>
+					<Input id="CheckEmployee" required="true"/>
+					<!--<Label labelFor="CheckLanguage" text="Language"/>-->
+					<!--<Select id="CheckLanguage" width="300px" change="changeTypeProcessing" items="{BProcess>/}">-->
+					<!--	<core:Item key="{BProcess>bpt_id}" text="{BProcess>description}"/>-->
+					<!--</Select>-->
+				</f:content>
+			</f:SimpleForm>
+			<ScrollContainer id="ScrollContChecks" height="100%" width="100%" horizontal="false" vertical="true" visible="true">
+				<Table id="tableChecks" width="auto" items="{ path: 'checkMap>/', sorter: { path: 'variable', descending: false } }"
+					noDataText="No Mapping Checks">
+					<headerToolbar>
+						<OverflowToolbar>
+							<Title  text="Results" level="H3"/>
+							<ToolbarSpacer/>
+							<!--<SearchField id="searchFieldCheck" tooltip="{i18n>worklistSearchTooltip}" search=".onSearchAttr">-->
+							<!--	<layoutData>-->
+							<!--		<OverflowToolbarLayoutData maxWidth="200px" priority="NeverOverflow"/>-->
+							<!--	</layoutData>-->
+							<!--</SearchField>-->
+						</OverflowToolbar>
+					</headerToolbar>
+					<columns>
+						<Column id="VariableCheck" width="150px" hAlign="Center">
+							<Text text="Variable"/>
+						</Column>
+						<Column id="StatusCheck" width="100px" hAlign="Center">
+							<Text text="Status"/>
+						</Column>
+						<Column id="ValueCheck" width="auto" hAlign="Center">
+							<Text text="Value"/>
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem type="Inactive">
+							<cells>
+								<Text text="{ path: 'checkMap>variable' }"/>
+								<ObjectStatus  state="{ path: 'checkMap>error', formatter: '.formatter.stateStatusCheck' }" 
+								icon="{ path: 'checkMap>error', formatter: '.formatter.iconStatusCheck' }"/>
+								<Text text="{ path: 'checkMap>value' }"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</ScrollContainer>
+		</VBox>
+		<buttons>
+			<Button text="Cancel" type="Reject" press="cancelCheckMap"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>
