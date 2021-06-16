@@ -1,0 +1,70 @@
+{
+	"_version": "3.0.0",
+	"identification": {
+		"id": "67e7fe5d-1b71-46ae-9bdf-85f2cab9171e",
+		"entityType": "bundle"
+	},
+	"payload": {
+		"catalogs": [{
+			"_version": "3.0.0",
+			"identification": {
+				"id": "defaultCatalogId",
+				"title": "{{title}}",
+				"entityType": "catalog",
+				"i18n": "i18n/defaultCatalogId.properties"
+			},
+			"payload": {
+				"viz": []
+			}
+		}],
+		"groups": [{
+			"_version": "3.0.0",
+			"identification": {
+				"id": "defaultGroupId",
+				"title": "{{title}}",
+				"entityType": "group",
+				"i18n": "i18n/defaultGroupId.properties"
+			},
+			"payload": {
+				"viz": [{
+					"id": "workerslist-0-1623256901871",
+					"appId": "workerslist",
+					"vizId": "Worker-List"
+				}]
+			}
+		}],
+		"sites": [{
+			"_version": "3.0.0",
+			"identification": {
+				"id": "44ed2e85-6388-44e9-a465-70e431c7cce6",
+				"entityType": "site",
+				"title": "SAP Fiori launchpad site on Cloud Foundry",
+				"description": "SAP Fiori launchpad site on Cloud Foundry, deployed from WING"
+			},
+			"payload": {
+				"config": {
+					"ushellConfig": {
+						"renderers": {
+							"fiori2": {
+								"componentData": {
+									"config": {
+										"applications": {
+											"Shell-home": {}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"groupsOrder": ["defaultGroupId"],
+				"sap.cloud.portal": {
+					"config": {
+						"theme.id": "sap_fiori_3",
+						"theme.active": ["sap_fiori_3", "sap_fiori_3_dark", "sap_belize_hcb", "sap_belize_hcw"]
+					}
+				}
+			}
+		}]
+	}
+}

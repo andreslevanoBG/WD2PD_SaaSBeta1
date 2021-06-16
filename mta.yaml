@@ -1,116 +1,265 @@
+#
+# ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ #
+#    GLOBALS                                 #
+# ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ #
+#
 _schema-version: '3.2'
-ID: wd2pdsaas
+ID: wd2pdsaascbg
 version: 0.0.1
-
 parameters:
+ # deploy_mode: html5-repo #no está
   enable-parallel-deployments: true
-
+  keep-existing-routes: true
 build-parameters:
   before-all:
-    - builder: custom
-      commands:
-        - npm install --production
-        - npx -p @sap/cds-dk cds build --production
+  - builder: custom
+    commands:
+    - npm install --production
+    - npx -p @sap/cds-dk cds build --production
 
+#
+# ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ #
+#    MODULES                                 #
+# ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ #
+#
 modules:
-
-  # --------------------- SERVER MODULE ------------------------
-  - name: wd2pdsaas-srv
-  # ------------------------------------------------------------
-    type: nodejs
-    path: gen/srv
-    parameters:
-      buildpack: nodejs_buildpack
-      memory: 512M
-      disk-quota: 1024M
-    requires:
-      - name: wd2pdsaas-uaa
-      - name: wd2pdsaas-registry
-      - name: wd2pdsaas-sm
-    provides:
-      - name: srv-api
-        properties:
-          srv-url: ${default-url}
-
-  # ------------------ APP ROUTER MODULE -----------------------
-  - name: wd2pdsaas
-  # ------------------------------------------------------------
-    type: approuter.nodejs
-    path: app
-    parameters:
-      memory: 256M
-      disk-quota: 1024M
+  #
+  #   ╔═══════════════════════════════════════╗   #
+  #   ║               CAP SERVICE             ║   #
+  #   ╚═══════════════════════════════════════╝   #
+  #
+- name: wd2pdsaascbg-srv
+  type: nodejs
+  path: gen/srv
+  parameters:
+    buildpack: nodejs_buildpack
+    disk-quota: 1024M
+    memory: 512M
+  properties:
+    SAP_JWT_TRUST_ACL: '[{"clientid":"*","identityzone":"sap-provisioning"}]'
+    EXIT: 1
+  requires:
+  - name: wd2pdsaascbg-uaa
+  - name: wd2pdsaascbg-registry
+  - name: wd2pdsaascbg-sm
+  - name: wd2pdsaascbg_portal
+  provides:
+  - name: srv_api
     properties:
-      TENANT_HOST_PATTERN: '^(.*)-${space}-${app-name}.${default-domain}'
+      srv-url: ${default-url}
+
+  #
+  #   ╔═══════════════════════════════════════╗   #
+  #   ║               APP ROUTER              ║   #
+  #   ╚═══════════════════════════════════════╝   #
+  #
+  
+- name: wd2pdsaascbg
+  type: approuter.nodejs
+  path: wd2pd-approuter
+  properties:
+    TENANT_HOST_PATTERN: '^(.*)-shapeinsubs-${app-name}.cfapps.eu10.hana.ondemand.com'
+  #  TENANT_HOST_PATTERN: ^(.*)-${space}-${app-name}.${default-domain}
+  #  TENANT_HOST_PATTERN: '^(.*)-shapeinsolutionsdev-${app-name}.cfapps.eu20.hana.ondemand.com'
+  requires:
+  - name: wd2pdsaascbg-uaa
+#  - name: wd2pdsaas_destination
+  - name: wd2pdsaascbg_portal
+  - name: wd2pdsaascbg_html5_repo_runtime
+  - name: wd2pdsaascbg-registry
+  - name: srv_api
+    group: destinations
+    properties:
+      forwardAuthToken: true
+      name: srv
+      timeout: 60000
+      url: ~{srv-url}
+  provides:
+  - name: app_api
+    properties:
+      application: ${app-name}
+      url: ${default-url}
+  parameters:
+    disk-quota: 1024M
+    memory: 256M
+  build-parameters:
+    #  ignore: ['default-env.json', 'node_modules/']
+      builder: custom
+      commands: []
+  #
+  #   ╔═══════════════════════════════════════╗   #
+  #   ║               HTML5 APPS              ║   #
+  #   ╚═══════════════════════════════════════╝   #
+  #
+- name: workerslist
+  type: html5
+  path: app/workerslist
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+
+  #
+  #   ╔═══════════════════════════════════════╗   #
+  #   ║            HTML5 DEPLOYER             ║   #
+  #   ╚═══════════════════════════════════════╝   #
+  #
+- name: wd2pdsaascbg-app-content
+  type: com.sap.application.content
+  path: html5-deployer
+  requires:
+  - name: wd2pdsaascbg-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
     requires:
-      - name: wd2pdsaas-uaa
-      - name: srv-api
-        group: destinations
-        properties:
-          name: srv
-          url: ~{srv-url}
-          timeout: 60000
-          forwardAuthToken: true
-    provides:
-      - name: app_api
-        properties:
-          url: ${default-url}
-          application: ${app-name}
+    - name: workerslist
+      artifacts:
+      - workerslist.zip   
+      target-path: resources/
+
+  #
+  #   ╔═══════════════════════════════════════╗   #
+  #   ║            PORTAL DEPLOYER            ║   #
+  #   ╚═══════════════════════════════════════╝   #
+  #
+- name: flp
+  type: com.sap.application.content
+  path: flp
+  parameters:
+      config:
+      #  TENANT_HOST_PATTERN: '^(.*)-shapeinsubs-${app-name}.${default-domain}'
+  requires:
+  - name: wd2pdsaascbg_portal
+    parameters:
+      content-target: true
+      service-key:
+        config:
+          content-endpoint: developer
+        name: content-deploy-key
+  - name: wd2pdsaascbg-uaa
+  - name: wd2pdsaascbg-repo-host
+  - name: wd2pdsaascbg-registry
 
 
+#
+# ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ #
+#     RESOURCES                              #
+# ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ #
+#
 resources:
-  # ----------------------- UAA SERVICE ------------------------
-  - name: wd2pdsaas-uaa
-  # ------------------------------------------------------------
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: xsuaa
-      service-plan: application
-      path: ./xs-security.json
-      xsuaa-app: ${space}-~{app_api/application}
-      config:
-        xsappname: ${xsuaa-app}
-    properties:
-      XSAPPNAME: ${xsuaa-app}
-    requires: 
-      - name: app_api
+ #
+  #   ┌─────────────────────────────────────┐   #
+  #   │            DESTINATIONS             │   #
+  #   └─────────────────────────────────────┘   #
+  #
+#- name: wd2pdsaas_destination
+#  type: org.cloudfoundry.managed-service
+#  parameters:
+#    service: destination
+#    service-plan: lite
 
+  #
+  #   ┌─────────────────────────────────────┐   #
+  #   │           SERVICE MANAGER           │   #
+  #   └─────────────────────────────────────┘   #
+  #
+- name: wd2pdsaascbg-sm
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      acquireTimeoutMillis: max
+      polling_timeout_seconds: 480
+    polling_timeout_seconds: 240
+    service: service-manager
+    service-plan: container
+  requires:
+  - name: wd2pdsaascbg-uaa
+  #
+  #   ┌─────────────────────────────────────┐   #
+  #   │                XSUAA                │   #
+  #   └─────────────────────────────────────┘   #
+  #
+- name: wd2pdsaascbg-uaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      xsappname: ${xsuaa-app}
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+    #xsuaa-app: ${space}-~{app_api/application}
+    xsuaa-app: shapeinsubs-~{app_api/application}
+  properties:
+    XSAPPNAME: ${xsuaa-app}
+ #   tenant-mode: shared
+  requires:
+  - name: app_api
 
+  #
+  #   ┌─────────────────────────────────────┐   #
+  #   │                SAAS                 │   #
+  #   └─────────────────────────────────────┘   #
+  #
+- name: wd2pdsaascbg-registry
 
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      appName: wd2pdsaascbg
+      appUrls:
+        getDependencies: https://bigcore-shapeinlabs-shapeinsubs-wd2pdsaascbg-srv.cfapps.eu10.hana.ondemand.com/mtx/v1/provisioning/dependencies
+        onSubscription: https://bigcore-shapeinlabs-shapeinsubs-wd2pdsaascbg-srv.cfapps.eu10.hana.ondemand.com/mtx/v1/provisioning/tenant/{tenantId}
+    #  onSubscription: https://${org}-${space}-wd2pdsaas-srv.${default-domain}/mtx/v1/provisioning/tenant/{tenantId}
+      category: SaaS Multitenant Apps
+      description: Business Application
+      displayName: WD2PD SaaS
+      xsappname: ~{wd2pdsaascbg-uaa/XSAPPNAME}
+    service: saas-registry
+    service-plan: application
+  requires:
+  - name: wd2pdsaascbg-uaa
 
+ #
+  #   ┌─────────────────────────────────────┐   #
+  #   │            HTML5 RUNTIME            │   #
+  #   └─────────────────────────────────────┘   #
+  #
+- name: wd2pdsaascbg_html5_repo_runtime
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service-plan: app-runtime
+    service: html5-apps-repo
+ 
+ 
+  #
+  #   ┌─────────────────────────────────────┐   #
+  #   │              HTML5 HOST             │   #
+  #   └─────────────────────────────────────┘   #
+  #
+- name: wd2pdsaascbg-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: wd2pdsaascbg-html5-srv
+    service-plan: app-host
+    config:
+        sizeLimit: 2
+ 
+  #
+  #   ┌─────────────────────────────────────┐   #
+  #   │            PORTAL SERVICE           │   #
+  #   └─────────────────────────────────────┘   #
+  #
+- name: wd2pdsaascbg_portal
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: portal
+    service-plan: standard
 
-
-  # --------------------- REGISTRY SERVICE ---------------------
-  - name: wd2pdsaas-registry
-  # ------------------------------------------------------------
-    type: org.cloudfoundry.managed-service
-    requires:
-      - name: wd2pdsaas-uaa
-    parameters:
-      service: saas-registry
-      service-plan: application
-      config:
-        xsappname: ~{wd2pdsaas-uaa/XSAPPNAME}
-        appName: wd2pdsaas
-        displayName: 'WD2PD SaaS'
-        description: 'Business Application'
-        category: 'SaaS Multitenant Apps'
-        appUrls:
-          onSubscription: https://${org}-${space}-wd2pdsaas-srv.${default-domain}/mtx/v1/provisioning/tenant/{tenantId}
-
-
-  # ------------------- SERVICE MANAGER SERVICE ----------------
-  - name: wd2pdsaas-sm
-  # ------------------------------------------------------------
-    type: org.cloudfoundry.managed-service
-    requires:
-     - name: wd2pdsaas-uaa
-    parameters:
-       service: service-manager
-       service-plan: container
-       polling_timeout_seconds: 240
-       config:
-         acquireTimeoutMillis: max
-         polling_timeout_seconds: 480
-
+ 
 

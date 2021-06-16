@@ -19,6 +19,7 @@
     "express": "^4"
   },
   "devDependencies": {
+    "@sap/ux-specification": "^1.90.0",
     "sqlite3": "^5"
   },
   "scripts": {
@@ -89,5 +90,8 @@
     "hana": {
       "deploy-format": "hdbtable"
     }
-  }
+  },
+  "sapux": [
+    "app/workerslist"
+  ]
 }

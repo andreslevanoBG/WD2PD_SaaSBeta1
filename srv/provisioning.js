@@ -5,7 +5,9 @@ const xsenv = require('@sap/xsenv');
 xsenv.loadEnv();
 const services = xsenv.getServices({
     registry: { tag: 'SaaS' }
+ //   port: { label: 'portal' }
 });
+
 
 
 module.exports = (service) => {
@@ -24,6 +26,20 @@ module.exports = (service) => {
         await next();
         return req.data.subscribedTenantId;
     });
+
+    service.on('dependencies', async (req, next) => {
+        //'05c6c0c3-befc-4ce4-942a-d0cb3a6204ec!b62197|portal-cf-service!b3664'
+        //services.portal.uaa.xsappname
+        let dependencies = [{
+            'xsappname': services.portal.uaa.xsappname
+        }
+      //  {
+      //      'xsappname': '2f90b798-8589-4b38-bd45-36ab4c79b4cc!b62197|html5-apps-repo-uaa!b1685'
+      //  }
+    ];
+        return dependencies;
+    });
+
 
 
 }

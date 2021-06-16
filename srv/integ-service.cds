@@ -6,7 +6,7 @@ using {shapein.integrations as my} from '../db/schema';
 }
 
 @path            : '/integration'
-@requires        : 'service_role'
+@requires        : 'Service'
 service IntegrationService {
     // entity Integrations as projection on my.Integrations;
     entity Integrations                   as

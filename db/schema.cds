@@ -125,7 +125,7 @@ entity Configuration_Types {
 entity Configurations : managed {
     key pck_code  : String(10);
     key conf_code : String(10);
-        value     : String;
+        value     : LargeString;
         int_pck   : Association to Integration_Pck
                         on int_pck.code = pck_code;
         conf_type : Association to Configuration_Types
@@ -438,7 +438,7 @@ entity Di_Template_Sign_Cfg {
     key uuid          : UUID;
         template_uuid : UUID;
         api_version   : String(5);
-        json_cfg      : String;
+        json_cfg      : LargeString;
         template      : Association to Di_Template
                             on template.uuid = template_uuid;
 }

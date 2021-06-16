@@ -18,16 +18,8 @@
             "description": "UAA"
         },
         {
-            "name": "$XSAPPNAME.service_role",
+            "name": "$XSAPPNAME.Service",
             "description": "Service Access "
-        },
-        {
-            "name": "$XSAPPNAME.ExtendCDS",
-            "description": "Create Extensions"
-        },
-        {
-            "name": "$XSAPPNAME.ExtendCDSdelete",
-            "description": "Delete Extensions"
         }
     ],
     "role-templates": [
@@ -39,41 +31,20 @@
             ]
         },
         {
-            "name": "service_role",
+            "name": "Service",
             "description": "Service Access",
             "scope-references": [
-                "$XSAPPNAME.service_role"
+                "$XSAPPNAME.Service"
             ],
             "attribute-references": []
-        },
-        {
-            "name": "ExtendCDS",
-            "description": "Extension Developer",
-            "scope-references": [
-                "$XSAPPNAME.ExtendCDS"
-            ]
-        },
-        {
-            "name": "ExtendCDSdelete",
-            "description": "Extension Developer - Delete",
-            "scope-references": [
-                "$XSAPPNAME.ExtendCDSdelete"
-            ]
         }
     ],
     "role-collections": [
         {
-            "name": "wd2pdsaas_Extension_Developer",
-            "description": "Extension development access",
+            "name": "wd2pdsaascbg_Service",
+            "description": "Service access",
             "role-template-references": [
-                "$XSAPPNAME.ExtendCDS"
-            ]
-        },
-        {
-            "name": "wd2pdsaas_Extension_Developer_Delete",
-            "description": "Extension development delete access",
-            "role-template-references": [
-                "$XSAPPNAME.ExtendCDSdelete"
+                "$XSAPPNAME.Service"
             ]
         }
     ],

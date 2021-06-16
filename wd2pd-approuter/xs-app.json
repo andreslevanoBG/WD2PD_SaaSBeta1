@@ -1,0 +1,27 @@
+{
+    "welcomeFile": "/cp.portal",
+    "authenticationMethod": "route",
+    "routes": [
+        {
+            "source": "^/integration/(.*)$",
+            "authenticationType": "xsuaa",
+            "destination": "srv",
+            "scope": "$XSAPPNAME.Service"
+        }
+        ,
+        {
+            "source": "^/v2/integration/(.*)$",
+            "authenticationType": "xsuaa",
+            "destination": "srv",
+            "scope": "$XSAPPNAME.Service"
+        },
+        {
+			"source": "^(.*)$",
+			"target": "$1",
+			"service": "html5-apps-repo-rt",
+            "authenticationType": "xsuaa",
+            "scope": "$XSAPPNAME.Service"
+		}
+
+    ]
+}
