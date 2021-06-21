@@ -44,6 +44,7 @@ modules:
   - name: wd2pdsaascbg-registry
   - name: wd2pdsaascbg-sm
   - name: wd2pdsaascbg_portal
+  - name: wd2pdsaascbg_destination
   provides:
   - name: srv_api
     properties:
@@ -65,7 +66,7 @@ modules:
   requires:
   - name: wd2pdsaascbg-uaa
   - name: wd2pdsaascbg-theming
-#  - name: wd2pdsaas_destination
+  - name: wd2pdsaascbg_destination
   - name: wd2pdsaascbg_portal
   - name: wd2pdsaascbg_html5_repo_runtime
   - name: wd2pdsaascbg-registry
@@ -342,11 +343,11 @@ resources:
   #   │            DESTINATIONS             │   #
   #   └─────────────────────────────────────┘   #
   #
-#- name: wd2pdsaas_destination
-#  type: org.cloudfoundry.managed-service
-#  parameters:
-#    service: destination
-#    service-plan: lite
+- name: wd2pdsaascbg_destination
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: destination
+    service-plan: lite
 
 
   #

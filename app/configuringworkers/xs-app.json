@@ -16,7 +16,17 @@
             "scope": "$XSAPPNAME.Service",
             "destination": "srv"
         },
-
+        {
+            "source": "^/CPI-WD2PD_Dest/(.*)$",
+            "target": "$1",
+            "httpMethods": [
+                "POST",
+                "GET"
+            ],
+            "authenticationType": "none",
+            "destination": "CPI-WD2PD_Dest",
+            "csrfProtection": false
+        },
         {
             "source": "^(.*)$",
             "target": "$1",

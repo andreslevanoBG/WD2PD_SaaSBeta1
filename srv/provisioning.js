@@ -6,7 +6,9 @@ xsenv.loadEnv();
 const services = xsenv.getServices({
     registry: { tag: 'SaaS' }
   //  port: { label: 'portal' },
-   // theme: { label: 'theming'}
+   // theme: { label: 'theming'},
+  // dest: { tag: 'destination'}
+
 });
 
 
@@ -31,6 +33,7 @@ module.exports = (service) => {
     service.on('dependencies', async (req, next) => {
         //'05c6c0c3-befc-4ce4-942a-d0cb3a6204ec!b62197|portal-cf-service!b3664'
         // 'e89e45ae-ef90-4388-8dbe-df5383da7d3c!b62197|sap-theming!b6529'
+        //'clone14742ca247674c35980d90fa9c15e28f!b62197|destination-xsappname!b404'
         //services.port.uaa.xsappname
         //services.port.xsappname
        // services.theme.xsappname
@@ -39,6 +42,10 @@ module.exports = (service) => {
         },
         {
             'xsappname': 'e89e45ae-ef90-4388-8dbe-df5383da7d3c!b62197|sap-theming!b6529'
+            
+        },
+        {
+            'xsappname': 'clone14742ca247674c35980d90fa9c15e28f!b62197|destination-xsappname!b404'
             
         }
       //  {

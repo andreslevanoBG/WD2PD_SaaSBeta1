@@ -17,3 +17,5 @@ _out
 .che/
 .gen/
 .DS_Store
+# auto generated wildcard
+wd2pdsaas/.env2
