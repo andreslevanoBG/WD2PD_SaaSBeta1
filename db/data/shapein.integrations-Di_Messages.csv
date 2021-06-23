@@ -1,7 +1,8 @@
 code,text
 TG_WD_H001,Error getting data from Workday
 TG_WD_D001,Error getting master data from a Workday Worker
-TG_IL_D002,Error when applying filter to employee data
+TG_IL_D001,Error when applying filter to employee data
+TG_IL_D002,Mapping logic detected error
 TG_PD_D001,Error checking if employee exists in PeopleDoc
 TG_PD_D002,Error in the process of creating the document into PeopleDoc
 TG_RT_H001,All the generations in the process are wrong
@@ -9,4 +10,5 @@ TG_PD_D003,Error in the process of assigning the document to the employee
 TG_PD_D004,Error in the document signing process
 TG_PD_D005,Employee not found in PeopleDoc
 TG_PD_MPMD,Mandatory fields not available
-TG_RT_D001,Mapping logic detected error
+
+
