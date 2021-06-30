@@ -1,1 +1,0 @@
-sap.ui.define(["./BaseController"],function(n){"use strict";return n.extend("shapein.OrganizationsList.controller.NotFound",{onLinkPressed:function(){this.getRouter().navTo("worklist")}})});

@@ -1,1 +1,0 @@
-sap.ui.define(["./BaseController"],function(e){"use strict";return e.extend("shapein.UsersMonitoring.controller.DetailObjectNotFound",{})});
