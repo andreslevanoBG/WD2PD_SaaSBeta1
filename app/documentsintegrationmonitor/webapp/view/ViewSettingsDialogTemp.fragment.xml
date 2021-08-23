@@ -1,0 +1,48 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+	<ViewSettingsDialog id="viewSettingsDialogTemp" confirm=".onConfirmViewSettingsDialogTemp" cancel="handleCancel" sortDescending="true"
+		resetFilters=".handleResetFilters">
+		<sortItems>
+			<ViewSettingsItem text="Template ID" key="template_id" selected="false"/>
+			<ViewSettingsItem text="Document Title" key="doc_title" selected="true"/>
+			<ViewSettingsItem text="Document Type" key="doc_type_id" selected="false"/>
+		</sortItems>
+		<filterItems>
+			<ViewSettingsCustomItem id="idCustomFilterItem2Temp" text="Template ID" key="template_id">
+				<customControl>
+					<l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<Label text="FROM"/>
+						<Input id="input1ATemp" type="Text" placeholder="Enter a Template ID" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+						<Label text="TO"/>
+						<Input id="input2ATemp" type="Text" placeholder="Enter a Template ID" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+					</l:VerticalLayout>
+				</customControl>
+			</ViewSettingsCustomItem>
+			<ViewSettingsCustomItem id="idCustomFilterItem3Temp" text="Document Title" key="doc_title">
+				<customControl>
+					<l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<Label text="FROM"/>
+						<Input id="input1BTemp" type="Text" placeholder="Enter a Document Title" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+						<Label text="TO"/>
+						<Input id="input2BTemp" type="Text" placeholder="Enter a Document Title" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+					</l:VerticalLayout>
+				</customControl>
+			</ViewSettingsCustomItem>
+			<ViewSettingsCustomItem id="idCustomFilterItem4Temp" text="Document Type" key="doc_type_id">
+				<customControl>
+					<l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<Label text="FROM"/>
+						<Input id="input1CTemp" type="Text" placeholder="Enter a Document Type" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+						<Label text="TO"/>
+						<Input id="input2CTemp" type="Text" placeholder="Enter a Document Type" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+					</l:VerticalLayout>
+				</customControl>
+			</ViewSettingsCustomItem>
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

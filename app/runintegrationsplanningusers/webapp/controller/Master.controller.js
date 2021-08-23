@@ -541,7 +541,7 @@ sap.ui.define([
 									var c = jqXHR;
 									//				that.byId("ondemand").setBusy(false);
 									if (textStatus == "success") {
-										var texto = "Execution On Demand " + data.uuid_exec + " executed.";
+										var texto = "Execution On Demand " + data.process_id + " executed.";
 										sap.m.MessageToast.show(texto);
 									}
 									//				dialogDemand.close();

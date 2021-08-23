@@ -599,8 +599,8 @@ module.exports = cds.service.impl(srv => {
     srv.on('updateOrg', async (msg) => {
         try {
             //var original_external_id = msg.data.original_external_id;
-            var org = await srv.run(SELECT.from(Organizations).where({ external_id: msg.data.external_id }));
-            if (org.length > 0) {
+            var org = await srv.run(SELECT.one.from(Organizations).where({ external_id: msg.data.external_id }));
+            if (org) {
                 if (!msg.data.original_external_id) {
                     msg.data.original_external_id = org[0].original_external_id;
                 }
@@ -658,29 +658,30 @@ module.exports = cds.service.impl(srv => {
 
     srv.on('updateWorker', async (msg) => {
         try {
-            var worker = await srv.run(SELECT.from(Workers).where({ external_id: msg.data.external_id }));
-            if (worker.length > 0) {
+            var worker = await srv.run(SELECT.one.from(Workers).where({ external_id: msg.data.external_id }));
+            if (worker) {
                 if (!msg.data.original_external_id) {
-                    msg.data.original_external_id = worker[0].original_external_id;
+                    msg.data.original_external_id = worker.original_external_id;
                 }
                 if (!msg.data.email) {
-                    msg.data.email = worker[0].email;
+                    msg.data.email = worker.email;
                 }
                 if (!msg.data.employee_number) {
-                    msg.data.employee_number = worker[0].employee_number;
+                    msg.data.employee_number = worker.employee_number;
                 }
                 if (!msg.data.lastname) {
-                    msg.data.lastname = worker[0].lastname;
+                    msg.data.lastname = worker.lastname;
                 }
                 if (!msg.data.organization_id) {
-                    msg.data.organization_id = worker[0].organization_id;
+                    msg.data.organization_id = worker.organization_id;
                 }
                 if (!msg.data.last_item_id) {
-                    msg.data.last_item_id = worker[0].last_item_id;
+                    msg.data.last_item_id = worker.last_item_id;
                 }
                 if (!msg.data.last_status) {
-                    msg.data.last_status = worker[0].last_status;
+                    msg.data.last_status = worker.last_status;
                 }
+                //console.log('CBG:' + msg.data.firstname);
                 srv.run(
                     UPDATE(Workers).set(
                         {
@@ -715,6 +716,7 @@ module.exports = cds.service.impl(srv => {
                 if (!msg.data.last_status) {
                     msg.data.last_status = null;
                 }
+                //console.log('CBGins:' + msg.data.firstname);
                 srv.run(
                     INSERT.into(Workers).entries(
                         {
@@ -733,8 +735,8 @@ module.exports = cds.service.impl(srv => {
 
     srv.on('updateUser', async (msg) => {
         try {
-            var user = await srv.run(SELECT.from(Users).where({ external_id: msg.data.external_id }));
-            if (user.length > 0) {
+            var user = await srv.run(SELECT.one.from(Users).where({ external_id: msg.data.external_id }));
+            if (user) {
                 if (!msg.data.original_external_id) {
                     msg.data.original_external_id = user[0].original_external_id;
                 }
@@ -974,92 +976,101 @@ module.exports = cds.service.impl(srv => {
             // //var text = atob(integ_item.request);
             var objectValue = JSON.parse(text);
             var external_id = integ_item.external_id;
-            // var firstname = objectValue['firstname'];
+            var firstname = objectValue['firstname'];
+            //console.log('CBGfirst:' + firstname);
             var pck_code = integ_item.pck_code;
-            var configuration = await srv.run(SELECT.from(Configurations).where({
+            var configuration = await srv.run(SELECT.one.from(Configurations).where({
                 pck_code: pck_code,
                 conf_code: 'SCE-CONFIG'
             }));
-
-            var buff = Buffer.from(configuration[0].value, 'base64');
-            var text = buff.toString('UTF8');
-            var xml2js = require('xml2js');
-            var resultado, res2;
-            xml2js.parseString(text, (err, result) => {
-                if (err) {
-                    throw err;
+            if (configuration) {
+                //console.log('CBGconf:' + configuration.pck_code);
+                var buff = Buffer.from(configuration.value, 'base64');
+                var text = buff.toString('UTF8');
+                var xml2js = require('xml2js');
+                var resultado, res2;
+                xml2js.parseString(text, (err, result) => {
+                    if (err) {
+                        throw err;
+                    }
+                    resultado = result;
+                });
+                xml2js = null;
+                configuration = null;
+                buff = null;
+                text = null;
+                var glo_conf = resultado['global_configuration'];
+                var ret_period = glo_conf['retention_period'];
+                if (ret_period) {
+                    var logic_type = ret_period['0']['logic_type'][0];
+                } else {
+                    var logic_type = '02';
                 }
-                resultado = result;
-            });
-            xml2js = null;
-            configuration = null;
-            buff = null;
-            text = null;
-            var glo_conf = resultado['global_configuration'];
-            var ret_period = glo_conf['retention_period'];
-            if (ret_period) {
-                var logic_type = ret_period['0']['logic_type'][0];
-            } else {
-                var logic_type = '02';
-            }
-            if (logic_type != '01') {
-                if (pck_code == "SYN_WORKER") {
-                    if (objectValue['registration_references']) {
-                        var reg_ref = objectValue['registration_references'];
-                        var employee_number = reg_ref[0].employee_number;
-                        var organization_id = reg_ref[0].organization_id;
-                    }
-                    var event = {
-                        external_id: external_id,
-                        last_item_id: integ_item.item_id,
-                        last_status: integ_item.status_code,
-                        original_external_id: integ_item.original_external_id,
-                        employee_number: employee_number,
-                        firstname: objectValue['firstname'],
-                        lastname: objectValue['lastname'],
-                        email: objectValue['email'],
-                        organization_id: organization_id,
-                        last_timestamp: integ_item.timestamp_start
-                    }
+                //console.log('CBGlogic:' + logic_type);
+                if (logic_type != '01') {
+                    if (pck_code == "SYN_WORKER") {
+                        if (objectValue['registration_references']) {
+                            var reg_ref = objectValue['registration_references'];
+                            var employee_number = reg_ref[0].employee_number;
+                            var organization_id = reg_ref[0].organization_id;
+                        }
+                        //var organization_id = "Sales_Marketing_supervisory";
+                        // var employee_number = "21185";
+                        var event = {
+                            external_id: external_id,
+                            last_item_id: integ_item.item_id,
+                            last_status: integ_item.status_code,
+                            original_external_id: integ_item.original_external_id,
+                            employee_number: employee_number,
+                            firstname: objectValue['firstname'],
+                            lastname: objectValue['lastname'],
+                            email: objectValue['email'],
+                            // firstname: "Nobu",
+                            //lastname: "Matsuda",
+                            //email: "nmatsuda@workday.net",
+                            organization_id: organization_id,
+                            last_timestamp: integ_item.timestamp_start
+                        }
 
-                    srv.emit('updateWorker', event)
-                    event = null;
+                        srv.emit('updateWorker', event)
+                        //   event = null;
 
-                } else if (pck_code == "SYN_ORG") {
-                    var event = {
-                        external_id: external_id,
-                        last_item_id: integ_item.item_id,
-                        last_status: integ_item.status_code,
-                        original_external_id: integ_item.original_external_id,
-                        name: objectValue['name'],
-                        corporate_name: objectValue['corporate_name'],
-                        last_timestamp: integ_item.timestamp_start
+                    } else if (pck_code == "SYN_ORG") {
+                        var event = {
+                            external_id: external_id,
+                            last_item_id: integ_item.item_id,
+                            last_status: integ_item.status_code,
+                            original_external_id: integ_item.original_external_id,
+                            name: objectValue['name'],
+                            corporate_name: objectValue['corporate_name'],
+                            last_timestamp: integ_item.timestamp_start
+                        }
+
+                        srv.emit('updateOrg', event)
+                        //   event = null;
+
+                    } else if (pck_code == "SYN_USER") {
+                        if (objectValue['registration_references']) {
+                            var reg_ref = objectValue['registration_references'];
+                            var employee_number = reg_ref[0].employee_number;
+                            var organization_id = reg_ref[0].organization_id;
+                        }
+                        var event = {
+                            external_id: external_id,
+                            last_item_id: integ_item.item_id,
+                            last_status: integ_item.status_code,
+                            original_external_id: integ_item.original_external_id,
+                            employee_number: employee_number,
+                            firstname: objectValue['firstname'],
+                            lastname: objectValue['lastname'],
+                            email: objectValue['email'],
+                            organization_id: organization_id,
+                            last_timestamp: integ_item.timestamp_start
+                        }
+
+                        srv.emit('updateUser', event)
+                        //  event = null;
                     }
-
-                    srv.emit('updateOrg', event)
-                    event = null;
-
-                } else if (pck_code == "SYN_USER") {
-                    if (objectValue['registration_references']) {
-                        var reg_ref = objectValue['registration_references'];
-                        var employee_number = reg_ref[0].employee_number;
-                        var organization_id = reg_ref[0].organization_id;
-                    }
-                    var event = {
-                        external_id: external_id,
-                        last_item_id: integ_item.item_id,
-                        last_status: integ_item.status_code,
-                        original_external_id: integ_item.original_external_id,
-                        employee_number: employee_number,
-                        firstname: objectValue['firstname'],
-                        lastname: objectValue['lastname'],
-                        email: objectValue['email'],
-                        organization_id: organization_id,
-                        last_timestamp: integ_item.timestamp_start
-                    }
-
-                    srv.emit('updateUser', event)
-                    event = null;
                 }
             }
         } catch (err) {

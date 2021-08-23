@@ -1,0 +1,62 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+	<ViewSettingsDialog id="viewSettingsDialogDetailEmpl" confirm=".searchFilters" cancel="handleCancel" sortDescending="true"
+		resetFilters=".handleResetFilters">
+		<sortItems>
+			<ViewSettingsItem text="Template ID" key="template/template_id" selected="false"/>
+			<ViewSettingsItem text="Document Title" key="template/doc_title" selected="false"/>
+            <ViewSettingsItem text="Description" key="template/description" selected="true"/>
+		</sortItems>
+		<filterItems>
+           <!--
+			<ViewSettingsCustomItem id="idCustomFilterItemDetEmpl" text="Employees" key="pernr">
+				<customControl>
+					<l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<Label text="FROM"/>
+						<Input id="inputNumber1DetEmpl" type="Number" placeholder="Enter a employee number" class="sapUiSmallMarginBottom"
+						change="changeWorkers"/>
+						<Label text="TO"/>
+						<Input id="inputNumber2DetEmpl" type="Number" placeholder="Enter a employee number" class="sapUiSmallMarginBottom"
+						change="changeWorkers"/>
+					</l:VerticalLayout>
+				</customControl>
+			</ViewSettingsCustomItem>
+            -->
+			<ViewSettingsCustomItem id="idCustomFilterItem2DetEmpl" text="Template ID" key="template/template_id">
+				<customControl>
+					<l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<Label text="FROM"/>
+						<Input id="input1ADetEmpl" type="Text" placeholder="Enter a Template ID" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+						<Label text="TO"/>
+						<Input id="input2ADetEmpl" type="Text" placeholder="Enter a Template ID" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+					</l:VerticalLayout>
+				</customControl>
+			</ViewSettingsCustomItem>
+			<ViewSettingsCustomItem id="idCustomFilterItem3DetEmpl" text="Document Title" key="template/doc_title">
+				<customControl>
+					<l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<Label text="FROM"/>
+						<Input id="input1BDetEmpl" type="Text" placeholder="Enter a Document Title" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+						<Label text="TO"/>
+						<Input id="input2BDetEmpl" type="Text" placeholder="Enter a Document Title" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+					</l:VerticalLayout>
+				</customControl>
+			</ViewSettingsCustomItem>
+			<ViewSettingsCustomItem id="idCustomFilterItem4DetEmpl" text="Description" key="template/description">
+				<customControl>
+					<l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<Label text="FROM"/>
+						<Input id="input1CDetEmpl" type="Text" placeholder="Enter a Description" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+						<Label text="TO"/>
+						<Input id="input2CDetEmpl" type="Text" placeholder="Enter a Description" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+					</l:VerticalLayout>
+				</customControl>
+			</ViewSettingsCustomItem>
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

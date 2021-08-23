@@ -1,0 +1,39 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+	<ViewSettingsDialog id="viewSettingsDialog" confirm=".onConfirmViewSettingsDialog" cancel="handleCancel" sortDescending="true"
+		resetFilters=".handleResetFilters">
+		<sortItems>
+			<ViewSettingsItem text="{i18n>masterSort1}" key="status" selected="false"/>
+			<ViewSettingsItem text="{i18n>masterSort2}" key="timestamp_start" selected="true"/>
+			<!-- <ViewSettingsItem text="{i18n>masterSort3}" key="numberOfItems" selected="false"/> -->
+			<ViewSettingsItem text="{i18n>masterSort4}" key="numberOfSeconds" selected="false"/>
+		</sortItems>
+		<filterItems>
+			<ViewSettingsCustomItem id="idCustomFilterItem" text="Run Dates" key="timestamp_start">
+				<customControl>
+					<l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<Label text="FROM"/>
+						<DateTimePicker id="DTP1" value="" valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="long" change="changeDates"
+							class="sapUiSmallMarginBottom"/>
+						<Label text="TO"/>
+						<DateTimePicker id="DTP2" value="" valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="long" change="changeDates"
+							class="sapUiSmallMarginBottom"/>
+					</l:VerticalLayout>
+				</customControl>
+			</ViewSettingsCustomItem>
+			<ViewSettingsFilterItem text="Status" key="status">
+				<items>
+					<ViewSettingsItem text="Success" key="S"/>
+					<ViewSettingsItem text="Error" key="E"/>
+					<ViewSettingsItem text="Warning" key="W"/>
+					<ViewSettingsItem text="Running" key="R"/>
+				</items>
+			</ViewSettingsFilterItem>
+			<!--<ViewSettingsCustomItem id="idCustomFilterItem2" text="Number of Documents" key="numberOfItems">
+				<customControl>
+					<RangeSlider showAdvancedTooltip="true" range="0,0" min="0" max="200" width="100%" showHandleTooltip="false" inputsAsTooltips="true"
+						class="sapUiLargeMarginBottom" change="changeSlider"/>
+				</customControl>
+			</ViewSettingsCustomItem> -->
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

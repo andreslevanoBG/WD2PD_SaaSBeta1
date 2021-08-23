@@ -1,0 +1,209 @@
+<mvc:View
+	controllerName="shapein.DocumentsIntegrationMonitor.controller.DetailEmplDetail"
+	xmlns:f="sap.f"
+	xmlns="sap.m"
+    xmlns:semantic="sap.f.semantic"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<semantic:SemanticPage
+		id="detailPage"
+		busy="{detailDetailView>/busy}"
+		busyIndicatorDelay="{detailDetailView>/delay}">
+		<semantic:titleHeading>
+			<Title text="{ path:'parameters>/template_id', formatter: '.formatter.headtitleTemp' }" level="H2"/>
+		</semantic:titleHeading>
+		<semantic:headerContent>
+			<ObjectHeader intro="Process ID: Document Integration" title="{parameters>/template_id}" icon="sap-icon://documents" number="{ path: 'numberOfItems' }"
+				numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }"
+				numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" titleActive="false" backgroundDesign="Translucent"
+				condensed="false" visible="true">
+				<attributes>
+                <!--
+                        <ObjectAttribute text="{ path:'uuid', formatter: '.formatter.worker_id'}" active="false" visible="true"/>
+                        <ObjectAttribute text="{ path:'worker/firstname', formatter: '.formatter.worker_firstname'}" active="false" visible="true"/>
+                        <ObjectAttribute text="{ path:'worker/lastname', formatter: '.formatter.worker_lastname'}" active="false" visible="true"/>
+                        <ObjectAttribute text="{ path:'worker/organization_id', formatter: '.formatter.worker_org'}" active="false" visible="true"/>
+                        <ObjectAttribute text="{ path:'worker/email', formatter: '.formatter.worker_email'}" active="false" visible="true"/>
+                -->
+                    <!--<ObjectAttribute text="{ path:'template/doc_title', formatter: '.formatter.temptitle' }" active="false" visible="true"/>-->
+                    <ObjectAttribute text="{ path:'parameters>/doc_type_id', formatter: '.formatter.temptype' }" active="false" visible="true"/>
+                    <!--<ObjectAttribute text="{ path:'template/language', formatter: '.formatter.templanguage' }" active="false" visible="true"/>-->
+                    <ObjectAttribute text="{ path:'parameters>/template_version', formatter: '.formatter.tempversion' }" active="false" visible="true"/>
+                    <ObjectAttribute text="{ path:'parameters>/template_uuid', formatter: '.formatter.tempid' }" active="false" visible="true"/>
+				</attributes>
+				<statuses>
+                    <ObjectStatus text="{ parts:[{path:'error_code'},{path:'status'}], formatter: '.formatter.ItemStatusText' }"
+                            state="{ path: 'status', formatter: '.formatter.IntegStatus' }"  press="pressError" 
+                            active="{ parts:[{path:'status'},{path:'error_code'}], formatter: '.formatter.VisError' }" icon="{ path: 'status', formatter: '.formatter.IconError' }" />
+				</statuses>
+				<markers/>
+			</ObjectHeader>
+		</semantic:headerContent>
+		<semantic:content>
+			<IconTabBar id="iconTab" expandable="false" expanded="true" applyContentPadding="false" backgroundDesign="Solid" upperCase="false"
+				visible="true" selectedKey="Ok" select="searchFilters">
+				<items>
+					<IconTabFilter icon="sap-icon://drop-down-list" iconColor="Default" text="All Items" count="{numberOfItems}" design="Vertical"
+						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+						<content></content>
+					</IconTabFilter>
+					<IconTabSeparator icon="" iconDensityAware="false"/>
+					<IconTabFilter id="tabfSuc" key="Suc" icon="sap-icon://accept" iconColor="Positive" text="Success" count="" design="Vertical"
+						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+						<content></content>
+					</IconTabFilter>
+					<IconTabSeparator icon="" iconDensityAware="false"/>
+					<IconTabFilter id="tabfErr" key="Err" icon="sap-icon://decline" iconColor="Negative" text="Error" count="" design="Vertical" showAll="false"
+						textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+						<content></content>
+					</IconTabFilter>
+					<IconTabSeparator icon="" iconDensityAware="false"/>
+				</items>
+				<content>
+                    <Table id="lineItemsListEmpl" width="auto" noDataText="No data" showSeparators="All" growing="true"
+						growingThreshold="20" growingScrollToLoad="true" items="{ path: 'itemsEmpl>/docs'}" class="sapUiResponsiveMargin">
+						<infoToolbar/>
+						<headerToolbar>
+							<OverflowToolbar width="auto" height="auto" design="Transparent" visible="true" enabled="true">
+								<content>
+									<Title text="" titleStyle="Auto" width="auto" textAlign="Begin" visible="true" wrapping="false"/>
+									<ToolbarSpacer width=""/>
+									<Button id="reproc" text="Reprocessing" type="Reject" icon="sap-icon://process" iconFirst="true" width="auto" visible="true"
+									press="onActionRepro2" iconDensityAware="false"/>
+									<SearchField id="search" search="searchFilters" placeholder="Search" showSearchButton="true" visible="true" width="auto"/>
+									<OverflowToolbarButton id="sortButton1" text="Sort" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true"
+										visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
+									<OverflowToolbarButton id="filterButton1" text="Filter" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto"
+										enabled="true" visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
+								</content>
+							</OverflowToolbar>
+						</headerToolbar>
+						<columns>
+
+                        <!--
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Phone" demandPopin="true" popinDisplay="Inline" mergeDuplicates="false">
+								<header>
+									<Text text="UUID" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
+								mergeDuplicates="false">
+								<header>
+									<Text text="Employee Number" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
+								mergeDuplicates="false">
+								<header>
+									<Text text="Document ID" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
+								mergeDuplicates="false">
+								<header>
+									<Text text="Status" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+                            -->
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Phone" demandPopin="true" popinDisplay="Inline" mergeDuplicates="false">
+								<header>
+									<Text text="UUID" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Phone" demandPopin="true" popinDisplay="Inline" mergeDuplicates="false">
+								<header>
+									<Text text="Created At" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+                            <!--
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
+								mergeDuplicates="false">
+								<header>
+									<Text text="Created By" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+                            -->
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
+								mergeDuplicates="false">
+								<header>
+									<Text text="Last Name" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
+								mergeDuplicates="false">
+								<header>
+									<Text text="First Name" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
+								mergeDuplicates="false">
+								<header>
+									<Text text="Employee" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+                            
+						</columns>
+						<items>
+							<ColumnListItem type="Active" visible="true">
+								<cells>
+                                <!--
+                                    <Text text="{itemsEmpl>uuid}"/> 
+                                    <Text text="{itemsEmpl>employee_number}"/> 
+                                    <Text text="{itemsEmpl>doc_id}"/> 
+                                    <Text text="{itemsEmpl>status}"/> 
+                                -->
+                                    <Text text="{itemsEmpl>uuid}"/> 
+                                    <Text text="{ parts:[{path:'itemsEmpl>createdAt'},{path:'status'}], formatter: '.formatter.Startdate2' }"/>
+                                    <!-- <Text text="{items>createdBy}"/> -->
+
+                                    <Text text="{itemsEmpl>worker/lastname}"/> 
+                                    <Text text="{itemsEmpl>worker/firstname}"/> 
+
+                                    <Text text="{ path: 'itemsEmpl>employee_number' }"/> 
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</content>
+			</IconTabBar>            
+		</semantic:content>
+		<!--Semantic ShareMenu Buttons-->
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction
+				id="shareEmail"
+				press=".onSendEmailPress"/>
+		</semantic:sendEmailAction>
+
+		<semantic:closeAction>
+			<semantic:CloseAction
+					id="closeColumn"
+					press=".onCloseDetailPress"/>
+		</semantic:closeAction>
+
+		<semantic:fullScreenAction>
+			<semantic:FullScreenAction
+					id="enterFullScreen"
+					visible="{= !${device>/system/phone} &amp;&amp; !${appView>/actionButtonsInfo/midColumn/fullScreen}}"
+					press=".toggleFullScreen"/>
+		</semantic:fullScreenAction>
+		<semantic:exitFullScreenAction>
+			<semantic:ExitFullScreenAction
+					id="exitFullScreen"
+					visible="{= !${device>/system/phone} &amp;&amp; ${appView>/actionButtonsInfo/midColumn/fullScreen}}"
+					press=".toggleFullScreen"/>
+		</semantic:exitFullScreenAction>
+
+	</semantic:SemanticPage>
+</mvc:View>

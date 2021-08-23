@@ -31,7 +31,7 @@
 		},
 		"dataSources": {
 			"mainService": {
-				"uri": "/v2/Integration/",
+				"uri": "/v2/integration/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",

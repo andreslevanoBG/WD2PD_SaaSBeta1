@@ -1,0 +1,36 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+	<ViewSettingsDialog id="viewSettingsDialogEmpl" confirm=".onConfirmViewSettingsDialogEmpl" cancel="handleCancel" sortDescending="true"
+		resetFilters=".handleResetFilters">
+		<sortItems>
+			<ViewSettingsItem text="Employee Number" key="employee_number" selected="false"/>
+			<ViewSettingsItem text="Last Name" key="worker/lastname" selected="false"/>
+			<ViewSettingsItem text="First Name" key="worker/firstname" selected="true"/>
+		</sortItems>
+		<filterItems>
+			<ViewSettingsCustomItem id="idCustomFilterItemEmpl" text="Employees" key="employee_number">
+				<customControl>
+					<l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<Label text="FROM"/>
+						<Input id="inputNumber1Temp" type="Number" placeholder="Enter a employee number" class="sapUiSmallMarginBottom"
+						change="changeWorkers"/>
+						<Label text="TO"/>
+						<Input id="inputNumber2Temp" type="Number" placeholder="Enter a employee number" class="sapUiSmallMarginBottom"
+						change="changeWorkers"/>
+					</l:VerticalLayout>
+				</customControl>
+			</ViewSettingsCustomItem>
+			<ViewSettingsCustomItem id="idCustomFilterItem2Empl" text="Last Name" key="worker/lastname">
+				<customControl>
+					<l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<Label text="FROM"/>
+						<Input id="input1Temp" type="Text" placeholder="Enter a Last Name" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+						<Label text="TO"/>
+						<Input id="input2Temp" type="Text" placeholder="Enter a Last Name" class="sapUiSmallMarginBottom"
+						change="changeLast"/>
+					</l:VerticalLayout>
+				</customControl>
+			</ViewSettingsCustomItem>
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

@@ -404,7 +404,7 @@ resources:
     #  onSubscription: https://${org}-${space}-wd2pdsaas-srv.${default-domain}/mtx/v1/provisioning/tenant/{tenantId}
       category: SaaS Multitenant Apps
       description: Business Application
-      displayName: WD2PD SaaS
+      displayName: WD2PD SaaS Cbg
       xsappname: ~{wd2pdsaascbg-uaa/XSAPPNAME}
     service: saas-registry
     service-plan: application
