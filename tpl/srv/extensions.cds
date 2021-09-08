@@ -1,13 +1,13 @@
 /* uncomment and modify as needed
-using CatalogService from '_base/srv/catalog-service'; 
+using IntegrationService from '_base/srv/integ-service'; 
 
-using Z_wd2pdsaas.db as db from '../db/new'; 
+using Z_shapein.integrations as my from '../db/new'; 
 
-extend service CatalogService with {
+extend service IntegrationService with {
 
     @readonly
     entity Z_Custom
-      as select * from db.Z_Custom;
+      as select * from my.Z_Custom;
 
 };
 */

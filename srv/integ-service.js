@@ -32,7 +32,7 @@ module.exports = cds.service.impl(srv => {
     const { Di_Employee_Template } = srv.entities('shapein.integrations')
     const { Di_Business_Process_Master } = srv.entities('shapein.integrations')
     const { Di_List_Values } = srv.entities('shapein.integrations')
-    const { Organizations_Types } = srv.entities('shapein.integrations')
+    const { Organization_Types } = srv.entities('shapein.integrations')
 
 
     srv.before('READ', 'Integrations', async (req) => {
@@ -1931,7 +1931,7 @@ module.exports = cds.service.impl(srv => {
         return "List Values deleted successfully"
     })
 
-    srv.on('get_type_organizations', async (req) => {
+    srv.on('get_organization_types', async (req) => {
         try {
             var configuration = await srv.run(SELECT.one.from(Configurations).where({
                 pck_code: 'SYN_ORG',
@@ -1962,15 +1962,30 @@ module.exports = cds.service.impl(srv => {
                             if (req_filter) {
                                 var typeOrg = req_filter[0]['type'][0];
                                 var subtypeOrg = req_filter[0]['subtype'][0];
-                                if (req.data.text == 'true') {
-                                    var typeTxt = await srv.run(SELECT.one.from(Organizations_Types).where({
+                                if (req.data.text == 'true' || req.data.metadata == 'true') {
+                                    var typeTxt = await srv.run(SELECT.one.from(Organization_Types).where({
                                         code: typeOrg
                                     }));
-                                    var result = {
-                                        type: typeOrg,
-                                        type_text: typeTxt.description,
-                                        subtype: subtypeOrg
-                                    };
+                                    if (req.data.text == 'true' && req.data.metadata == 'true') {
+                                        var result = {
+                                            type: typeOrg,
+                                            type_text: typeTxt.description,
+                                            subtype: subtypeOrg,
+                                            metadata: typeTxt.metadata
+                                        };
+                                    } else if (req.data.text == 'true' && req.data.metadata == 'false') {
+                                        var result = {
+                                            type: typeOrg,
+                                            type_text: typeTxt.description,
+                                            subtype: subtypeOrg
+                                        };
+                                    } else {
+                                        var result = {
+                                            type: typeOrg,
+                                            subtype: subtypeOrg,
+                                            metadata: typeTxt.metadata
+                                        };
+                                    }
                                 } else {
                                     var result = {
                                         type: typeOrg,

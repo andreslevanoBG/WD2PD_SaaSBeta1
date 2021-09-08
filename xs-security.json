@@ -32,6 +32,14 @@
         {
             "name": "$XSAPPNAME.Users",
             "description": "Users"
+        },
+        {
+            "name": "$XSAPPNAME.ExtendCDS",
+            "description": "Create Extensions"
+        },
+        {
+            "name": "$XSAPPNAME.ExtendCDSdelete",
+            "description": "Delete Extensions"
         }
     ],
     "role-templates": [
@@ -40,6 +48,13 @@
             "description": "UAA Token Exchange",
             "scope-references": [
                 "uaa.user"
+            ]
+        },
+        {
+            "name": "Provisioning",
+            "description": "Role for Provisioning",
+            "scope-references": [
+                "$XSAPPNAME.mtcallback"
             ]
         },
         {
@@ -70,6 +85,20 @@
             "scope-references": [
                 "$XSAPPNAME.Users"
             ]
+        },
+        {
+            "name": "ExtendCDS",
+            "description": "Extension Developer",
+            "scope-references": [
+                "$XSAPPNAME.ExtendCDS"
+            ]
+        },
+        {
+            "name": "ExtendCDSdelete",
+            "description": "Extension Developer - Delete",
+            "scope-references": [
+                "$XSAPPNAME.ExtendCDSdelete"
+            ]
         }
     ],
     "role-collections": [
@@ -99,6 +128,20 @@
             "description": "Users apps Access",
             "role-template-references": [
                 "$XSAPPNAME.Users"
+            ]
+        },
+        {
+            "name": "wd2pdsaas_Extension_Developer",
+            "description": "Extension development access",
+            "role-template-references": [
+                "$XSAPPNAME.ExtendCDS"
+            ]
+        },
+        {
+            "name": "wd2pdsaas_Extension_Developer_Delete",
+            "description": "Extension development delete access",
+            "role-template-references": [
+                "$XSAPPNAME.ExtendCDSdelete"
             ]
         }
     ],

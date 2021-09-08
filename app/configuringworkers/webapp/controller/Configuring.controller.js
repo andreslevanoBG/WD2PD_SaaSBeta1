@@ -931,13 +931,14 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					"value": vBase64
 				};
 
+                var oThat = this;
 				var sUrl = "/Configurations(pck_code='SYN_WORKER',conf_code='SCE-CONFIG')";
 				vServiceModel.update(sUrl, changedData, {
 					success: function (oData, response) {
-						sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage4"));
+						sap.m.MessageToast.show(oThat.getView().getModel("i18n").getResourceBundle().getText("viewMessage4"));
 					},
 					error: function (oData, response) {
-						sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage5"));
+						sap.m.MessageToast.show(oThat.getView().getModel("i18n").getResourceBundle().getText("viewMessage5"));
 					}
 				});
 			} else {

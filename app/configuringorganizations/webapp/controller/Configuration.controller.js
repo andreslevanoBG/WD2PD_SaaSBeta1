@@ -9,17 +9,10 @@ sap.ui.define([
 
 	return Controller.extend("shapein.ConfiguringOrganizations.controller.Configuration", {
 		onInit: function () {
-
-			// //carga modelo local-inicio
-			// var vThat = this;
-			// var oModelJSON = this.getOwnerComponent().getModel("mock_json_model");
-			// this.getView().setModel(oModelJSON, "ModelJSON");
-
-			// oModelJSON.attachRequestCompleted(function () {
-			// 	var dataModelCountryLogic = vThat.formatCountryLogic(oModelJSON);
-			// 	vThat.getView().setModel(dataModelCountryLogic, "CountryLogic");
-			// }, this);
-			// //carga modelo local-fin
+			this.initialType = "";
+            this.initialSubtype = "";
+			this.finalType = "";
+			this.finalSubtype = "";
 
 			var modelBase64 = this.getOwnerComponent().getModel();
 			this.getView().setModel(modelBase64, "Base64");
@@ -150,7 +143,21 @@ sap.ui.define([
 			var vRequestFilter = vGetOrganizations[0].childNodes;
 			var vIncludeInactiveOrgs = vRequestFilter[0].childNodes[0].textContent;
 
-			array.global_configuration.web_services.ws_get_organizations.request_filter.include_inactive_orgs = vIncludeInactiveOrgs;
+            array.global_configuration.web_services.ws_get_organizations.request_filter.include_inactive_orgs = vIncludeInactiveOrgs;
+            
+			//enhancement 08-09-2021 - begin
+			var vType = vRequestFilter[1].childNodes[0].textContent;
+			array.global_configuration.web_services.ws_get_organizations.request_filter.type = vType;
+			this.initialType = vType;
+
+			if (vRequestFilter[2].childNodes.length != 0) {
+				var vSubtype = vRequestFilter[2].childNodes[0].textContent;
+				array.global_configuration.web_services.ws_get_organizations.request_filter.subtype = vSubtype;
+				this.initialSubtype = vSubtype;
+			} else {
+				this.initialSubtype = "";
+			}
+			//enhancement 08-09-2021 - end
 
 			var vGetWorkers = vWebServices[2].childNodes;
 			var vMappings2 = vGetWorkers[0].childNodes;
@@ -239,7 +246,9 @@ sap.ui.define([
 						},
 						"ws_get_organizations": {
 							"request_filter": {
-								"include_inactive_orgs": "False"
+								"include_inactive_orgs": "False",
+								"type": "",
+								"subtype": ""
 							}
 						},
 						"ws_get_workers": {
@@ -346,7 +355,7 @@ sap.ui.define([
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 			}
 		},
 		addRow_email: function (oArg) {
@@ -387,7 +396,7 @@ sap.ui.define([
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 			}
 		},
 		addRow_address: function (oArg) {
@@ -427,7 +436,7 @@ sap.ui.define([
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 			}
 		},
 		addRow_country: function (oArg) {
@@ -441,7 +450,7 @@ sap.ui.define([
 						if (oItems[i].getAggregation("cells") !== null) {
 							var oItemKey = oItems[i].getAggregation("cells")[0].getProperty("text");
 							if (oItemKey === oSelected.getProperty("key")) {
-								sap.m.MessageToast.show('This country is already selected.');
+								sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage2"));
 								aux = false;
 								break;
 							} else {
@@ -474,7 +483,7 @@ sap.ui.define([
 					this.getView().getModel("CountryLogic").refresh(); //which will add the new record	
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a country to add.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage3"));
 			}
 		},
 		deleteRow_country: function (oArg) {
@@ -498,7 +507,7 @@ sap.ui.define([
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 			}
 		},
 		addRow_trans: function (oArg) {
@@ -539,7 +548,7 @@ sap.ui.define([
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 			}
 		},
 		handleUploadComplete: function (oEvent) {
@@ -631,6 +640,27 @@ sap.ui.define([
 			this.getView().byId("table13423").removeSelections();
 		},
 		saveConfiguration: function (oObject) {
+			var oThat = this;
+
+			this.finalType = this.getView().byId("box0").getSelectedKey();
+			this.finalSubtype = this.getView().byId("input1").getProperty("value");
+
+			if (this.initialType === this.finalType && this.initialSubtype === this.finalSubtype) {
+				this.saveProcedure();
+			} else {
+				MessageBox.warning(
+					oThat.getView().getModel("i18n").getResourceBundle().getText("viewMessage9"), {
+						actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+						emphasizedAction: MessageBox.Action.OK,
+						onClose: function (sAction) {
+							if (sAction === "OK") {
+								oThat.saveProcedure();
+							}
+						}
+				});
+			}
+        },
+        saveProcedure: function () {
 			var vArray = [];
 
 			var aux = this.validation2Save();
@@ -643,19 +673,24 @@ sap.ui.define([
 					"value": vBase64
 				};
 
+                var oThat = this;
 				var sUrl = "/Configurations(pck_code='SYN_ORG',conf_code='SCE-CONFIG')";
 				vServiceModel.update(sUrl, changedData, {
 					success: function (oData, response) {
-						sap.m.MessageToast.show('Organizations Configurations updated.');
+                        sap.m.MessageToast.show(oThat.getView().getModel("i18n").getResourceBundle().getText("viewMessage8"));
+                        oThat.initialType = oThat.finalType;
+						oThat.initialSubtype = oThat.finalSubtype;
+						oThat.finalType = "";
+						oThat.finalSubtype = "";
 					},
 					error: function (oData, response) {
-						sap.m.MessageToast.show('Data can not be updated. Please try again');
+						sap.m.MessageToast.show(oThat.getView().getModel("i18n").getResourceBundle().getText("viewMessage5"));
 					}
 				});
 			} else {
-				sap.m.MessageToast.show('There is a field with wrong value.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage6"));
 			}
-		},
+        },
 		getUpdatedArray: function () {
 			var array = this.createJSON();
 
@@ -670,6 +705,13 @@ sap.ui.define([
 
 			array.global_configuration.web_services.ws_get_organizations.request_filter.include_inactive_orgs = vIncludeInactiveOrgs;
 
+            //enhancement 08-09-2021 - begin
+			var oType = this.getView().byId("box0").getSelectedKey();
+			array.global_configuration.web_services.ws_get_organizations.request_filter.type = oType;
+			var oSubtype = this.getView().byId("input1").getProperty("value");
+			array.global_configuration.web_services.ws_get_organizations.request_filter.subtype = oSubtype;
+            //enhancement 08-09-2021 - end
+            
 			//MAPPING CONFIGURATION - COMMON ADDRESS
 			var vItems4 = this.getView().byId("table0").getItems();
 			for (var n = 0; n < vItems4.length; n++) {

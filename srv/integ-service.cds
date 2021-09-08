@@ -82,7 +82,7 @@ service IntegrationService {
     entity Di_Template_Mapping_Types         as projection on my.Di_Template_Mapping_Types;
     entity Di_List_Values                    as projection on my.Di_List_Values;
     entity Di_Template_Page_Content          as projection on my.Di_Template_Page_Content;
-    entity Organizations_Types               as projection on my.Organizations_Types;
+    entity Organization_Types               as projection on my.Organization_Types;
 
     event deleteInteg : {
         integ_id : String(32);
@@ -150,5 +150,5 @@ service IntegrationService {
     function di_business_process_type_master_delete_all() returns String;
     function delete_list_values(lvaid : String(20)) returns String;
     function delete_complete_template(uuid : String(36)) returns String;
-    function get_type_organizations(text : Boolean) returns organization_type;
+    function get_organization_types(text : Boolean, metadata: Boolean) returns organization_type;
 }

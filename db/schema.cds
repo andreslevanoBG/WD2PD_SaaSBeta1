@@ -584,7 +584,8 @@ entity Di_Template_Mapping_Types {
 
 }
 
-entity Organizations_Types {
+entity Organization_Types {
     key code : String(50);
     description: String;
+    metadata: String;
 }
