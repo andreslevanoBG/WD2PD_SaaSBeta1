@@ -1,16 +1,16 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
-	<Dialog id="editFilter" state="Success" icon="sap-icon://edit" title="Edit Filter" contentHeight="200px" contentWidth="500px">
+	<Dialog id="editFilter" state="Success" icon="sap-icon://edit" title="{i18n>editFil}" contentHeight="200px" contentWidth="500px">
 		<VBox class="sapUiTinyMargin">
-			<Label labelFor="SelEditAttr" text="Select Attribute" class="sapUiTinyMargin"/>
+			<Label labelFor="SelEditAttr" text="{i18n>selAtt}" class="sapUiTinyMargin"/>
 			<Select id="SelEditAttr" width="280px" change="changeDocType" items="{attributes>/}" class="sapUiTinyMargin" width="98%">
 				<core:Item key="{attributes>name}" text="{attributes>name}" />
 			</Select>
-			<Label labelFor="FilEditValue" text="Filter Value" class="sapUiTinyMargin"/>
+			<Label labelFor="FilEditValue" text="{i18n>filValue}" class="sapUiTinyMargin"/>
 			<Input id="FilEditValue" required="true" class="sapUiTinyMargin" width="98%"/>
 		</VBox>
 		<buttons>
-			<Button text="Save" type="Accept" press="editFilter"/>
-			<Button text="Cancel" type="Reject" press="cancelEditFilter"/>
+			<Button text="{i18n>save}" type="Accept" press="editFilter"/>
+			<Button text="{i18n>cancel}" type="Reject" press="cancelEditFilter"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

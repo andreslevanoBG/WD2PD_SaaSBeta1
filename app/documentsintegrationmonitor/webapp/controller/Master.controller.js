@@ -102,7 +102,9 @@ sap.ui.define([
 		 */
         onUpdateFinished: function (oEvent) {
             // update the master list object counter after new data is loaded
-            this._updateListItemCount(oEvent.getParameter("total"));
+            this.checkTab();
+
+            //this._updateListItemCount(oEvent.getParameter("total"));
         },
 
 		/**
@@ -124,6 +126,7 @@ sap.ui.define([
             }
 
             var sQuery = oEvent.getParameter("query");
+            sQuery = sQuery.replace(/^["'](.+(?=["']$))["']$/, '$1');
             //sQuery = "guid'" + sQuery + "'";
 
             //var oModel = this.getView().getModel();
@@ -136,6 +139,7 @@ sap.ui.define([
                 //this._oListFilterState.aSearch = [new Filter("uuid", FilterOperator.EQ, sQuery)];
                 //this._oListFilterState.aSearch = [new Filter("template/template_id", FilterOperator.Contains, sQuery)];
                 //this._oListFilterState.aSearch = [new Filter("template/doc_title", FilterOperator.Contains, sQuery)];
+
 
                 this._oListFilterState.aSearch = new Filter({
                     filters: [
@@ -160,6 +164,7 @@ sap.ui.define([
             }
 
             var sQuery = oEvent.getParameter("query");
+            sQuery = sQuery.replace(/^["'](.+(?=["']$))["']$/, '$1');
             if (sQuery) {
                 this._oListFilterStateEmp.aSearch = new Filter({
                     filters: [
@@ -182,11 +187,17 @@ sap.ui.define([
             }
 
             var sQuery = oEvent.getParameter("query");
+            sQuery = sQuery.replace(/^["'](.+(?=["']$))["']$/, '$1');
             if (sQuery) {
                 this._oListFilterStateTem.aSearch = new Filter({
                     filters: [
-                        new Filter("tolower(template_id)", FilterOperator.Contains, "'" + sQuery.toLowerCase() + "'"),
-                        new Filter("tolower(doc_title)", FilterOperator.Contains, "'" + sQuery.toLowerCase() + "'")
+                        
+                        new Filter("tolower(template_id)", FilterOperator.Contains, "'" +  sQuery.toLowerCase() + "'"),
+                        new Filter("tolower(doc_title)", FilterOperator.Contains, "'" +  sQuery.toLowerCase() + "'")
+                        /*
+                        new Filter("template_id", FilterOperator.Contains, sQuery.toLowerCase()),
+                        new Filter("doc_title", FilterOperator.Contains, sQuery.toLowerCase())
+                        */
                     ],
                     and: false
                 });
@@ -296,14 +307,7 @@ sap.ui.define([
 		 * removed in the ViewSettingsDialog.
 		 * @param {sap.ui.base.Event} oEvent the confirm event
 		 * @public
-		 */
-
-        date2digits: function (num) {
-            if (num < 10) {
-                return "0" + num;
-            }
-            return num;
-        },
+         */
         onConfirmViewSettingsDialog: function (oEvent) {
             var aFilterItems = oEvent.getParameters().filterItems,
                 aFilters = [],
@@ -317,37 +321,16 @@ sap.ui.define([
             this.fromDatePreviousValue = fechadesde;
             this.toDatePreviousValue = fechahasta;
             var oViewModel = this.getModel("masterView");
-            var fechadesde2 = vLayout.getContent()[1].getDateValue();
-            var fechahasta2 = vLayout.getContent()[3].getDateValue();
-
             if (fechadesde !== "") {
-                var year = fechadesde2.getUTCFullYear();
-                var month = fechadesde2.getUTCMonth() + 1;
-                month = this.date2digits(month);
-                var day = fechadesde2.getUTCDate();
-                day = this.date2digits(day);
-                var hour = fechadesde2.getUTCHours();
-                hour = this.date2digits(hour);
-                var minutes = fechadesde2.getUTCMinutes();
-                minutes = this.date2digits(minutes);
-                var seconds = fechadesde2.getUTCSeconds();
-                seconds = this.date2digits(seconds);
-                var fedesde = year + "-" + month + "-" + day + "T" + hour + ":" + minutes + ":" + seconds + "Z";
+                var fedesde = fechadesde.substring(0, 4) + "-" + fechadesde.substring(5, 7) + "-" + fechadesde.substring(8, 10) + "T" +
+                    fechadesde.substring(11, 13) + ":" + fechadesde.substring(14, 16) + ":" + fechadesde.substring(17, 19) + "Z";
             }
             if (fechahasta !== "") {
-                var year2 = fechahasta2.getUTCFullYear();
-                var month2 = fechahasta2.getUTCMonth() + 1;
-                month2 = this.date2digits(month2);
-                var day2 = fechahasta2.getUTCDate();
-                day2 = this.date2digits(day2);
-                var hour2 = fechahasta2.getUTCHours();
-                hour2 = this.date2digits(hour2);
-                var minutes2 = fechahasta2.getUTCMinutes();
-                minutes2 = this.date2digits(minutes2);
-                var seconds2 = fechahasta2.getUTCSeconds();
-                seconds2 = this.date2digits(seconds2);
-                var fehasta = year2 + "-" + month2 + "-" + day2 + "T" + hour2 + ":" + minutes2 + ":" + seconds2 + "Z";
+                var fehasta = fechahasta.substring(0, 4) + "-" + fechahasta.substring(5, 7) + "-" + fechahasta.substring(8, 10) + "T" +
+                    fechahasta.substring(11, 13) + ":" + fechahasta.substring(14, 16) + ":" + fechahasta.substring(17, 19) + "Z";
             }
+            //aFilters.push(new Filter("createdAt", FilterOperator.LE, fehasta));
+            //aFilters.push(new Filter("createdAt", FilterOperator.GE, fedesde));
             if (fehasta && !fedesde) {
                 aFilters.push(new Filter([
                     new Filter("timestamp_start", FilterOperator.LE, fehasta)
@@ -381,16 +364,22 @@ sap.ui.define([
             aFilterItems.forEach(function (oItem) {
                 if (oItem.getKey() !== "timestamp_start" && oItem.getKey() !== "numberOfItems") {
                     aFilters2.push(new Filter(oItem.getParent().getKey(), FilterOperator.EQ, oItem.getKey()));
+                    // aFilters.push(new Filter([
+                    // 	new Filter(oItem.getParent().getKey(), FilterOperator.EQ, oItem.getKey())
+                    // ], false));
                 }
+                //	aCaptions.push(oItem.getText());
             });
             if (aFilters2.length > 0) {
                 aFilters.push(new Filter(aFilters2, false));
             }
 
             this._oListFilterState.aFilter = aFilters;
+            //	this._updateFilterBar(aCaptions.join(", "));
             this._applyFilterSearch();
             this._applySortGroup(oEvent);
         },
+
 
         onConfirmViewSettingsDialogEmpl: function (oEvent) {
             var aFilterItems = oEvent.getParameters().filterItems,
@@ -731,6 +720,7 @@ sap.ui.define([
                 oViewModel.setProperty("/noDataText", this.getResourceBundle().getText("masterListNoDataText"));
             }
         },
+        
 		/**
 		 * Internal helper method that sets the filter bar visibility property and the label's caption to be shown
 		 * @param {string} sFilterBarText the selected filter value
@@ -927,7 +917,30 @@ sap.ui.define([
 			slider.setValue2(0);
 			oCustomFilter2.setFilterCount(0);
 			oCustomFilter2.setSelected(false);
-		}
+        },
+        checkTab: function (oEvent) {
+            var oTabBar = this.getView().byId("iconTab");
+            var oList;
+            var oBinding;
+            var oCount;
+
+            if (oTabBar.getProperty("selectedKey") == "proc" || oTabBar.getProperty("selectedKey") == "") {
+                oList = this.getView().byId("list");
+                oBinding = oList.getBinding("items");
+                oCount = oBinding.getContexts().length;
+            }
+            if (oTabBar.getProperty("selectedKey") == "empl") {
+                oList = this.getView().byId("list_emp");
+                oBinding = oList.getBinding("items");
+                oCount = oBinding.getContexts().length;
+            }
+            if (oTabBar.getProperty("selectedKey") == "temp") {
+                oList = this.getView().byId("list_tem");
+                oBinding = oList.getBinding("items");
+                oCount = oBinding.getContexts().length;
+            }
+            this._updateListItemCount(oCount);
+        }
     });
 
 });

@@ -20,48 +20,27 @@ sap.ui.define([
 
 		formatter: formatter,
 
-		/* =========================================================== */
-		/* lifecycle methods                                           */
-		/* =========================================================== */
-
-		/**
-		 * Called when the master list controller is instantiated. It sets up the event handling for the master/detail communication and other lifecycle tasks.
-		 * @public
-		 */
+		/* Al instanciar el objeto */
 		onInit: function () {
-			// Control state model
 			var oList = this.byId("list"),
 				oViewModel = this._createViewModel(),
-				// Put down master list's original value for busy indicator delay,
-				// so it can be restored later on. Busy handling on the master list is
-				// taken care of by the master list itself.
 				iOriginalBusyDelay = oList.getBusyIndicatorDelay();
-
 			this._oList = oList;
-			// keeps the filter and search state
 			this._oListFilterState = {
 				aFilter: [],
 				aSearch: []
 			};
-
 			var handlerEvent = sap.ui.getCore().getEventBus();
 			handlerEvent.subscribe("Detail", "Delete_Plan", this._delete_Plan, this);
-
 			this.setModel(oViewModel, "masterView");
-			// Make sure, busy indication is showing immediately so there is no
-			// break after the busy indication for loading the view's meta data is
-			// ended (see promise 'oWhenMetadataIsLoaded' in AppController)
 			oList.attachEventOnce("updateFinished", function () {
-				// Restore original busy indicator delay for the list
 				oViewModel.setProperty("/delay", iOriginalBusyDelay);
 			});
-
 			this.getView().addEventDelegate({
 				onBeforeFirstShow: function () {
 					this.getOwnerComponent().oListSelector.setBoundMasterList(oList);
 				}.bind(this)
 			});
-
 			this.getRouter().getRoute("master").attachPatternMatched(this._onMasterMatched, this);
 			this.getRouter().attachBypassed(this.onBypassed, this);
 			this.setModel(new JSONModel(), "newExec");
@@ -70,46 +49,21 @@ sap.ui.define([
 				toUpd: new Date(),
 				fromEffec: new Date(1900, 0),
 				toEffec: new Date()
-					//	workers: [],
-					//	supervisories: [],
 			};
 			var newExecModel = this.getView().getModel("newExec");
 			newExecModel.setData(dataNewExec);
 			var oModelTime = this.getOwnerComponent().getModel("timezones");
-			//	var aData = oModelTime.getData();
-			//	oModelTime.setSizeLimit(aData.timezones.length);
 			oModelTime.setSizeLimit(1000);
 		},
 
-		/* =========================================================== */
-		/* event handlers                                              */
-		/* =========================================================== */
-
-		/**
-		 * After list data is available, this handler method updates the
-		 * master list counter
-		 * @param {sap.ui.base.Event} oEvent the update finished event
-		 * @public
-		 */
+		/* Al cargar la lista del máster */
 		onUpdateFinished: function (oEvent) {
-			// update the master list object counter after new data is loaded
 			this._updateListItemCount(oEvent.getParameter("total"));
 		},
 
-		/**
-		 * Event handler for the master search field. Applies current
-		 * filter value and triggers a new search. If the search field's
-		 * 'refresh' button has been pressed, no new search is triggered
-		 * and the list binding is refresh instead.
-		 * @param {sap.ui.base.Event} oEvent the search event
-		 * @public
-		 */
+		/* Al realizar una búsqueda en el máster*/
 		onSearch: function (oEvent) {
 			if (oEvent.getParameters().refreshButtonPressed) {
-				// Search field's 'refresh' button has been pressed.
-				// This is visible if you select any master list item.
-				// In this case no new search is triggered, we only
-				// refresh the list binding.
 				this.onRefresh();
 				return;
 			}
@@ -123,6 +77,7 @@ sap.ui.define([
 			this._applyFilterSearch();
 		},
 
+		/* Respuesta al evento lanzado para el borrado de la planificación */
 		_delete_Plan: function (sChanel, sEvent, oData) {
 			if (sEvent === "Delete_Plan") {
 				var uuid = oData.Number;
@@ -143,25 +98,15 @@ sap.ui.define([
 						break;
 					}
 				}
-
-				//this._showDetail(firstItem);
 			}
 		},
 
-		/**
-		 * Event handler for refresh event. Keeps filter, sort
-		 * and group settings and refreshes the list binding.
-		 * @public
-		 */
+		/* Al refrescar la lista del máster*/
 		onRefresh: function () {
 			this._oList.getBinding("items").refresh();
 		},
 
-		/**
-		 * Event handler for the filter, sort and group buttons to open the ViewSettingsDialog.
-		 * @param {sap.ui.base.Event} oEvent the button press event
-		 * @public
-		 */
+		/* Abre el popup para filtros y ordenamientos */
 		onOpenViewSettings: function (oEvent) {
 			var sDialogTab = "filter";
 			if (oEvent.getSource() instanceof sap.m.Button) {
@@ -172,14 +117,12 @@ sap.ui.define([
 					sDialogTab = "group";
 				}
 			}
-			// load asynchronous XML fragment
 			if (!this.byId("viewSettingsDialog")) {
 				Fragment.load({
 					id: this.getView().getId(),
 					name: "shapein.RunIntegrationPlanningUsers.view.ViewSettingsDialog",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					oDialog.open(sDialogTab);
@@ -189,25 +132,12 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * Event handler called when ViewSettingsDialog has been confirmed, i.e.
-		 * has been closed with 'OK'. In the case, the currently chosen filters, sorters or groupers
-		 * are applied to the master list, which can also mean that they
-		 * are removed from the master list, in case they are
-		 * removed in the ViewSettingsDialog.
-		 * @param {sap.ui.base.Event} oEvent the confirm event
-		 * @public
-		 */
+		/* Al confirmar los valores de filtrado u ordenación, se generan los filtros y sorts */
 		onConfirmViewSettingsDialog: function (oEvent) {
-
 			this._applySortGroup(oEvent);
 		},
 
-		/**
-		 * Apply the chosen sorter and grouper to the master list
-		 * @param {sap.ui.base.Event} oEvent the confirm event
-		 * @private
-		 */
+		/*Aplicamos el ordenación del grupo */
 		_applySortGroup: function (oEvent) {
 			var mParams = oEvent.getParameters(),
 				sPath,
@@ -219,39 +149,21 @@ sap.ui.define([
 			this._oList.getBinding("items").sort(aSorters);
 		},
 
-		/**
-		 * Event handler for the list selection event
-		 * @param {sap.ui.base.Event} oEvent the list selectionChange event
-		 * @public
-		 */
+		/* Se ejecuta el evento de cambio de selección en la lista del máster */
 		onSelectionChange: function (oEvent) {
 			var oList = oEvent.getSource(),
 				bSelected = oEvent.getParameter("selected");
-
-			// skip navigation when deselecting an item in multi selection mode
 			if (!(oList.getMode() === "MultiSelect" && !bSelected)) {
-				// get the list item, either from the listItem parameter or from the event's source itself (will depend on the device-dependent mode).
 				this._showDetail(oEvent.getParameter("listItem") || oEvent.getSource());
 			}
 		},
 
-		/**
-		 * Event handler for the bypassed event, which is fired when no routing pattern matched.
-		 * If there was an object selected in the master list, that selection is removed.
-		 * @public
-		 */
+		/* Event lanzado cuando nadie corresponde con la selección */
 		onBypassed: function () {
 			this._oList.removeSelections(true);
 		},
 
-		/**
-		 * Used to create GroupHeaders with non-capitalized caption.
-		 * These headers are inserted into the master list to
-		 * group the master list's items.
-		 * @param {Object} oGroup group whose text is to be displayed
-		 * @public
-		 * @returns {sap.m.GroupHeaderListItem} group header with non-capitalized caption.
-		 */
+		/* Al agrupar creamos el item de cabecera */
 		createGroupHeader: function (oGroup) {
 			return new GroupHeaderListItem({
 				title: oGroup.text,
@@ -259,18 +171,11 @@ sap.ui.define([
 			});
 		},
 
-		/**
-		 * Event handler for navigating back.
-		 * It there is a history entry or an previous app-to-app navigation we go one step back in the browser history
-		 * If not, it will navigate to the shell home
-		 * @public
-		 */
+		/*Navegamos hacia atrás */
 		onNavBack: function () {
 			var sPreviousHash = History.getInstance().getPreviousHash(),
 				oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
-
 			if (sPreviousHash !== undefined || !oCrossAppNavigator.isInitialNavigation()) {
-				// eslint-disable-next-line sap-no-history-manipulation
 				history.go(-1);
 			} else {
 				oCrossAppNavigator.toExternal({
@@ -281,10 +186,7 @@ sap.ui.define([
 			}
 		},
 
-		/* =========================================================== */
-		/* begin: internal methods                                     */
-		/* =========================================================== */
-
+		/* Crear el modelo para la vista */
 		_createViewModel: function () {
 			return new JSONModel({
 				isFilterBarVisible: false,
@@ -297,74 +199,55 @@ sap.ui.define([
 			});
 		},
 
+		/* Evento al matchear el master */
 		_onMasterMatched: function () {
-			//Set the layout property of the FCL control to 'OneColumn'
 			this.getModel("appView").setProperty("/layout", "OneColumn");
 		},
 
-		/**
-		 * Shows the selected item on the detail page
-		 * On phones a additional history entry is created
-		 * @param {sap.m.ObjectListItem} oItem selected Item
-		 * @private
-		 */
+		/*Mostramos el detalle del objeto seleccionado en la lista*/
 		_showDetail: function (oItem) {
 			var bReplace = !Device.system.phone;
-			// set the layout property of FCL control to show two columns
 			this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
 			this.getRouter().navTo("object", {
 				objectId: oItem.getBindingContext().getProperty("uuid")
 			}, bReplace);
 		},
 
-		/**
-		 * Sets the item count on the master list header
-		 * @param {integer} iTotalItems the total number of items in the list
-		 * @private
-		 */
+		/* Actualizamos el contador en la lista del máster */
 		_updateListItemCount: function (iTotalItems) {
 			var sTitle;
-			// only update the counter if the length is final
 			if (this._oList.getBinding("items").isLengthFinal()) {
 				sTitle = this.getResourceBundle().getText("masterTitleCount", [iTotalItems]);
 				this.getModel("masterView").setProperty("/title", sTitle);
 			}
 		},
 
-		/**
-		 * Internal helper method to apply both filter and search state together on the list binding
-		 * @private
-		 */
+		/* Aplicamos los filtros */
 		_applyFilterSearch: function () {
 			var aFilters = this._oListFilterState.aSearch.concat(this._oListFilterState.aFilter),
 				oViewModel = this.getModel("masterView");
 			this._oList.getBinding("items").filter(aFilters, "Application");
-			// changes the noDataText of the list in case there are no filter results
 			if (aFilters.length !== 0) {
 				oViewModel.setProperty("/noDataText", this.getResourceBundle().getText("masterListNoDataWithFilterOrSearchText"));
 			} else if (this._oListFilterState.aSearch.length > 0) {
-				// only reset the no data text to default when no new search was triggered
 				oViewModel.setProperty("/noDataText", this.getResourceBundle().getText("masterListNoDataText"));
 			}
 		},
 
-		/**
-		 * Internal helper method that sets the filter bar visibility property and the label's caption to be shown
-		 * @param {string} sFilterBarText the selected filter value
-		 * @private
-		 */
+		/* Actualizamos la barra indicando los filtros aplicados */
 		_updateFilterBar: function (sFilterBarText) {
 			var oViewModel = this.getModel("masterView");
 			oViewModel.setProperty("/isFilterBarVisible", (this._oListFilterState.aFilter.length > 0));
 			oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sFilterBarText]));
 		},
 
+		/* Cancelar la ejecución on Demand */
 		cancelOnDemand: function (oEvent) {
 			var dialog = oEvent.getSource().getParent();
 			dialog.close();
-
 		},
 
+		/* Validamos el campo para que esté relleno */
 		_validateInput: function (oInput) {
 			var sValueState = "None";
 			var bValidationError = false;
@@ -377,26 +260,18 @@ sap.ui.define([
 			return bValidationError;
 		},
 
+		/* Al cambiar fechas de la ejecución on Demand */
 		changeDatesDemand: function (oEvent) {
 			var value = oEvent.getParameter("value");
 			var oInput = oEvent.getSource();
 			var sValueState = "None";
 			if (value == "") {
 				sValueState = "Error";
-			} else {
-				// var id = oInput.getId();
-				// if(id == "DP2"){
-				// 	var dp1 = this.byId("DP1").getDateValue();
-				// 	var dp2 = this.byId("DP2").getDateValue();
-				// 	if(dp2 > dp1){
-
-				// 	}
-				// }
-
-			}
+			} else {}
 			oInput.setValueState(sValueState);
 		},
 
+		/* Realizamos la ejecución on Demand */
 		execOnDemand: function (oEvent) {
 			var oView = this.getView(),
 				aInputs = [
@@ -406,80 +281,56 @@ sap.ui.define([
 					oView.byId("DTP14")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInput(oInput) || bValidationError;
 			}, this);
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("errorVal");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
-
 			if (aInputs[0].getDateValue() > aInputs[1].getDateValue()) {
-				sap.m.MessageBox.alert("Date 'Updated To' is earlier than 'Updated From'.");
+				var text = this.getResourceBundle().getText("updatTo");
+				sap.m.MessageBox.alert(text);
 				aInputs[1].setValueState("Error");
 				return;
 			}
-
 			if (aInputs[2].getDateValue() > aInputs[3].getDateValue()) {
-				sap.m.MessageBox.alert("Date 'Effective To' is earlier than 'Effective From'.");
+				var text = this.getResourceBundle().getText("effecDate");
+				sap.m.MessageBox.alert(text);
 				aInputs[1].setValueState("Error");
 				return;
 			}
-
-			var text = "Are you sure you want to execute this integration on Demand?";
+			var text = this.getResourceBundle().getText("sureOnDem");
 			var that = this;
 			var dialogDemand = oEvent.getSource().getParent();
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						var NewExecModel = that.getModel("newExec");
 						var fromUpd = NewExecModel.getProperty("/fromUpd");
 						var toUpd = NewExecModel.getProperty("/toUpd");
 						var fromEffec = NewExecModel.getProperty("/fromEffec");
 						var toEffec = NewExecModel.getProperty("/toEffec");
-						//var fragmentId = this.getView().createId("fr1");
-						//var tab = Fragment.byId(fragmentId, "tab1");
-						//	var supervisoriest = that.byId("multiInput1").getTokens();
 						var workerst = that.byId("multiInput2").getTokens();
-						//	var supervisories = [];
 						var workers = [];
-						//	for (var i = 0; i < supervisoriest.length; i++) {
-						//		var supervisor = supervisoriest[i].getText();
-						//		supervisories.push(supervisor);
-						//	}
 						for (var i = 0; i < workerst.length; i++) {
 							var worker = workerst[i].getText();
 							workers.push(worker);
 						}
-
 						fromUpd = dateFormat.format(fromUpd);
 						toUpd = dateFormat.format(toUpd);
 						fromEffec = dateFormat.format(fromEffec);
 						toEffec = dateFormat.format(toEffec);
-
-						// var data = {
-						// 	"test_mode": "False",
-						// 	"reprocess": "True",
-						// 	"transaction_log": {
-						// 		"time_zone": "UTC",
-						// 		"effective_from": "1900-01-01T00:00:01",
-						// 		"effective_to": effective,
-						// 	},
-						// 	"workers": {
-						// 		"reference_id": "Employee_ID",
-						// 		"workers_list": [worker]
-						// 	}
-						// };
 						var data = {
 							"test_mode": "False",
 							"transaction_log": {
@@ -489,37 +340,14 @@ sap.ui.define([
 								"effective_from": fromEffec,
 								"effective_to": toEffec
 							},
-							// "supervisories": {
-							// 	"reference_id": "Organization_Reference_ID",
-							// 	"supervisories_list": [
-							// 		supervisories
-							// 	]
-							// },
 							"workers": {
 								"reference_id": "Employee_ID",
 								"workers_list": workers
 							}
 						};
-						// var oViewModel = that.getModel("detailView");
-						// oViewModel.setProperty("/busy", true);
-						//			that.byId("ondemand").setBusy(true);
 						var datajson = JSON.stringify(data);
-						//	var url = "/CPI-WD2PD/users_sync/ondemand";
 						var url = "/CPI-WD2PD_Dest/md/users_sync/ondemand";
-						// var entorno = 'DEV';
-						// if (entorno == 'DEV') {
-						// 	var cuscode = "C000000001";
-						// 	var cusclientid = "15ff0365-5b0c-420e-bb14-bcf28b458374";
-						// 	var cusscope = "cf0f8bd6-4d5c-4ea5-827d-22898796ce68";
-						// }
-						// if (entorno == 'TEST') {
-						// 	var cuscode = "T000000001";
-						// 	var cusclientid = "e4f496b6-4c9b-4d03-9665-86d13349b046";
-						// 	var cusscope = "f0adfc99-7fea-42d7-9439-46a4c9de4742";
-						// }
 						if (that.getOwnerComponent().settings) {
-							//this.settings = await this.getSubscriptionSettings();
-
 							var cuscode = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
 							var cusclientid = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
 							var cusscope = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
@@ -539,19 +367,17 @@ sap.ui.define([
 									var a = data;
 									var b = textStatus;
 									var c = jqXHR;
-									//				that.byId("ondemand").setBusy(false);
 									if (textStatus == "success") {
-										var texto = "Execution On Demand " + data.process_id + " executed.";
+										var text1 = that.getResourceBundle().getText("execOn");
+										var text2 = that.getResourceBundle().getText("executed");
+										var texto = text1 + " " + data.process_id + " " + text2;
 										sap.m.MessageToast.show(texto);
 									}
-									//				dialogDemand.close();
 								})
 								.fail(function (jqXHR, textStatus, errorThrown) {
 									var d = jqXHR;
 									var e = textStatus;
 									var f = errorThrown;
-									//				that.byId("ondemand").setBusy(false);
-									//				dialogDemand.close();
 								});
 						}
 						dialog.close();
@@ -559,7 +385,7 @@ sap.ui.define([
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -568,19 +394,17 @@ sap.ui.define([
 					dialog.destroy();
 				}
 			});
-
 			dialog.open();
 		},
 
+		/* Al pulsar el botón para la creación de una nueva Planificación */
 		createPlan: function (oEvent) {
-			// load asynchronous XML fragment
 			if (!this.byId("newPlan")) {
 				Fragment.load({
 					id: this.getView().getId(),
 					name: "shapein.RunIntegrationPlanningUsers.view.fragment.NewPlanning",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					var fnValidator = function (args) {
@@ -590,15 +414,14 @@ sap.ui.define([
 							text: text
 						});
 					};
-					//	this.getView().byId("multiInput11").addValidator(fnValidator);
 					oDialog.open();
 				}.bind(this));
 			} else {
 				this.byId("newPlan").open();
 			}
-
 		},
 
+		/* Validación del campo indicado */
 		_validateInputNewP: function (oInput) {
 			var sValueState = "None";
 			var bValidationError = false;
@@ -612,42 +435,41 @@ sap.ui.define([
 			return bValidationError;
 		},
 
+		/* Al guardar la nueva planificación */
 		execNewPlan: function (oEvent) {
-			// VALIDACIONES TODO
 			var oView = this.getView(),
 				aInputs = [
 					oView.byId("Comments"),
 					oView.byId("DTP1"),
 					oView.byId("DTP2"),
 					oView.byId("DTP3")
-					//	oView.byId("DTP4")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
 			if (this.byId("ProcessType").getSelectedKey() === "I") {
 				aInputs.forEach(function (oInput) {
 					bValidationError = this._validateInputNewP(oInput) || bValidationError;
 				}, this);
 			}
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("errorVal");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
 			var comments = aInputs[0].getValue();
-			var text = "Are you sure you want to create a Users Planning?";
+			var text = this.getResourceBundle().getText("sureCreate");
 			var that = this;
 			var dialogNewPlan = oEvent.getSource().getParent();
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						var selKey = that.byId("SegBut").getSelectedKey();
 						var enable = false;
@@ -670,12 +492,11 @@ sap.ui.define([
 								'Accept': 'application/json'
 							},
 							success: function (oData, response) {
-								//var but = oEvent.getSource();
 								dialogNewPlan.setBusy(false);
 								dialogNewPlan.close();
 								that.createDataBatch(oData.uuid, oData.processing_type);
-								sap.m.MessageToast.show("Planning created succesfully.");
-
+								var planSuc = this.getResourceBundle().getText("planSuc");
+								sap.m.MessageToast.show(planSuc);
 							},
 							error: function (oError) {
 								dialogNewPlan.setBusy(false);
@@ -687,7 +508,7 @@ sap.ui.define([
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -696,11 +517,10 @@ sap.ui.define([
 					dialog.destroy();
 				}
 			});
-
 			dialog.open();
-
 		},
 
+		/* Creamos los datos para el batch de los aData */
 		createDataBatch: function (planUuid, processing_type) {
 			var planning_uuid = planUuid;
 			var sPath = "/Integration_Pck_Planning_Adata";
@@ -720,7 +540,6 @@ sap.ui.define([
 				oData2.planning_uuid = planning_uuid;
 				oData2.level1 = "WS_GET_WORKERS";
 				oData2.level2 = "NEXT_UPDATED_FROM";
-				//oData2.value = this.byId("DTP4").getValue();
 				oData2.value = "";
 				oData2.value2 = null;
 				oModel.create(sPath, oData2, {
@@ -753,30 +572,6 @@ sap.ui.define([
 				oModel.create(sPath, oData5, {
 					groupId: "createGroup"
 				});
-
-				// var oData6 = {};
-				// oData6.planning_uuid = planning_uuid;
-				// oData6.level1 = "SUPERVISORIES_ALLOWED";
-				// oData6.level2 = "REFERENCE_ID";
-				// oData6.value = this.byId("RefId").getSelectedKey();
-				// oData6.value2 = null;
-				// oModel.create(sPath, oData6, {
-				// 	groupId: "createGroup"
-				// });
-
-				// var supervisoriest = this.byId("multiInput11").getTokens();
-				// for (var i = 0; i < supervisoriest.length; i++) {
-				// 	var oData7 = {};
-				// 	oData7.planning_uuid = planning_uuid;
-				// 	oData7.level1 = "SUPERVISORIES_ALLOWED";
-				// 	oData7.level2 = "SUPERVISORY";
-				// 	oData7.value = supervisoriest[i].getText();
-				// 	oData7.value2 = null;
-				// 	oModel.create(sPath, oData7, {
-				// 		groupId: "createGroup"
-				// 	});
-				// }
-
 				oModel.submitChanges({
 					groupId: "createGroup",
 					success: this.successCreateBatch,
@@ -785,16 +580,19 @@ sap.ui.define([
 			}
 		},
 
+		/* Si el Batch ha ido correctamente */
 		successCreateBatch: function (oData, response) {
 			//TODO
 			var a = 0;
 		},
 
+		/* Si ha habido error en el Batch */
 		errorCreateBatch: function (oError) {
 			//TODO
 			var e = 0;
 		},
 
+		/* Al cambiar el tipo de procesamiento */
 		changeTypeProcessing: function (oEvent) {
 			var key = oEvent.getParameter("selectedItem").getKey();
 			var oView = this.getView();
@@ -806,20 +604,20 @@ sap.ui.define([
 			}
 		},
 
+		/* Cancelamos la nueva planificación */
 		cancelNewPlan: function (oEvent) {
 			var dialog = oEvent.getSource().getParent();
 			dialog.close();
 		},
 
+		/* Al pulsar para configurar una nueva ejecución onDemand */
 		newOnDemand: function (oEvent) {
-			// load asynchronous XML fragment
 			if (!this.byId("ondemand")) {
 				Fragment.load({
 					id: this.getView().getId(),
 					name: "shapein.RunIntegrationPlanningUsers.view.fragment.OnDemand",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					var fnValidator = function (args) {
@@ -829,7 +627,6 @@ sap.ui.define([
 							text: text
 						});
 					};
-					//this.getView().byId("multiInput1").addValidator(fnValidator);
 					this.getView().byId("multiInput2").addValidator(fnValidator);
 					oDialog.open();
 				}.bind(this));
@@ -837,7 +634,5 @@ sap.ui.define([
 				this.byId("ondemand").open();
 			}
 		}
-
 	});
-
 });

@@ -2,32 +2,32 @@
 	<ViewSettingsDialog id="viewSettingsDialog" confirm=".searchFilters" cancel="handleCancel" sortDescending="true"
 		resetFilters=".handleResetFilters">
 		<sortItems>
-			<ViewSettingsItem text="Organization" key="external_id" selected="true"/>
-			<ViewSettingsItem text="Name" key="name" selected="false"/>
-			<ViewSettingsItem text="Company" key="corporate_name" selected="false"/>
-			<ViewSettingsItem text="Timestamp" key="last_timestamp" selected="false"/> 
+			<ViewSettingsItem text="{i18n>Orga}" key="external_id" selected="true"/>
+			<ViewSettingsItem text="{i18n>Name}" key="name" selected="false"/>
+			<ViewSettingsItem text="{i18n>Company}" key="corporate_name" selected="false"/>
+			<ViewSettingsItem text="{i18n>Timestamp}" key="last_timestamp" selected="false"/> 
 		</sortItems>
 		<filterItems>
-			<ViewSettingsCustomItem id="idCustomFilterItem" text="Timestamp" key="last_timestamp">
+			<ViewSettingsCustomItem id="idCustomFilterItem" text="{i18n>Timestamp}" key="last_timestamp">
 				<customControl>
 					<l:VerticalLayout class="sapUiContentPadding" width="100%">
-						<Label text="FROM"/>
+						<Label text="{i18n>From}"/>
 						<DateTimePicker id="DTP1" value="" valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="long" change="changeDates"
 							class="sapUiSmallMarginBottom"/>
-						<Label text="TO"/>
+						<Label text="{i18n>To}"/>
 						<DateTimePicker id="DTP2" value="" valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="long" change="changeDates"
 							class="sapUiSmallMarginBottom"/>
 					</l:VerticalLayout>
 				</customControl>
 			</ViewSettingsCustomItem>
-					<ViewSettingsCustomItem id="idCustomFilterItem2" text="Last Name" key="lastname">
+					<ViewSettingsCustomItem id="idCustomFilterItem2" text="{i18n>lastName}" key="lastname">
 				<customControl>
 					<l:VerticalLayout class="sapUiContentPadding" width="100%">
-						<Label text="FROM"/>
-						<Input id="input1" type="Text" placeholder="Enter a Last Name" class="sapUiSmallMarginBottom"
+						<Label text="{i18n>From}"/>
+						<Input id="input1" type="Text" placeholder="{i18n>PlaName}" class="sapUiSmallMarginBottom"
 						change="changeLast"/>
-						<Label text="TO"/>
-						<Input id="input2" type="Text" placeholder="Enter a Last Name" class="sapUiSmallMarginBottom"
+						<Label text="{i18n>To}"/>
+						<Input id="input2" type="Text" placeholder="{i18n>PlaName}" class="sapUiSmallMarginBottom"
 						change="changeLast"/>
 					</l:VerticalLayout>
 				</customControl>

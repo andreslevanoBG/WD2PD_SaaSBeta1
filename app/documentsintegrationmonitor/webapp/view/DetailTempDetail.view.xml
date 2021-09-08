@@ -80,7 +80,6 @@
 						</headerToolbar>
 						<columns>
 
-
                         <!--
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Phone" demandPopin="true" popinDisplay="Inline" mergeDuplicates="false">
 								<header>
@@ -135,14 +134,14 @@
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
 								mergeDuplicates="false">
 								<header>
-									<Text text="Last Name" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="File Number" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
 								mergeDuplicates="false">
 								<header>
-									<Text text="First Name" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="Detail" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
@@ -150,7 +149,7 @@
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
 								mergeDuplicates="false">
 								<header>
-									<Text text="Employee" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="Status" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
@@ -169,10 +168,19 @@
                                     <Text text="{ parts:[{path:'itemsTemp>createdAt'},{path:'status'}], formatter: '.formatter.Startdate2' }"/>
                                     <!-- <Text text="{items>createdBy}"/> -->
 
-                                    <Text text="{itemsTemp>worker/lastname}"/> 
-                                    <Text text="{itemsTemp>worker/firstname}"/> 
-
-                                    <Text text="{ path: 'itemsTemp>employee_number' }"/> 
+                                    <Text text="{itemsEmpl>doc_sign/pd_id}"/>
+                                    <!--
+                                    <Text text="{itemsEmpl>worker/firstname}"/> 
+                                    -->
+									<Button text="" type="Default" icon="sap-icon://message-error" iconFirst="true" width="60px"
+										enabled="{ path: 'itemsEmpl>generation_proc/status', formatter: '.formatter.ItemButEnabled' }" visible="true" iconDensityAware="false"
+										press="handleMessagePopoverPress"/>
+                                    <!--
+                                    <Text text="{ path: 'itemsEmpl>generation_proc/status' }"/> 
+                                    -->
+                                    <ObjectStatus text="{ path:'itemsEmpl>generation_proc/status', formatter: '.formatter.ItemStatusText3'}" 
+                                    state="{ path: 'itemsEmpl>generation_proc/status', formatter: '.formatter.ItemStatusText3' }" 
+                                    icon="{ path: 'itemsEmpl>generation_proc/status', formatter: '.formatter.IconError' }"/> 
 								</cells>
 							</ColumnListItem>
 						</items>

@@ -20,15 +20,15 @@
 					</l:VerticalLayout>
 				</customControl>
 			</ViewSettingsCustomItem>
-			<ViewSettingsFilterItem text="Status" key="status_code">
+			<ViewSettingsFilterItem text="{i18n>Status}" key="status_code">
 				<items>
-					<ViewSettingsItem text="Success" key="S"/>
-					<ViewSettingsItem text="Error" key="E"/>
-					<ViewSettingsItem text="Warning" key="W"/>
-					<ViewSettingsItem text="Running" key="R"/>
+					<ViewSettingsItem text="{i18n>Success}" key="S"/>
+					<ViewSettingsItem text="{i18n>Error}" key="E"/>
+					<ViewSettingsItem text="{i18n>Warning}" key="W"/>
+					<ViewSettingsItem text="{i18n>Running}" key="R"/>
 				</items>
 			</ViewSettingsFilterItem>
-			<ViewSettingsCustomItem id="idCustomFilterItem2" text="Number of Organizations" key="numberOfItems">
+			<ViewSettingsCustomItem id="idCustomFilterItem2" text="{i18n>NumOrg}" key="numberOfItems">
 				<customControl>
 					<RangeSlider showAdvancedTooltip="true" range="0,0" min="0" max="200" width="100%" showHandleTooltip="false" inputsAsTooltips="true"
 						class="sapUiLargeMarginBottom" change="changeSlider"/>

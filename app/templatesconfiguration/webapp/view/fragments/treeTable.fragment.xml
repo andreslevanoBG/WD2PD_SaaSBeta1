@@ -1,12 +1,12 @@
 <core:FragmentDefinition xmlns="sap.ui.table" xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:u="sap.ui.unified" xmlns:core="sap.ui.core">
-	<m:Dialog id="treeTable" title="Workday to PeopleDoc Mapping" contentHeight="100%" contentWidth="50%" resizable="true" draggable="true">
+	<m:Dialog id="treeTable" title="{i18n>wdToPd}" contentHeight="100%" contentWidth="50%" resizable="true" draggable="true">
 		<m:buttons>
-			<m:Button id="BtnAccept" text="Accept" press=".onMap" type="Accept"/>
-			<m:Button id="BtnAccept2" text="Accept" press=".onMap2" type="Accept" visible="false"/>
-			<m:Button id="BtnAccept3" text="Accept" press=".onMap3" type="Accept" visible="false"/>
-			<m:Button id="BtnAccept4" text="Accept" press=".onMap4" type="Accept" visible="false"/>
-			<m:Button id="BtnAccept5" text="Accept" press=".onMap5" type="Accept" visible="false"/>
-			<m:Button text="Cancel" press=".onCloseTableTree" type="Reject"/>
+			<m:Button id="BtnAccept" text="{i18n>accept}" press=".onMap" type="Accept"/>
+			<m:Button id="BtnAccept2" text="{i18n>accept}"  press=".onMap2" type="Accept" visible="false"/>
+			<m:Button id="BtnAccept3" text="{i18n>accept}"  press=".onMap3" type="Accept" visible="false"/>
+			<m:Button id="BtnAccept4" text="{i18n>accept}"  press=".onMap4" type="Accept" visible="false"/>
+			<m:Button id="BtnAccept5" text="{i18n>accept}"  press=".onMap5" type="Accept" visible="false"/>
+			<m:Button text="{i18n>cancel}" press=".onCloseTableTree" type="Reject"/>
 		</m:buttons>
 		<m:content>
 			<TreeTable id="TreeTableBasic1" visibleRowCount="12" class="sapUiTinyMargin"
@@ -14,14 +14,12 @@
 				selectionMode="Single" enableSelectAll="false" ariaLabelledBy="title" filter="filterNode">
 				<extension>
 					<m:OverflowToolbar>
-						<m:SearchField placeholder="Search Node" search="filterNode1" width="25%"/>
+						<m:SearchField placeholder="{i18n>searNode}" search="filterNode1" width="25%"/>
 						<m:Button text="" press="applySearch1" width="10%" icon="sap-icon://sys-next-page"/>
 						<m:Button text="" press="applySearch2" width="10%" icon="sap-icon://sys-prev-page"/>
-						<m:Button text="Collapse all" press="onCollapseAll"/>
-						<m:Button text="Collapse selection" press="onCollapseSelection"/>
-						<m:Button text="Expand all" press="onExpandAll"/>
-						<!--<m:Button text="Get Path" press="getPath" width="20%"/>-->
-						<!--<m:Input id="pathInput" placeholder="Path" width="40%"/>-->
+						<m:Button text="{i18n>collAll}" press="onCollapseAll"/>
+						<m:Button text="{i18n>collSel}" press="onCollapseSelection"/>
+						<m:Button text="{i18n>expAll}" press="onExpandAll"/>
 					</m:OverflowToolbar>
 				</extension>
 				<rowSettingsTemplate>
@@ -29,9 +27,8 @@
 				</rowSettingsTemplate>
 				<columns>
 					<Column width="40rem">
-						<m:Label text="Node"/>
+						<m:Label text="{i18n>node}"/>
 						<template>
-							<!--<m:Text text="{jerarquia>fieldname}" wrapping="false"/>-->
 							<m:ObjectStatus text="{jerarquia>fieldname}"
 								state="{parts:[{path:'jerarquia>node_type'},{path:'jerarquia>maxoccurs'}], formatter:'.formatter.setColor'}" visible="true"
 								class="sapUiSmallMarginTop" icon="{parts:[{path:'jerarquia>node_type'},{path:'jerarquia>maxoccurs'}], formatter:'.formatter.setIcon'}"/>
@@ -39,9 +36,7 @@
 					</Column>
 				</columns>
 			</TreeTable>
-			<!--<m:Input id="pathInput" placeholder="Path" width="98%" class="sapUiTinyMargin"/>-->
-			<m:Button text="Assign Field" press="getPath" width="20%" class="sapUiTinyMargin"/>
-			<!--<m:Input id="pathInput" placeholder="Path" width="75%" class="sapUiTinyMargin"/>-->
+			<m:Button text="{i18n>assField}" press="getPath" width="20%" class="sapUiTinyMargin"/>
 			<m:TextArea id="pathTextArea" growing="true" growingMaxLines="15" rows="7" width="98%" class="sapUiTinyMargin"/>
 		</m:content>
 	</m:Dialog>

@@ -44,18 +44,18 @@
 			<IconTabBar id="iconTab" expandable="false" expanded="true" applyContentPadding="false" backgroundDesign="Solid" upperCase="false"
 				visible="true" selectedKey="Ok" select="searchFilters">
 				<items>
-					<IconTabFilter icon="sap-icon://drop-down-list" iconColor="Default" text="All Items" count="{numberOfItems}" design="Vertical"
+					<IconTabFilter id="tabfAll" icon="sap-icon://drop-down-list" iconColor="Default" text="All Items" count="" design="Vertical"
 						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content></content>
 					</IconTabFilter>
-					<IconTabSeparator icon="" iconDensityAware="false"/>
+					<IconTabSeparator icon="" iconDensityAware="false" visible="false"/>
 					<IconTabFilter id="tabfSuc" key="Suc" icon="sap-icon://accept" iconColor="Positive" text="Success" count="" design="Vertical"
-						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+						showAll="false" textDirection="Inherit" enabled="true" visible="false" iconDensityAware="false">
 						<content></content>
 					</IconTabFilter>
-					<IconTabSeparator icon="" iconDensityAware="false"/>
+					<IconTabSeparator icon="" iconDensityAware="false" visible="false"/>
 					<IconTabFilter id="tabfErr" key="Err" icon="sap-icon://decline" iconColor="Negative" text="Error" count="" design="Vertical" showAll="false"
-						textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+						textDirection="Inherit" enabled="true" visible="false" iconDensityAware="false">
 						<content></content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
@@ -72,7 +72,7 @@
 						<headerToolbar>
 							<OverflowToolbar width="auto" height="auto" design="Transparent" visible="true" enabled="true">
 								<content>
-									<Title text="" titleStyle="Auto" width="auto" textAlign="Begin" visible="true" wrapping="false"/>
+									<Title text="List of Employees" titleStyle="Auto" width="auto" textAlign="Begin" visible="true" wrapping="false"/>
 									<ToolbarSpacer width=""/>
 									<Button id="reproc" text="Reprocessing" type="Reject" icon="sap-icon://process" iconFirst="true" width="auto" visible="true"
 									press="onActionRepro2" iconDensityAware="false"/>

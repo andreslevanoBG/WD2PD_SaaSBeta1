@@ -2,31 +2,31 @@
 	<ViewSettingsDialog id="viewSettingsDialogDetail" confirm=".searchFilters" cancel="handleCancel" sortDescending="true"
 		resetFilters=".handleResetFilters">
 		<sortItems>
-			<ViewSettingsItem text="Worker" key="pernr" selected="true"/>
-			<ViewSettingsItem text="First Name" key="firstname" selected="false"/>
-			<ViewSettingsItem text="Last Name" key="lastname" selected="false"/>
+			<ViewSettingsItem text="{i18n>Worker}" key="pernr" selected="true"/>
+			<ViewSettingsItem text="{i18n>firstName}" key="firstname" selected="false"/>
+			<ViewSettingsItem text="{i18n>lastName}" key="lastname" selected="false"/>
 		</sortItems>
 		<filterItems>
-			<ViewSettingsCustomItem id="idCustomFilterItem" text="Workers" key="pernr">
+			<ViewSettingsCustomItem id="idCustomFilterItem" text="{i18n>Work}" key="pernr">
 				<customControl>
 					<l:VerticalLayout class="sapUiContentPadding" width="100%">
-						<Label text="FROM"/>
-						<Input id="inputNumber1" type="Number" placeholder="Enter a employee number" class="sapUiSmallMarginBottom"
+						<Label text="{i18n>From}"/>
+						<Input id="inputNumber1" type="Number" placeholder="{i18n>PlaEmp}" class="sapUiSmallMarginBottom"
 						change="changeWorkers"/>
-						<Label text="TO"/>
-						<Input id="inputNumber2" type="Number" placeholder="Enter a employee number" class="sapUiSmallMarginBottom"
+						<Label text="{i18n>To}"/>
+						<Input id="inputNumber2" type="Number" placeholder="{i18n>PlaEmp}" class="sapUiSmallMarginBottom"
 						change="changeWorkers"/>
 					</l:VerticalLayout>
 				</customControl>
 			</ViewSettingsCustomItem>
-			<ViewSettingsCustomItem id="idCustomFilterItem2" text="Last Name" key="lastname">
+			<ViewSettingsCustomItem id="idCustomFilterItem2" text="{i18n>lastName}" key="lastname">
 				<customControl>
 					<l:VerticalLayout class="sapUiContentPadding" width="100%">
-						<Label text="FROM"/>
-						<Input id="input1" type="Text" placeholder="Enter a Last Name" class="sapUiSmallMarginBottom"
+						<Label text="{i18n>From}"/>
+						<Input id="input1" type="Text" placeholder="{i18n>PlaName}" class="sapUiSmallMarginBottom"
 						change="changeLast"/>
-						<Label text="TO"/>
-						<Input id="input2" type="Text" placeholder="Enter a Last Name" class="sapUiSmallMarginBottom"
+						<Label text="{i18n>To}"/>
+						<Input id="input2" type="Text" placeholder="{i18n>PlaName}" class="sapUiSmallMarginBottom"
 						change="changeLast"/>
 					</l:VerticalLayout>
 				</customControl>

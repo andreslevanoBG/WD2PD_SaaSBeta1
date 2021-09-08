@@ -84,6 +84,7 @@ sap.ui.define([
             );
         },
 
+
 		/**
 		 * Updates the item count within the line item table's header
 		 * @param {object} oEvent an event containing the total number of items in the list
@@ -212,7 +213,7 @@ sap.ui.define([
             oViewModel.refresh();
             oModel.read(sPath, {
                 urlParameters: {
-                    "$expand": "docs/last_temp_employee,message,docs/message,template,docs/worker"
+                    "$expand": "docs/last_temp_employee,docs/message,message,template,docs/worker"
                 },
                 success: function (oData, oResponse) {
                     var results = oData.docs.results;
@@ -467,6 +468,7 @@ sap.ui.define([
                             var cuscode = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
                             var cusclientid = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
                             var cusscope = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
+
                             var settings = {
                                 "url": url,
                                 "method": "POST",
@@ -570,10 +572,11 @@ sap.ui.define([
                                     "tlog_retro_effective_from": tlog_retro_effective_from,
                                     "tlog_future_updated_from": tlog_future_updated_from
                                 };
-
                                 data_reproc.employees.push(employee);
                             }
                         });
+
+
 
                         var oViewModel = that.getModel("detailView");
                         var datajson = JSON.stringify(data_reproc);
@@ -616,8 +619,10 @@ sap.ui.define([
                                     var d = jqXHR;
                                     var e = textStatus;
                                     var f = errorThrown;
-                                    sap.m.MessageToast.show("An error ocurred during the update task.");
+                                    sap.m.MessageToast.show("An error occurred during the update task.");
                                     //			oViewModel.setProperty("/busy", false);
+
+                                    
                                 });
                         }
                         dialog.close();
@@ -645,7 +650,6 @@ sap.ui.define([
             var employee_number = itemsModel.getProperty(sPath2);
             var sPath3 = "/template_uuid";
             var template_uuid = itemsModel.getProperty(sPath3);
-
             var sPath4 = sPath + "/tlog_timezone";
             var tlog_timezone = itemsModel.getProperty(sPath4);
             var sPath5 = sPath + "/tlog_updated_from";
@@ -710,14 +714,16 @@ sap.ui.define([
                         var data_reproc = {
 
                             "template_uuid": template_uuid,
-                            "employees": [{
+                            "employees": [
+                                {
                                 //"employee_number": employee_number,
                                 "employee_wid": employee_external_id,
                                 "tlog_timezone": tlog_timezone,
                                 "tlog_updated_from": tlog_updated_from,
                                 "tlog_retro_effective_from": tlog_retro_effective_from,
                                 "tlog_future_updated_from": tlog_future_updated_from
-                            }]
+                                }
+                            ]
                         };
 
                         var oViewModel = that.getModel("detailView");
@@ -729,6 +735,7 @@ sap.ui.define([
                             var cuscode = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
                             var cusclientid = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
                             var cusscope = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
+                            
                             var settings = {
                                 "url": url,
                                 "method": "POST",
@@ -771,7 +778,7 @@ sap.ui.define([
                                     var d = jqXHR;
                                     var e = textStatus;
                                     var f = errorThrown;
-                                    sap.m.MessageToast.show("An error ocurred during the update task.");
+                                    sap.m.MessageToast.show("An error occurred during the update task.");
                                 });
                         }
                         dialog.close();
@@ -794,7 +801,7 @@ sap.ui.define([
         handleMessagePopoverPress: function (oEvent) {
             var sPath = oEvent.getSource().getParent().getBindingContext("items").getPath();
             var itemsModel = this.getView().getModel("items");
-            var sPath1 = sPath + "/timestamp_start";
+            var sPath1 = "/timestamp_start";
             var sPath2 = sPath + "/error_code";
             var sPath3 = sPath + "/message/text";
             var sPath4 = sPath + "/error_message";
@@ -851,16 +858,16 @@ sap.ui.define([
                 this.toWorkerPreviousValue = workerto;
                 if (workerfrom !== "" && workerto == "") {
                     aFilters.push(new Filter([
-                        new Filter("pernr", FilterOperator.GE, workerfrom)
+                        new Filter("employee_number", FilterOperator.GE, workerfrom)
                     ], true));
                 } else if (workerfrom == "" && workerto !== "") {
                     aFilters.push(new Filter([
-                        new Filter("pernr", FilterOperator.LE, workerto)
+                        new Filter("employee_number", FilterOperator.LE, workerto)
                     ], true));
                 } else if (workerfrom !== "" && workerto !== "") {
                     aFilters.push(new Filter([
-                        new Filter("pernr", FilterOperator.GE, workerfrom),
-                        new Filter("pernr", FilterOperator.LE, workerto)
+                        new Filter("employee_number", FilterOperator.GE, workerfrom),
+                        new Filter("employee_number", FilterOperator.LE, workerto)
                     ], true));
                 }
                 var vLayout2 = this.byId("viewSettingsDialogDetail").getFilterItems()[1].getCustomControl();
@@ -870,15 +877,15 @@ sap.ui.define([
                 this.toLastPreviousValue = lastto;
                 if (lastfrom !== "" && lastto == "") {
                     aFilters.push(new Filter([
-                        new Filter("lastname", FilterOperator.GE, lastfrom)
+                        new Filter("worker/lastname", FilterOperator.GE, lastfrom)
                     ], true));
                 } else if (lastfrom == "" && lastto !== "") {
                     aFilters.push(new Filter([
-                        new Filter("lastname", FilterOperator.LE, lastto)
+                        new Filter("worker/lastname", FilterOperator.LE, lastto)
                     ], true));
                 } else if (lastfrom !== "" && lastto !== "") {
                     aFilters.push(new Filter([
-                        new Filter("lastname", FilterOperator.BT, lastfrom, lastto)
+                        new Filter("worker/lastname", FilterOperator.BT, lastfrom, lastto)
                         //	new Filter("lastname", FilterOperator.LE, lastto)
                     ], true));
                 }

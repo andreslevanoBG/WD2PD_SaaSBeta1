@@ -1,30 +1,30 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
-	<Dialog id="copyConfigTemp" state="Success" icon="sap-icon://duplicate" title="Select Template and Objects to Copy" contentHeight="380px"
+	<Dialog id="copyConfigTemp" state="Success" icon="sap-icon://duplicate" title="{i18n>selTempCop}" contentHeight="380px"
 		contentWidth="450px">
 		<VBox class="sapUiTinyMargin">
 			<f:SimpleForm id="SimpleFormChange8789" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="4" labelSpanL="4"
 				labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2"
 				columnsL="2" columnsM="1" singleContainerFullSize="false">
 				<f:content>
-					<core:Title text="Selection"/>
-					<Label labelFor="selTemplate" text="Template"/>
+					<core:Title text="{i18n>selection}"/>
+					<Label labelFor="selTemplate" text="{i18n>template}"/>
 					<Select id="selTemplate" width="380px" change="changeTypeProcessing" items="{ path: 'templates_pers>/', sorter: [{ path: 'doc_title', descending: false }, { path: 'template_version', descending: true }] }">
 						<core:Item key="{templates_pers>uuid}" text="{templates_pers>doc_title} - Vers. {templates_pers>template_version}"/>
 					</Select>
-					<Label text="Objects to Copy"/>
-					<CheckBox id="copMap" text="Variable Mappings" enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }"/>
-					<CheckBox id="copMeta" text="Metadata Mappings" enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }"/>
-					<CheckBox id="copVar" text="Global Variables" enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }"/>
-					<CheckBox id="copAtt" text="Worker Filters" enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }"/>
-					<CheckBox id="copPlan" text="Job Planning"/>
-					<CheckBox id="copPlanR" text="Job Reprocessing Planning"/>
-					<CheckBox id="copSign" text="Sign Configuration" enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }"/>
+					<Label text="{i18n>objCop}"/>
+					<CheckBox id="copMap" text="{i18n>varMap}" enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }"/>
+					<CheckBox id="copMeta" text="{i18n>metMap}" enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }"/>
+					<CheckBox id="copVar" text="{i18n>gloVar}" enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }"/>
+					<CheckBox id="copAtt" text="{i18n>worFil}" enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }"/>
+					<CheckBox id="copPlan" text="{i18n>jobPla}"/>
+					<CheckBox id="copPlanR" text="{i18n>jobRep}"/>
+					<CheckBox id="copSign" text="{i18n>sinCon}" enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }"/>
 				</f:content>
 			</f:SimpleForm>
 		</VBox>
 		<buttons>
-			<Button text="Copy" type="Accept" press="execCopyTemp"/>
-			<Button text="Cancel" type="Reject" press="cancelCopyTemp"/>
+			<Button text="{i18n>copy}" type="Accept" press="execCopyTemp"/>
+			<Button text="{i18n>cancel}" type="Reject" press="cancelCopyTemp"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

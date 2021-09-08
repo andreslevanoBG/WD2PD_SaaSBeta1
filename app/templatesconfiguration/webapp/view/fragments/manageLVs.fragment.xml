@@ -1,0 +1,41 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	<Dialog id="manageLVs" state="Success" icon="sap-icon://list" title="" resizable="true"
+		draggable="true" contentHeight="350px" contentWidth="750px">
+		<ScrollContainer id="ScrollContLVs" height="100%" width="100%" horizontal="false" vertical="true" visible="true">
+			<Table id="tableLVs" width="auto" items="{ path: 'LValues>/', sorter: { path: 'name', descending: false } }"
+				noDataText="{i18n>noCfs}" busyIndicatorDelay="{worklistView>/tableBusyDelay}">
+				<headerToolbar>
+					<OverflowToolbar>
+						<Title id="tableLVsHeader" text="" level="H3"/>
+						<ToolbarSpacer/>
+						<Button id="syncLV" class="sapUiTinyMargin" icon="sap-icon://upload-to-cloud" type="Emphasized" text=""
+						tooltip="" press="onSyncLV"/>
+					</OverflowToolbar>
+				</headerToolbar>
+				<columns>
+					<Column id="LVSeqno" width="100px" hAlign="Center">
+						<Text text="{i18n>seqno}"/>
+					</Column>
+					<Column id="LVValue" width="auto" hAlign="Center">
+						<Text text="{i18n>value}"/>
+					</Column>
+					<Column id="LVText" width="auto" hAlign="Center">
+						<Text text="{i18n>text}"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem type="Inactive">
+						<cells>
+							<Text text="{ path: 'LValues>seqno' }"/>
+							<Text text="{ path: 'LValues>value' }"/>
+							<Text text="{ path: 'LValues>text' }"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</ScrollContainer>
+		<buttons>
+			<Button text="{i18n>close}" type="Reject" press="closeManageLVs"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

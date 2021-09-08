@@ -2,35 +2,23 @@
 	<ViewSettingsDialog id="viewSettingsDialogDetail" confirm=".searchFilters" cancel="handleCancel" sortDescending="true"
 		resetFilters=".handleResetFilters">
 		<sortItems>
-			<ViewSettingsItem text="Timestamp" key="timestamp_start" selected="true"/>
-			<ViewSettingsItem text="Name" key="name" selected="false"/>
-			<ViewSettingsItem text="Company" key="corporate_name" selected="false"/>
+			<ViewSettingsItem text="{i18n>Timestamp}" key="timestamp_start" selected="true"/>
+			<ViewSettingsItem text="{i18n>Name}" key="name" selected="false"/>
+			<ViewSettingsItem text="{i18n>Company}" key="corporate_name" selected="false"/>
 		</sortItems>
 		<filterItems>
-			<ViewSettingsCustomItem id="idCustomFilterItem" text="Process Dates" key="timestamp_start">
+			<ViewSettingsCustomItem id="idCustomFilterItem" text="{i18n>procDates}" key="timestamp_start">
 				<customControl>
 					<l:VerticalLayout class="sapUiContentPadding" width="100%">
-						<Label text="FROM"/>
+						<Label text="{i18n>From}"/>
 						<DateTimePicker id="DTP1" value="" valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="long" change="changeDates"
 							class="sapUiSmallMarginBottom"/>
-						<Label text="TO"/>
+						<Label text="{i18n>To}"/>
 						<DateTimePicker id="DTP2" value="" valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="long" change="changeDates"
 							class="sapUiSmallMarginBottom"/>
 					</l:VerticalLayout>
 				</customControl>
 			</ViewSettingsCustomItem>
-			<!--<ViewSettingsCustomItem id="idCustomFilterItem2" text="Last Name" key="lastname">-->
-			<!--	<customControl>-->
-			<!--		<l:VerticalLayout class="sapUiContentPadding" width="100%">-->
-			<!--			<Label text="FROM"/>-->
-			<!--			<Input id="input1" type="Text" placeholder="Enter a Last Name" class="sapUiSmallMarginBottom"-->
-			<!--			change="changeLast"/>-->
-			<!--			<Label text="TO"/>-->
-			<!--			<Input id="input2" type="Text" placeholder="Enter a Last Name" class="sapUiSmallMarginBottom"-->
-			<!--			change="changeLast"/>-->
-			<!--		</l:VerticalLayout>-->
-			<!--	</customControl>-->
-			<!--</ViewSettingsCustomItem>-->
 		</filterItems>
 	</ViewSettingsDialog>
 </core:FragmentDefinition>

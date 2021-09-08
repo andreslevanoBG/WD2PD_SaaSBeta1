@@ -52,10 +52,6 @@
 					</Table>
 				</f:content>
 			</f:SimpleForm>
-			<!--<Label text="Supervisories" labelFor="multiInput2" class="sapUiLargeMarginBegin"/>-->
-			<!--<MultiInput id="multiInput1" width="300px" showValueHelp="false"/>-->
-			<!--<Label text="Workers" labelFor="multiInput2" class="sapUiLargeMarginBegin"/>-->
-			<!--<MultiInput id="multiInput2" width="300px" showValueHelp="false"/>-->
 		</VBox>
 		<buttons>
 			<Button text="Execute" type="Accept" press="execOnDemand"/>

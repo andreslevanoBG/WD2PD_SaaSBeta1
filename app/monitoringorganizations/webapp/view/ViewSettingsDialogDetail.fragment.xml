@@ -2,32 +2,28 @@
 	<ViewSettingsDialog id="viewSettingsDialogDetail" confirm=".searchFilters" cancel="handleCancel" sortDescending="true"
 		resetFilters=".handleResetFilters">
 		<sortItems>
-			<ViewSettingsItem text="Organization" key="id" selected="true"/>
-			<ViewSettingsItem text="Name" key="name" selected="false"/>
-			<ViewSettingsItem text="Company" key="corpname" selected="false"/>
+			<ViewSettingsItem text="{i18n>Organization}" key="id" selected="true"/>
+			<ViewSettingsItem text="{i18n>Name}" key="name" selected="false"/>
+			<ViewSettingsItem text="{i18n>Company}" key="corpname" selected="false"/>
 		</sortItems>
 		<filterItems>
-			<ViewSettingsCustomItem id="idCustomFilterItem" text="Organization" key="name">
+			<ViewSettingsCustomItem id="idCustomFilterItem" text="{i18n>Organization}" key="name">
 				<customControl>
 					<l:VerticalLayout class="sapUiContentPadding" width="100%">
 						<Label text="FROM"/>
-						<Input id="inputorg1"  placeholder="Enter a Org. Name" class="sapUiSmallMarginBottom"
-						change="changeWorkers"/>
+						<Input id="inputorg1" placeholder="{i18n>PlaOrg}" class="sapUiSmallMarginBottom" change="changeOrganizations"/>
 						<Label text="TO"/>
-						<Input id="inputorg2"  placeholder="Enter a Org. Name" class="sapUiSmallMarginBottom"
-						change="changeOrganizations"/>
+						<Input id="inputorg2" placeholder="{i18n>PlaOrg}" class="sapUiSmallMarginBottom" change="changeOrganizations"/>
 					</l:VerticalLayout>
 				</customControl>
 			</ViewSettingsCustomItem>
-			<ViewSettingsCustomItem id="idCustomFilterItem2" text="Company" key="corpname">
+			<ViewSettingsCustomItem id="idCustomFilterItem2" text="{i18n>Company}" key="corpname">
 				<customControl>
 					<l:VerticalLayout class="sapUiContentPadding" width="100%">
 						<Label text="FROM"/>
-						<Input id="input1" type="Text" placeholder="Enter a Company" class="sapUiSmallMarginBottom"
-						change="changeCorp"/>
+						<Input id="input1" type="Text" placeholder="{i18n>PlaComp}" class="sapUiSmallMarginBottom" change="changeCorp"/>
 						<Label text="TO"/>
-						<Input id="input2" type="Text" placeholder="Enter a Company" class="sapUiSmallMarginBottom"
-						change="changeCorp"/>
+						<Input id="input2" type="Text" placeholder="{i18n>PlaComp}" class="sapUiSmallMarginBottom" change="changeCorp"/>
 					</l:VerticalLayout>
 				</customControl>
 			</ViewSettingsCustomItem>

@@ -23,12 +23,17 @@ sap.ui.define([
 
 			var modelBase64 = this.getOwnerComponent().getModel();
 			this.getView().setModel(modelBase64, "Base64");
-			var that = this;
+            var that = this;
+            
+            var oGlobalBusyDialog = new sap.m.BusyDialog();
+            oGlobalBusyDialog.open();
+
 			modelBase64.attachBatchRequestCompleted(function (oEvent) {
 				var requests = oEvent.getParameter('requests');
 				for (var i = 0; i < requests.length; i++) {
 					if (requests[i].url == "Subscription_Settings") {
-						that.readBase64(modelBase64);
+                        that.readBase64(modelBase64);
+                        oGlobalBusyDialog.close();
 					}
 				}
 			});
@@ -501,16 +506,16 @@ sap.ui.define([
 
 			if (dataModel.getData().global_configuration.transformations.organization_code.transformation.length == undefined) {
 				dataModel.getData().global_configuration.transformations.organization_code.transformation = ([{
-					characters: " ",
-					separator: " ",
-					replace_by: " ",
+					characters: "",
+					separator: "",
+					replace_by: "",
 					_secuence: null
 				}]);
 			} else {
 				dataModel.getData().global_configuration.transformations.organization_code.transformation.push({
-					characters: " ",
-					separator: " ",
-					replace_by: " ",
+					characters: "",
+					separator: "",
+					replace_by: "",
 					_secuence: null
 				});
 			}

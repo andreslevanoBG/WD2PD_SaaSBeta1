@@ -1,21 +1,24 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
-	<Dialog id="selSource" state="Success" icon="sap-icon://database" title="XSD Source" contentHeight="150px" contentWidth="300px">
+	<Dialog id="selSource" state="Success" icon="sap-icon://database" title="{i18n>xsdSource}" contentHeight="200px" contentWidth="300px">
 		<VBox class="sapUiTinyMargin">
 			<f:SimpleForm id="SimpleFormChangeee4545" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="4" labelSpanL="4"
 				labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2"
 				columnsL="2" columnsM="1" singleContainerFullSize="false">
 				<f:content>
-					<Label labelFor="sourXsdPath" text="Select Source"/>
+					<Label labelFor="sourXsdPath" text="{i18n>selSource}"/>
 					<Select id="sourXsdPath" items="{ path: '/Di_Template_Mapping_Sources', sorter: { path: 'text', descending: false }}"
 						enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }">
 						<core:Item key="{code}" text="{text}"/>
 					</Select>
+					<CheckBox id="constSource" text="{i18n>constant}" select="selectConst" />
+					<Label labelFor="valueCte" text="{i18n>value}"/>
+					<Input id="valueCte" visible="false" />
 				</f:content>
 			</f:SimpleForm>
 		</VBox>
 		<buttons>
-			<Button text="OK" type="Accept" press="selecSource"/>
-			<Button text="Cancel" type="Reject" press="cancelSelSource"/>
+			<Button text="{i18n>ok}" type="Accept" press="selecSource"/>
+			<Button text="{i18n>cancel}" type="Reject" press="cancelSelSource"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

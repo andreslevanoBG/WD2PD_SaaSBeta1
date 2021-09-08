@@ -10,8 +10,6 @@
 				text="{i18n>masterSort1}"
 				key="uuid"
 				selected="true"/>
-
 		</sortItems>
-
 	</ViewSettingsDialog>
 </core:FragmentDefinition>

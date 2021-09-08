@@ -1,72 +1,71 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
-	<Dialog id="newSigner" state="Success" icon="sap-icon://add-activity-2" title="New Signer" contentHeight="450px" contentWidth="500px">
+	<Dialog id="newSigner" state="Success" icon="sap-icon://add-activity-2" title="{i18n>newSigner}" contentHeight="450px" contentWidth="500px">
 		<VBox class="sapUiTinyMargin">
 			<f:SimpleForm id="SimpleFormChange46546" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="4" labelSpanL="4"
 				labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2"
 				columnsL="2" columnsM="1" singleContainerFullSize="false">
 				<f:content>
-					<!--<core:Title text="Configuration"/>-->
-					<Label labelFor="Signature_Type" text="Signature Type"/>
+					<Label labelFor="Signature_Type" text="{i18n>sinType}"/>
 					<Select id="Signature_Type" width="300px" change="changeSignType" selectedKey="{ path: 'signer>/type'}">
-						<core:Item key="organization" text="organization"/>
-						<core:Item key="employee" text="employee"/>
-						<core:Item key="manager" text="manager"/>
-						<core:Item key="external" text="external"/>
+						<core:Item key="organization" text="{i18n>organization}"/>
+						<core:Item key="employee" text="{i18n>employee}"/>
+						<core:Item key="manager" text="{i18n>manager}"/>
+						<core:Item key="external" text="{i18n>external}"/>
 					</Select>
-					<Label labelFor="Sign_Order" text="Signing Order"/>
-					<Input id="Sign_Order" type="Number" required="true" value="{ path: 'signer>/signing_order'}"/>
-					<Label labelFor="Pdf_Sign_Field" text="Pdf Sign Field"/>
+					<Label labelFor="Sign_Order" text="{i18n>sinOrder}"/>
+					<Input id="Sign_Order" type="Number" enabled="false" required="true" value="{ path: 'signer>/signing_order'}"/>
+					<Label labelFor="Pdf_Sign_Field" text="{i18n>pdfSing}"/>
 					<Input id="Pdf_Sign_Field" required="true" value="{ path: 'signer>/pdf_sign_field'}"/>
-					<Button id="btnCoord" type="Attention" text="Select Sign Field Coordenates" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }" press="selectCoordenates"/>
-					<Label text="Sign Field Page" labelFor="sfpage" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/> 
+					<Button id="btnCoord" type="Attention" text="{i18n>selSignFieCoord}" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }" press="selectCoordenates"/>
+					<Label text="{i18n>sigPage}" labelFor="sfpage" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/> 
 					<Input id="sfpage"  required="true" enabled="false" width="30%" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"
 					value="{ parts: [{path: 'signer>/generate_pdf_sign_field/page'}, { path: 'signer>/generate_pdf_sign_field/llx'}] ,formatter: '.formatter.lastPage' }"/>
-					<Label text="Lower Left Corner Coordenates" labelFor="llx" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/>
+					<Label text="{i18n>lowLeft}" labelFor="llx" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/>
 					<HBox alignItems="Center" width="auto" height="auto" justifyContent="Start" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }" displayInline="false">
 						<items>
 							<Input id="llx" type="Number" required="true" enabled="false" width="60%" value="{ path: 'signer>/generate_pdf_sign_field/llx'}" class="sapUiSmallMarginEnd"/>
 							<Input id="lly" type="Number" enabled="false" width="60%" class="sapUiSmallMarginEnd" value="{ path: 'signer>/generate_pdf_sign_field/lly'}"/>
 						</items>
 					</HBox>
-					<Label text="Upper Right Corner Coordenates" labelFor="upx" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/>
+					<Label text="{i18n>uppRight}" labelFor="upx" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/>
 					<HBox alignItems="Center" width="auto" height="auto" justifyContent="Start" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }" displayInline="false">
 						<items>
 							<Input id="upx" required="true" type="Number" enabled="false" width="60%" class="sapUiSmallMarginEnd" value="{ path: 'signer>/generate_pdf_sign_field/urx'}"/>
 							<Input id="upy" type="Number" enabled="false" width="60%" class="sapUiSmallMarginEnd" value="{ path: 'signer>/generate_pdf_sign_field/ury'}"/>
 						</items>
 					</HBox>
-					<Label labelFor="Reg_Reference" text="Reg. Reference"/>
+					<Label labelFor="Reg_Reference" text="{i18n>regRef}"/>
 					<Input id="Reg_Reference" required="false" visible="false" value="{ path: 'signer>/registration_reference'}"/>
-					<Label labelFor="Tech_Id" text="Technical Id"/>
+					<Label labelFor="Tech_Id" text="{i18n>techID}"/>
 					<Input id="Tech_Id" required="false" visible="false" value="{ path: 'signer>/technical_id'}"/>
-					<Label labelFor="Email_address" text="Email Address"/>
+					<Label labelFor="Email_address" text="{i18n>emailAd}"/>
 					<Input id="Email_address" required="true" value="{ path: 'signer>/email_address'}"/>
-					<Label labelFor="Phone_number" text="Phone Number"/>
+					<Label labelFor="Phone_number" text="{i18n>phoneNu}"/>
 					<Input id="Phone_number" type="Number" required="false" visible="false" value="{ path: 'signer>/phone_number'}"/>
-					<Label labelFor="First_name" text="First Name"/>
+					<Label labelFor="First_name" text="{i18n>firstNa}"/>
 					<Input id="First_name" required="false" visible="false" value="{ path: 'signer>/first_name'}"/>
-					<Label labelFor="Last_name" text="Last Name"/>
+					<Label labelFor="Last_name" text="{i18n>lastNa}"/>
 					<Input id="Last_name" required="false" visible="false" value="{ path: 'signer>/last_name'}"/>
-					<Label id="Language_label" labelFor="Language_Sign" text="Language" visible="false"/>
+					<Label id="Language_label" labelFor="Language_Sign" text="{i18n>langu}" visible="false"/>
 					<Select id="Language_Sign" width="300px" visible="false" selectedKey="{ path: 'signer>/language'}">
-						<core:Item key="nl" text="Dutch"/>
-						<core:Item key="en" text="English"/>
-						<core:Item key="fr" text="French"/>
-						<core:Item key="de" text="German"/>
-						<core:Item key="it" text="Italian"/>
-						<core:Item key="nb" text="Norwegian"/>
-						<core:Item key="pt_BR" text="Portuguese (Brazil)"/>
-						<core:Item key="es" text="Spanish"/>
+						<core:Item key="nl" text="{i18n>dutch}"/>
+						<core:Item key="en" text="{i18n>english}"/>
+						<core:Item key="fr" text="{i18n>french}"/>
+						<core:Item key="de" text="{i18n>german}"/>
+						<core:Item key="it" text="{i18n>italian}"/>
+						<core:Item key="nb" text="{i18n>norwegian}"/>
+						<core:Item key="pt_BR" text="{i18n>portu}"/>
+						<core:Item key="es" text="{i18n>spanish}"/>
 					</Select>
-					<CheckBox id="checkSMSnot" text="With SMS Notification" visible="false" select="selectSMS" selected="{ path: 'signer>/with_sms_notification'}"/>
-					<CheckBox id="checkSMSau" text="With SMS Authentication" visible="false" select="selectSMS" selected="{ path: 'signer>/with_sms_authentication'}"/>
-					<CheckBox id="checkSMSsend" text="Send Signed Document" selected="{ path: 'signer>/send_signed_document'}"/>
+					<CheckBox id="checkSMSnot" text="{i18n>smsNot}" visible="false" select="selectSMS" selected="{ path: 'signer>/with_sms_notification'}"/>
+					<CheckBox id="checkSMSau" text="{i18n>smsAut}" visible="false" select="selectSMS" selected="{ path: 'signer>/with_sms_authentication'}"/>
+					<CheckBox id="checkSMSsend" text="{i18n>sendSig}" selected="{ path: 'signer>/send_signed_document'}"/>
 				</f:content>
 			</f:SimpleForm>
 		</VBox>
 		<buttons>
-			<Button text="Add" type="Accept" press="execNewSigner"/>
-			<Button text="Cancel" type="Reject" press="cancelNewSigner"/>
+			<Button text="{i18n>add}" type="Accept" press="execNewSigner"/>
+			<Button text="{i18n>cancel}" type="Reject" press="cancelNewSigner"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

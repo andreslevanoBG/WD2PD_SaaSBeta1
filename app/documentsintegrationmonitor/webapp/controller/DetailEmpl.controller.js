@@ -247,7 +247,7 @@ sap.ui.define([
                     }
                     that.getView().byId("tabfSuc").setCount(scount);
                     that.getView().byId("tabfErr").setCount(ecount);
-
+                    
                     that.getCounters();
                 },
                 error: function (oError) {
@@ -738,6 +738,7 @@ sap.ui.define([
                 aCaptions = [];
             if (this.byId("viewSettingsDialogDetailEmpl")) {
                 aFilterItems = this.byId("viewSettingsDialogDetailEmpl").getFilterItems();
+
                 /*
                 var vLayout = this.byId("viewSettingsDialogDetailEmpl").getFilterItems()[0].getCustomControl();
                 var workerfrom = vLayout.getContent()[1].getValue();
@@ -816,7 +817,7 @@ sap.ui.define([
                         new Filter(aFilterItems[2].getKey(), FilterOperator.BT, lastfrom, lastto)
                     ], true));
                 }
-
+                
                 var sortItems = this.byId("viewSettingsDialogDetailEmpl").getSortItems();
                 var sortItem;
                 sortItems.forEach(function (oItem) {
@@ -829,9 +830,9 @@ sap.ui.define([
 
             var keySel = this.getView().byId("iconTab").getSelectedKey();
             if (keySel == "Suc") {
-                aFilters.push(new Filter("status", FilterOperator.EQ, "S"));
+                aFilters.push(new Filter("last_status", FilterOperator.EQ, "S"));
             } else if (keySel == "Err") {
-                aFilters.push(new Filter("status", FilterOperator.EQ, "E"));
+                aFilters.push(new Filter("last_status", FilterOperator.EQ, "E"));
             }
 
             var query = this.getView().byId("search").getValue();
@@ -1054,12 +1055,12 @@ sap.ui.define([
             localCounter.oData.oCounterAll = oCountAll;
             localCounter.oData.oCounterSuccess = oCountSuccess;
             localCounter.oData.oCounterError = oCountError;
-            this.getView().setModel(localCounter, "counters");
-
+            this.getView().setModel(localCounter, "counters"); 
+            
             this.getView().byId("tabfAll").setCount(oCountAll);
             this.getView().byId("tabfSuc").setCount(oCountSuccess);
             this.getView().byId("tabfErr").setCount(oCountError);
-            
+
         }
     });
 

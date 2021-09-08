@@ -74,28 +74,28 @@
     ],
     "role-collections": [
         {
-            "name": "wd2pdsaascbg_Service",
+            "name": "wd2pdsaas_Service",
             "description": "Service access",
             "role-template-references": [
                 "$XSAPPNAME.Service"
             ]
         },
         {
-            "name": "wd2pdsaascbg_Workers",
+            "name": "wd2pdsaas_Workers",
             "description": "Workers apps Access",
             "role-template-references": [
                 "$XSAPPNAME.Workers"
             ]
         },
         {
-            "name": "wd2pdsaascbg_Organizations",
+            "name": "wd2pdsaas_Organizations",
             "description": "Organizations apps Access",
             "role-template-references": [
                 "$XSAPPNAME.Organizations"
             ]
         },
         {
-            "name": "wd2pdsaascbg_Users",
+            "name": "wd2pdsaas_Users",
             "description": "Users apps Access",
             "role-template-references": [
                 "$XSAPPNAME.Users"

@@ -14,17 +14,19 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 			var vThat = this;
 			var vWindow = window;
 
-			// var dataModel = this.getOwnerComponent().getModel("my_global_json_model");
-			// this.getView().setModel(dataModel, "DataModel");
-
 			var modelBase64 = this.getOwnerComponent().getModel();
 			this.getView().setModel(modelBase64, "Base64");
-			var that = this;
+            var that = this;
+            
+            var oGlobalBusyDialog = new sap.m.BusyDialog();
+            oGlobalBusyDialog.open();
+            
 			modelBase64.attachBatchRequestCompleted(function (oEvent) {
 				var requests = oEvent.getParameter('requests');
 				for(var i = 0; i < requests.length; i++){
 					if(requests[i].url == "Subscription_Settings"){
-						that.readBase64(modelBase64);	
+                        that.readBase64(modelBase64);	
+                        oGlobalBusyDialog.close();
 					}
 				}
 			});
@@ -485,7 +487,8 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+                sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
+
 			}
 		},
 		addRow_zipcode: function (oArg) {
@@ -522,7 +525,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 			}
 		},
 		addRow_email: function (oArg) {
@@ -563,7 +566,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 			}
 		},
 		addRow_address: function (oArg) {
@@ -602,7 +605,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 			}
 		},
 		addRow_country: function (oArg) {
@@ -616,7 +619,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 						if (oItems[i].getAggregation("cells") !== null) {
 							var oItemKey = oItems[i].getAggregation("cells")[0].getProperty("text");
 							if (oItemKey === oSelected.getProperty("key")) {
-								sap.m.MessageToast.show('This country is already selected.');
+								sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage2"));
 								aux = false;
 								break;
 							} else {
@@ -648,7 +651,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					this.getView().getModel("CountryLogic").refresh(); //which will add the new record	
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a country to add.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage3"));
 			}
 		},
 		deleteRow_country: function (oArg) {
@@ -672,7 +675,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 			}
 		},
 		addRow_trans: function (oArg) {
@@ -680,16 +683,16 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 
 			if (dataModel.getData().global_configuration.transformations.organization_code.transformation.length === undefined) {
 				dataModel.getData().global_configuration.transformations.organization_code.transformation = ([{
-					characters: " ",
-					separator: " ",
-					replace_by: " ",
+					characters: "",
+					separator: "",
+					replace_by: "",
 					_secuence: null
 				}]);
 			} else {
 				dataModel.getData().global_configuration.transformations.organization_code.transformation.push({
-					characters: " ",
-					separator: " ",
-					replace_by: " ",
+					characters: "",
+					separator: "",
+					replace_by: "",
 					_secuence: null
 				});
 			}
@@ -713,7 +716,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 			}
 		},
 		_convertBase64toXML: function (oObject) {
@@ -931,14 +934,14 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 				var sUrl = "/Configurations(pck_code='SYN_WORKER',conf_code='SCE-CONFIG')";
 				vServiceModel.update(sUrl, changedData, {
 					success: function (oData, response) {
-						sap.m.MessageToast.show('Workers Configurations updated.');
+						sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage4"));
 					},
 					error: function (oData, response) {
-						sap.m.MessageToast.show('Data can not be updated. Please try again');
+						sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage5"));
 					}
 				});
 			} else {
-				sap.m.MessageToast.show('There is a field with wrong value.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage6"));
 			}
 		},
 		createJSON: function () {

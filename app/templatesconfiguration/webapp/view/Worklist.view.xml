@@ -5,7 +5,8 @@
 			<Title text="{i18n>worklistTitle}" level="H2"/>
 		</semantic:titleHeading>
 		<semantic:content>
-			<Table id="table" width="auto" items="{ path: 'templates>/', sorter:[{ path: 'id', descending: false }, { path: 'active_version', descending: true }] }"
+			<Table id="table" width="auto"
+				items="{ path: 'templates>/', sorter:[{ path: 'id', descending: false }, { path: 'active_version', descending: true }] }"
 				noDataText="{worklistView>/tableNoDataText}" busyIndicatorDelay="{worklistView>/tableBusyDelay}" growing="true" growingScrollToLoad="true"
 				updateFinished=".onUpdateFinished">
 				<headerToolbar>
@@ -18,7 +19,15 @@
 								<OverflowToolbarLayoutData maxWidth="200px" priority="NeverOverflow"/>
 							</layoutData>
 						</SearchField>
-						<Button text="Business Processes" enabled="true" icon="sap-icon://business-by-design" type="Accept" press="onBPs"/>
+						<MenuButton text="{i18n>loadMaster}" type="Accept">
+							<menu>
+								<Menu>
+									<MenuItem text="{i18n>busProc}" icon="sap-icon://business-by-design" press="onBPs"/>
+									<MenuItem text="{i18n>workCF}" icon="sap-icon://list" key="WD-WORKERS-CF" press="onListValues"/>
+								</Menu>
+							</menu>
+						</MenuButton>
+						<!--<Button text="{i18n>busProc}" enabled="true" icon="sap-icon://business-by-design" type="Accept" press="onBPs"/>-->
 						<Button id="sortButtonTemp" text="{i18n>Sort}" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true"
 							visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
 						<Button id="filterButtonTemp" text="{i18n>Filter}" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto" enabled="true"
@@ -27,34 +36,34 @@
 				</headerToolbar>
 				<columns>
 					<Column id="Template" width="auto" hAlign="Center">
-						<Text text="Template Name"/>
+						<Text text="{i18n>tempName}"/>
 					</Column>
 					<Column id="Description" width="auto" hAlign="Center">
-						<Text text="Description" id="nameColumnTitle"/>
+						<Text text="{i18n>description}" id="nameColumnTitle"/>
 					</Column>
 					<Column id="Format" width="70px" hAlign="Center" visible="false">
-						<Text text="Format"/>
+						<Text text="{i18n>format}"/>
 					</Column>
 					<Column id="activeVersion" width="70px" hAlign="Center">
-						<Text text="Version"/>
+						<Text text="{i18n>version}"/>
 					</Column>
 					<Column id="active" width="70px" hAlign="Center">
-						<Text text="Active"/>
+						<Text text="{i18n>active}"/>
 					</Column>
 					<Column id="exist_pers" width="100px" hAlign="Center">
-						<Text text="Configured"/>
+						<Text text="{i18n>configured}"/>
 					</Column>
 					<Column id="exist_PD" width="100px" hAlign="Center">
-						<Text text="In PeopleDoc"/>
+						<Text text="{i18n>inPD}"/>
 					</Column>
 					<Column id="Planned" width="100px" hAlign="Center">
-						<Text text="Planned"/>
+						<Text text="{i18n>planned}"/>
 					</Column>
 					<Column id="updated" width="160px" hAlign="Center">
-						<Text text="Updated on/at"/>
+						<Text text="{i18n>updated}"/>
 					</Column>
 					<Column id="actions" width="70px" hAlign="Center">
-						<Text text="Delete"/>
+						<Text text="{i18n>delete}"/>
 					</Column>
 				</columns>
 				<items>
@@ -78,9 +87,10 @@
 							<ObjectStatus icon="{ path: 'templates>planned', formatter: '.formatter.EnabStatusIconX4' }"
 								tooltip="{ path: 'templates>planned', formatter: '.formatter.toolPlanned' }"
 								state="{ path: 'templates>planned', formatter: '.formatter.EnabStatusX2' }" visible="true" class="sapUiSmallMarginTop"/>
-								<Text text="{ path: 'templates>updated_at', formatter: '.formatter.Update' }"/>
+							<Text text="{ path: 'templates>updated_at', formatter: '.formatter.Update' }"/>
 							<Button id="deleteTempPers" tooltip="Delete Template" text="" icon="sap-icon://delete"
-								enabled="{ parts: [{path: 'templates>active'}, {path: 'templates>exist_pers'}], formatter: '.formatter.DeleteTemplate' }" class="sapUiTinyMargin" press="deleteTemplate"/>
+								enabled="{ parts: [{path: 'templates>active'}, {path: 'templates>exist_pers'}], formatter: '.formatter.DeleteTemplate' }"
+								class="sapUiTinyMargin" press="deleteTemplate"/>
 						</cells>
 					</ColumnListItem>
 				</items>

@@ -43,7 +43,7 @@
 			<IconTabBar id="iconTab" expandable="false" expanded="true" applyContentPadding="false" backgroundDesign="Solid" upperCase="false"
 				visible="true" selectedKey="Ok" select="searchFilters">
 				<items>
-					<IconTabFilter icon="sap-icon://drop-down-list" iconColor="Default" text="All Items" count="{numberOfItems}" design="Vertical"
+					<IconTabFilter id="tabfAll" icon="sap-icon://drop-down-list" iconColor="Default" text="All Items" count="" design="Vertical"
 						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content></content>
 					</IconTabFilter>
@@ -74,13 +74,14 @@
                             }, {
                                 path: 'template/template_version', 
                                 descending: true
-                            }]}" 
+                            }
+                            ]}" 
                         class="sapUiResponsiveMargin">
 						<infoToolbar/>
 						<headerToolbar>
 							<OverflowToolbar width="auto" height="auto" design="Transparent" visible="true" enabled="true">
 								<content>
-									<Title text="" titleStyle="Auto" width="auto" textAlign="Begin" visible="true" wrapping="false"/>
+									<Title text="Executed Templates" titleStyle="Auto" width="auto" textAlign="Begin" visible="true" wrapping="false"/>
 									<ToolbarSpacer width=""/>
 									<Button id="reproc" text="Reprocessing" type="Reject" icon="sap-icon://process" iconFirst="true" width="auto" visible="true"
 									press="onActionRepro2" iconDensityAware="false"/>
@@ -171,13 +172,15 @@
                             -->
 						</columns>
 						<items>
-							<ColumnListItem type="Navigation" press= ".onSelectionChangeEmplDet" visible="true">
+							<ColumnListItem type="Navigation" press=".onSelectionChangeEmplDet" visible="true">
 								<cells>
                                     <Text text="{items>template/template_id}"/> 
                                     <Text text="{items>template/doc_title}"/> 
                                     <Text text="{items>template/description}"/> 
                                     <Text text="{items>template/template_version}"/> 
-                                    <Text text="{items>last_status}"/> 
+                                    <ObjectStatus text="{ path:'items>last_status', formatter: '.formatter.ItemStatusText3'}" 
+                                    state="{ path: 'items>last_status', formatter: '.formatter.ItemStatusText3' }" 
+                                    icon="{ path: 'items>last_status', formatter: '.formatter.IconError' }"/> 
                                     <!--<Text text="{ parts:[{path:'items>createdAt'},{path:'status'}], formatter: '.formatter.Startdate' }"/> -->
                                     <!-- <Text text="{items>createdBy}"/> -->
                                     <!--

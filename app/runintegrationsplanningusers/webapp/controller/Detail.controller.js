@@ -7,9 +7,7 @@ sap.ui.define([
 ], function (BaseController, JSONModel, formatter, mobileLibrary, Fragment) {
 	"use strict";
 
-	// shortcut for sap.m.URLHelper
 	var URLHelper = mobileLibrary.URLHelper;
-	//	var adataOld = {};
 
 	return BaseController.extend("shapein.RunIntegrationPlanningUsers.controller.Detail", {
 
@@ -18,28 +16,19 @@ sap.ui.define([
 		oldKey: "",
 		_formFragments: null,
 
-		/* =========================================================== */
-		/* lifecycle methods                                           */
-		/* =========================================================== */
-
+		/* Al instanciar el objeto */
 		onInit: function () {
-			// Model used to manipulate control states. The chosen values make sure,
-			// detail page is busy indication immediately so there is no break in
-			// between the busy indication for loading the view's meta data
 			var oViewModel = new JSONModel({
 				busy: false,
 				delay: 0,
 				lineItemListTitle: this.getResourceBundle().getText("detailLineItemTableHeading")
 			});
-
 			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
-
 			this.setModel(oViewModel, "detailView");
 			this.oSemanticPage = this.byId("detailPage");
 			this.oEditAction = this.byId("editAction");
 			this.oDeleteAction = this.byId("deleteAction");
 			this.showCustomActions(false);
-
 			var newPlanModel = new JSONModel({
 				execute: true,
 				begda: "2020-01-01",
@@ -53,9 +42,7 @@ sap.ui.define([
 				time_end: "23:59:00",
 				time_zone: "UTC"
 			});
-
 			this.setModel(newPlanModel, "newPlan");
-
 			var daysModel = new JSONModel();
 			var data = [];
 			var item = {};
@@ -69,129 +56,58 @@ sap.ui.define([
 			this.setModel(new JSONModel(), "adata");
 			this.setModel(daysModel, "days");
 			this.getOwnerComponent().getModel().metadataLoaded().then(this._onMetadataLoaded.bind(this));
-			//	this._showFormFragment("DisplayData");
-
 			this.createFragmentsData();
 		},
 
+		/* Al salir de la vista */
 		onExit: function () {
 			this._formFragments["DisplayData"].destroy();
 			this._formFragments["ChangeData"].destroy();
 			this._formFragments = null;
 		},
 
+		/* Instanciamos los fragmentos para la visualización o edición de los aDatas */
 		createFragmentsData: function () {
 			var sFragmentName = "DisplayData";
 			this._formFragments = [];
-		//	if (!this._formFragments["DisplayData"]) {
-				var fragmentName = "shapein.RunIntegrationPlanningUsers.view.fragment." + sFragmentName;
-				Fragment.load({
-					id: "displayData",
-					name: fragmentName,
-					controller: this
-				}).then(function (oFragment) {
-					// connect dialog to the root view of this component (models, lifecycle)
-					this.getView().addDependent(oFragment);
-					this._formFragments[sFragmentName] = oFragment;
-					this._toggleButtonsAndView(false);
-					//return this._formFragments[sFragmentName];
-				}.bind(this));
-		//	}
-
+			var fragmentName = "shapein.RunIntegrationPlanningUsers.view.fragment." + sFragmentName;
+			Fragment.load({
+				id: "displayData",
+				name: fragmentName,
+				controller: this
+			}).then(function (oFragment) {
+				this.getView().addDependent(oFragment);
+				this._formFragments[sFragmentName] = oFragment;
+				this._toggleButtonsAndView(false);
+			}.bind(this));
 			var sFragmentName2 = "ChangeData";
 			var fragmentName2 = "shapein.RunIntegrationPlanningUsers.view.fragment." + sFragmentName2;
-		//	if (!this._formFragments["ChangeData"]) {
-				Fragment.load({
-					id: "changeData",
-					name: fragmentName2,
-					controller: this
-				}).then(function (oFragment) {
-					// connect dialog to the root view of this component (models, lifecycle)
-					this.getView().addDependent(oFragment);
-					// var fnValidator = function (args) {
-					// 	var text = args.text;
-					// 	return new sap.m.Token({
-					// 		key: text,
-					// 		text: text
-					// 	});
-					// };
-			//		var multi = Fragment.byId("changeData", "multiInput11");
-			//		multi.addValidator(fnValidator);
-					this._formFragments[sFragmentName2] = oFragment;
-					//	return this._formFragments[sFragmentName];
-				}.bind(this));
-	//		}
+			Fragment.load({
+				id: "changeData",
+				name: fragmentName2,
+				controller: this
+			}).then(function (oFragment) {
+				this.getView().addDependent(oFragment);
+				this._formFragments[sFragmentName2] = oFragment;
+			}.bind(this));
 		},
 
-		/* =========================================================== */
-		/* event handlers                                              */
-		/* =========================================================== */
-
-		/**
-		 * Event handler when the share by E-Mail button has been clicked
-		 * @public
-		 */
-		onSendEmailPress: function () {
-			var oViewModel = this.getModel("detailView");
-
-			URLHelper.triggerEmail(
-				null,
-				oViewModel.getProperty("/shareSendEmailSubject"),
-				oViewModel.getProperty("/shareSendEmailMessage")
-			);
-		},
-
-		/**
-		 * Event handler when the share in JAM button has been clicked
-		 * @public
-		 */
-		onShareInJamPress: function () {
-			var oViewModel = this.getModel("detailView"),
-				oShareDialog = sap.ui.getCore().createComponent({
-					name: "sap.collaboration.components.fiori.sharing.dialog",
-					settings: {
-						object: {
-							id: location.href,
-							share: oViewModel.getProperty("/shareOnJamTitle")
-						}
-					}
-				});
-
-			oShareDialog.open();
-		},
-
-		/**
-		 * Updates the item count within the line item table's header
-		 * @param {object} oEvent an event containing the total number of items in the list
-		 * @private
-		 */
+		/* Función al finalizar la carga del listado de items */
 		onListUpdateFinished: function (oEvent) {
 			var sTitle,
 				iTotalItems = oEvent.getParameter("total"),
 				oViewModel = this.getModel("detailView");
-
-			// only update the counter if the length is final
 			if (this.byId("lineItemsList").getBinding("items").isLengthFinal()) {
 				if (iTotalItems) {
 					sTitle = this.getResourceBundle().getText("detailLineItemTableHeadingCount", [iTotalItems]);
 				} else {
-					//Display 'Line Items' instead of 'Line items (0)'
 					sTitle = this.getResourceBundle().getText("detailLineItemTableHeading");
 				}
 				oViewModel.setProperty("/lineItemListTitle", sTitle);
 			}
 		},
 
-		/* =========================================================== */
-		/* begin: internal methods                                     */
-		/* =========================================================== */
-
-		/**
-		 * Binds the view to the object path and expands the aggregated line items.
-		 * @function
-		 * @param {sap.ui.base.Event} oEvent pattern match event in route 'object'
-		 * @private
-		 */
+		/* Evento al matchear el objeto seleccionado */
 		_onObjectMatched: function (oEvent) {
 			var sObjectId = oEvent.getParameter("arguments").objectId;
 			this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
@@ -203,20 +119,10 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		/**
-		 * Binds the view to the object path. Makes sure that detail view displays
-		 * a busy indicator while data for the corresponding element binding is loaded.
-		 * @function
-		 * @param {string} sObjectPath path to the object to be bound to the view.
-		 * @private
-		 */
+		/* Bindeamos la vista al objeto seleccionado con sus detalles */
 		_bindView: function (sObjectPath) {
-			// Set busy indicator during view binding
 			var oViewModel = this.getModel("detailView");
-
-			// If the view was not bound yet its not busy, only if the binding requests data it is set to busy again
 			oViewModel.setProperty("/busy", false);
-
 			this.getView().bindElement({
 				path: sObjectPath,
 				events: {
@@ -231,32 +137,26 @@ sap.ui.define([
 			});
 		},
 
+		/* Al cambiar el detalle del objeto a mostrar */
 		_onBindingChange: function () {
 			var oView = this.getView(),
 				oElementBinding = oView.getElementBinding();
-
-			// No data for the binding
 			if (!oElementBinding.getBoundContext()) {
 				this.getRouter().getTargets().display("detailObjectNotFound");
-				// if object could not be found, the selection in the master list
-				// does not make sense anymore.
 				this.getOwnerComponent().oListSelector.clearMasterListSelection();
 				return;
 			}
-
 			var sPath = oElementBinding.getPath(),
 				oResourceBundle = this.getResourceBundle(),
 				oObject = oView.getModel().getObject(sPath),
 				sObjectId = oObject.uuid,
 				sObjectName = oObject.uuid,
 				oViewModel = this.getModel("detailView");
-
 			if (oObject.enable) {
 				this.oldKey = "A";
 			} else {
 				this.oldKey = "U";
 			}
-
 			var oModel = this.getOwnerComponent().getModel();
 			var adataModel = this.getView().getModel("adata");
 			var that = this;
@@ -322,7 +222,6 @@ sap.ui.define([
 							break;
 						default:
 						}
-
 					});
 					that.adataOld = item2;
 					adataModel.setData(item);
@@ -359,72 +258,31 @@ sap.ui.define([
 				oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, location.href]));
 		},
 
+		/* Los metadatas son cargados inicializa */
 		_onMetadataLoaded: function () {
-			// Store original busy indicator delay for the detail view
 			var iOriginalViewBusyDelay = this.getView().getBusyIndicatorDelay(),
 				oViewModel = this.getModel("detailView"),
 				oLineItemTable = this.byId("lineItemsList"),
 				iOriginalLineItemTableBusyDelay = oLineItemTable.getBusyIndicatorDelay();
-
-			// Make sure busy indicator is displayed immediately when
-			// detail view is displayed for the first time
 			oViewModel.setProperty("/delay", 0);
 			oViewModel.setProperty("/lineItemTableDelay", 0);
-
 			oLineItemTable.attachEventOnce("updateFinished", function () {
-				// Restore original busy indicator delay for line item table
 				oViewModel.setProperty("/lineItemTableDelay", iOriginalLineItemTableBusyDelay);
 			});
-
-			// Binding the view will set it to not busy - so the view is always busy if it is not bound
 			oViewModel.setProperty("/busy", true);
-			// Restore original busy indicator delay for the detail view
 			oViewModel.setProperty("/delay", iOriginalViewBusyDelay);
 			this.byId('edit').setEnabled(true);
 		},
 
+		/* Obtenemos la instancia del fragmento indicado */
 		_getFormFragment: function (sFragmentName) {
 			var oFormFragment = this._formFragments[sFragmentName];
 			if (oFormFragment) {
 				return oFormFragment;
 			}
-			// var fragmentName = "shapein.RunIntegrationPlanningWorkers.view.fragment." + sFragmentName;
-
-			// //this.getView().addDependent(oFormFragment);
-			// if (sFragmentName == "ChangeData") {
-			// 	Fragment.load({
-			// 		id: "changeData",
-			// 		name: fragmentName,
-			// 		controller: this
-			// 	}).then(function (oFragment) {
-			// 		// connect dialog to the root view of this component (models, lifecycle)
-			// 		this.getView().addDependent(oFragment);
-			// 		var fnValidator = function (args) {
-			// 			var text = args.text;
-			// 			return new sap.m.Token({
-			// 				key: text,
-			// 				text: text
-			// 			});
-			// 		};
-			// 		var multi = Fragment.byId("changeData", "multiInput11");
-			// 		multi.addValidator(fnValidator);
-			// 		this._formFragments[sFragmentName] = oFragment;
-			// 		return this._formFragments[sFragmentName];
-			// 	}.bind(this));
-			// } else {
-			// 	Fragment.load({
-			// 		id: "displayData",
-			// 		name: fragmentName,
-			// 		controller: this
-			// 	}).then(function (oFragment) {
-			// 		// connect dialog to the root view of this component (models, lifecycle)
-			// 		this.getView().addDependent(oFragment);
-			// 		this._formFragments[sFragmentName] = oFragment;
-			// 		return this._formFragments[sFragmentName];
-			// 	}.bind(this));
-			// }
 		},
 
+		/* Mostramos el fragmento indicado */
 		_showFormFragment: function (sFragmentName) {
 			var oIconTabFilter = this.byId("icontabData");
 			var content = oIconTabFilter.getContent();
@@ -437,40 +295,31 @@ sap.ui.define([
 			oIconTabFilter.insertContent(conte);
 		},
 
+		/* Al presionar para editar los aData */
 		handleEditPress: function () {
-
-			//Clone the data
-			//	this._oSupplier = Object.assign({}, this.getView().getModel().getData().SupplierCollection[0]);
 			this._toggleButtonsAndView(true);
-
 		},
 
+		/* Gestionar los elementos UI para pasar de Edición a Visualización y viceversa */
 		_toggleButtonsAndView: function (bEdit) {
 			var oView = this.getView();
-
-			// Show the appropriate action buttons
 			oView.byId("edit").setVisible(!bEdit);
 			oView.byId("save").setVisible(bEdit);
 			oView.byId("cancel").setVisible(bEdit);
-			// Set the right form type
 			this._showFormFragment(bEdit ? "ChangeData" : "DisplayData");
 		},
 
+		/* Al Cancelar la Edición de los aData*/
 		handleCancelPress: function () {
-
-			//Restore the data
 			var oModel = this.getView().getModel();
 			var adataModel = this.getView().getModel("adata");
 			var data = Object.assign({}, this.adataOld);
 			adataModel.setData(data);
 			adataModel.refresh();
-			//	oData.SupplierCollection[0] = this._oSupplier;
-
-			//	oModel.setData(oData);
 			this._toggleButtonsAndView(false);
-
 		},
 
+		/* Validación */
 		_validateInputEditA: function (oInput) {
 			var sValueState = "None";
 			var bValidationError = false;
@@ -484,51 +333,45 @@ sap.ui.define([
 			return bValidationError;
 		},
 
+		/* Guardar los valores editados */
 		handleSavePress: function (oEvent) {
 			var adataModel = this.getView().getModel("adata");
 			var adata = adataModel.getData();
 			var oModel = this.getOwnerComponent().getModel();
 			var fragmentId = this.getView().createId("changeData");
-
-			// VALIDACIONES TODO
 			var oView = this.getView(),
 				aInputs = [
 					Fragment.byId("changeData", "dp1"),
 					Fragment.byId("changeData", "dp2"),
 					Fragment.byId("changeData", "dp3"),
 					Fragment.byId("changeData", "dp4")
-					// oView.byId("dp1"),
-					// oView.byId("dp2"),
-					// oView.byId("dp3"),
-					// oView.byId("dp4")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInputEditA(oInput) || bValidationError;
 			}, this);
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("errorVal");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
-			var text = "Are you sure you want to update a Users Planning Adata?";
+			var text = this.getResourceBundle().getText("sureUpdData");
 			var that = this;
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						var oViewModel = that.getModel("detailView");
 						oViewModel.setProperty("/busy", true);
 						var planning_uuid = adataModel.getProperty("/planning_uuid");
-						// UPDATE
 						planning_uuid = that.byId("title").getText();
 						var sPath = "/Integration_Pck_Planning_Adata";
 						oModel.setDeferredGroups(["updateGroup"]);
@@ -567,45 +410,6 @@ sap.ui.define([
 						oModel.update(sPath5, oData5, {
 							groupId: "updateGroup"
 						});
-						// var oData6 = {};
-						// oData6.uuid = adata.ref_id_uuid;
-						// var sPath6 = sPath + "(" + oData6.uuid + ")";
-						// oData6.value = adata.ref_id;
-						// oModel.update(sPath6, oData6, {
-						// 	groupId: "updateGroup"
-						// });
-						// var supervisoriest = Fragment.byId("changeData", "multiInput11").getTokens();
-						// var sPath7 = "/Integration_Pck_Planning_Adata";
-						// for (var i = 0; i < supervisoriest.length; i++) { //Los nuevos
-						// 	var resultado = that.adataOld.supervisories.find(function (supervisory) {
-						// 		return supervisory.Name === supervisoriest[i].getText();
-						// 	});
-						// 	if (!resultado) {
-						// 		var oData7 = {};
-						// 		oData7.planning_uuid = planning_uuid;
-						// 		oData7.level1 = "SUPERVISORIES_ALLOWED";
-						// 		oData7.level2 = "SUPERVISORY";
-						// 		oData7.value = supervisoriest[i].getText();
-						// 		oData7.value2 = null;
-						// 		oModel.create(sPath7, oData7, {
-						// 			groupId: "updateGroup"
-						// 		});
-						// 	}
-						// }
-
-						// for (var j = 0; j < that.adataOld.supervisories.length; j++) { //Los eliminados
-						// 	var resultado2 = supervisoriest.find(function (supervisory) {
-						// 		return supervisory.getText() === that.adataOld.supervisories[j].Name;
-						// 	});
-						// 	if (!resultado2) {
-						// 		var oData8 = {};
-						// 		var sPath8 = sPath + "(" + that.adataOld.supervisories[j].Uuid + ")";
-						// 		oModel.remove(sPath8, oData8, {
-						// 			groupId: "updateGroup"
-						// 		});
-						// 	}
-						// }
-
 						that._toggleButtonsAndView(false);
 						oModel.submitChanges({
 							groupId: "updateGroup",
@@ -628,13 +432,16 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Manejar la respuesta exitosa del batch de grabación */
 		successUpdateBatch: function (oData, response) {
-			sap.m.MessageToast.show("Adata updated succesfully.");
+			var text = this.getResourceBundle().getText("updSucData");
+			sap.m.MessageToast.show(text);
 			var oViewModel = this.getModel("detailView");
 			oViewModel.setProperty("/busy", false);
 			this._onBindingChange();
 		},
 
+		/* Manejar la respuesta errónea del batch de grabación */
 		errorUpdateBatch: function (oError) {
 			var oViewModel = this.getModel("detailView");
 			oViewModel.setProperty("/busy", false);
@@ -642,16 +449,14 @@ sap.ui.define([
 
 		},
 
-		/**
-		 * Set the full screen mode to false and navigate to master page
-		 */
+		/* Cerrar la visualización del detalle */
 		onCloseDetailPress: function () {
 			this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreen", false);
-			// No item should be selected on master after detail page is closed
 			this.getOwnerComponent().oListSelector.clearMasterListSelection();
 			this.getRouter().navTo("master");
 		},
 
+		/* Al pulsar para añadir una periodicidad de planificación */
 		onAddPlanD: function () {
 			var data = {
 				execute: true,
@@ -661,43 +466,41 @@ sap.ui.define([
 				ontime: false,
 				periodicity_values: "2-4-6",
 				time_frecuency: "1m",
-				//	time_measure: "m",
 				time_start: "00:00:00",
 				time_end: "23:59:00",
 				time_zone: "UTC"
 			};
-
 			var newPlanModel = this.getModel("newPlan");
+			var text = this.getResourceBundle().getText("newPlanD");
 			newPlanModel.setData(data);
-
 			if (!this.byId("PlanningD")) {
 				Fragment.load({
 					id: this.getView().getId(),
 					name: "shapein.RunIntegrationPlanningUsers.view.fragment.Planning",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					this.byId("createBut").setVisible(true);
 					this.byId("saveBut").setVisible(false);
-					oDialog.setTitle("New Planning D");
+					oDialog.setTitle(text);
 					oDialog.open();
 				}.bind(this));
 			} else {
 				this.byId("createBut").setVisible(true);
 				this.byId("saveBut").setVisible(false);
-				this.byId("PlanningD").setTitle("New Planning D");
+				this.byId("PlanningD").setTitle(text);
 				this.byId("PlanningD").open();
 			}
 		},
 
+		/* Cancelar la planificación */
 		cancelPlan: function (oEvent) {
 			var dialog = oEvent.getSource().getParent();
 			dialog.close();
-
 		},
 
+		/* Evento al modificar si se va a activar o no la planificación*/
 		selExecute: function (oEvent) {
 			var index = oEvent.getParameter("selectedIndex");
 			var NewPlanModel = this.getModel("newPlan");
@@ -708,6 +511,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Evento de cambiar la fecha de inicio de planificación */
 		changeBegda: function (oEvent) {
 			var value = oEvent.getParameter("value");
 			var oInput = oEvent.getSource();
@@ -720,6 +524,7 @@ sap.ui.define([
 			NewPlanModel.setProperty("/begda", value);
 		},
 
+		/* Evento de cambiar la fecha de finalización de planificación */
 		changeEndda: function (oEvent) {
 			var value = oEvent.getParameter("value");
 			var oInput = oEvent.getSource();
@@ -732,6 +537,7 @@ sap.ui.define([
 			NewPlanModel.setProperty("/endda", value);
 		},
 
+		/* Evento al cambiar la selección de días de ejecución de la planificación */
 		selectCheck: function (oEvent) {
 			var source = oEvent.getSource();
 			var text = source.getText();
@@ -764,6 +570,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Evento al finalizar la selección de valores de planificación */
 		handleSelectionFinish: function (oEvent) {
 			var items = oEvent.getParameter("selectedItems");
 			var itemsSel = [];
@@ -776,35 +583,38 @@ sap.ui.define([
 			NewPlanModel.setProperty("/periodicity_valuesM", strValues);
 		},
 
+		/* Borrar una periodicidad de planificación */
 		deletePlanD: function (oEvent) {
 			var sPath = oEvent.getSource().getParent().getParent().getBindingContext().getPath();
 			var itemsModel = this.getView().getModel();
-			var text = "Are you sure?";
+			var text = this.getResourceBundle().getText("sureDelPlanD");
 			var that = this;
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						itemsModel.remove(sPath, {
 							success: function (oData, response) {
-								//var but = oEvent.getSource();
-								sap.m.MessageToast.show("Planning D deleted succesfully.");
+								var texto = that.getResourceBundle().getText("delPlanDSuc");
+								sap.m.MessageToast.show(texto);
 							},
 							error: function (oError) {
 								sap.m.MessageToast.show("Error");
 							}
 						});
 						dialog.close();
-
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -816,6 +626,7 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Evento al cambiar el tipo periodicidad */
 		changePeriodType: function (oEvent) {
 			var selItem = oEvent.getParameter("selectedItem");
 			var itemsCheck = this.byId("days").getItems();
@@ -833,6 +644,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Evento de cambios en la selección */
 		handleSelectionChange: function (oEvent) {
 			var oInput = oEvent.getSource();
 			var sValueState = "None";
@@ -842,6 +654,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Al cambiar las horas de la planificación */
 		timeChange: function (oEvent) {
 			var value = oEvent.getParameter("value");
 			var oInput = oEvent.getSource();
@@ -852,6 +665,7 @@ sap.ui.define([
 			oInput.setValueState(sValueState);
 		},
 
+		/* Al editar una periodicidad de planificación */
 		editPlanD: function (oEvent) {
 			var sPath = oEvent.getSource().getParent().getParent().getBindingContext().getPath();
 			var itemsModel = this.getView().getModel();
@@ -909,12 +723,10 @@ sap.ui.define([
 				ontime: false,
 				periodicity_values: periodicity_values,
 				time_frecuency: time_frecuency,
-				//	time_measure: time_measure,
 				time_start: time_start,
 				time_end: time_end,
 				time_zone: time_zone
 			};
-
 			var newPlanModel = this.getModel("newPlan");
 			newPlanModel.setData(data);
 			if (!this.byId("PlanningD")) {
@@ -923,25 +735,24 @@ sap.ui.define([
 					name: "shapein.RunIntegrationPlanningUsers.view.fragment.Planning",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					this.byId("createBut").setVisible(false);
 					this.byId("saveBut").setVisible(true);
-					oDialog.setTitle("Edit Planning D");
+					var texto = this.getResourceBundle().getText("editPlanD");
+					oDialog.setTitle(texto);
 					oDialog.open();
 				}.bind(this));
 			} else {
 				this.byId("createBut").setVisible(false);
 				this.byId("saveBut").setVisible(true);
-				this.byId("PlanningD").setTitle("Edit Planning D");
+				var texto = this.getResourceBundle().getText("editPlanD");
+				this.byId("PlanningD").setTitle(texto);
 				this.byId("PlanningD").open();
 			}
-			//newPlanModel.setData(data);
-			//sPath = sPath + "/request";
-			//var request = itemsModel.getProperty(sPath);
 		},
 
+		/* Validamos el campo que se le indique para que esté relleno */
 		_validateInput: function (oInput) {
 			var sValueState = "None";
 			var bValidationError = false;
@@ -955,8 +766,8 @@ sap.ui.define([
 			return bValidationError;
 		},
 
+		/* Al salvar la planificación */
 		execPlan: function (oEvent) {
-			// VALIDACIONES TODO
 			var oView = this.getView(),
 				aInputs = [
 					oView.byId("begda"),
@@ -965,21 +776,19 @@ sap.ui.define([
 					oView.byId("TP2")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInput(oInput) || bValidationError;
 			}, this);
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("errorVal");
+				sap.m.MessageBox.alert(text);
 			} else {
 				if (this.byId("periodType").getSelectedItem().getKey() == "M") {
 					var selKeys = this.byId("MC1").getSelectedKeys();
 					if (selKeys.length == 0) {
 						this.byId("MC1").setValueState("Error");
-						sap.m.MessageBox.alert("A validation error has occurred.");
+						var text = this.getResourceBundle().getText("errorVal");
+						sap.m.MessageBox.alert(text);
 						return;
 					} else {
 						this.byId("MC1").setValueState("None");
@@ -996,23 +805,26 @@ sap.ui.define([
 						itemsCheck.forEach(function (item) {
 							item.setValueState("Error");
 						});
-						sap.m.MessageBox.alert("A validation error has occurred.");
+						var text = this.getResourceBundle().getText("errorVal");
+						sap.m.MessageBox.alert(text);
 						return;
 					}
-
 				}
 				var planDialog = oEvent.getSource().getParent();
 				var button = oEvent.getSource().getText();
-				var text = "Are you sure?";
+				var text = this.getResourceBundle().getText("savePlan");
 				var that = this;
+				var tit = this.getResourceBundle().getText("confi");
+				var yes = this.getResourceBundle().getText("yes");
+				var no = this.getResourceBundle().getText("no");
 				var dialog = new sap.m.Dialog({
-					title: 'Confirmation',
+					title: tit,
 					type: 'Message',
 					content: new sap.m.Text({
 						text: text
 					}),
 					beginButton: new sap.m.Button({
-						text: 'Yes',
+						text: yes,
 						press: function () {
 							var uuid = that.byId("title").getText();
 							var NewPlanModel = that.getModel("newPlan");
@@ -1033,7 +845,6 @@ sap.ui.define([
 								seconds = "0" + String(seconds);
 							}
 							var timeS = hours + ":" + minutes + ":" + seconds;
-							//	var timeE = NewPlanModel.getProperty("/time_end");
 							var tp2 = that.byId("TP2").getDateValue();
 							hours = tp2.getHours();
 							if (hours < 10) {
@@ -1089,17 +900,15 @@ sap.ui.define([
 										'Accept': 'application/json'
 									},
 									success: function (oData, response) {
-										//var but = oEvent.getSource();
 										planDialog.setBusy(false);
 										planDialog.close();
-										sap.m.MessageToast.show("Planning D created succesfully.");
-
+										var texto1 = that.getResourceBundle().getText("planDCreaSuc");
+										sap.m.MessageToast.show(texto1);
 									},
 									error: function (oError) {
 										planDialog.setBusy(false);
 										planDialog.close();
 										sap.m.MessageToast.show("Error");
-
 									}
 								});
 							} else if (button == "Save") {
@@ -1109,17 +918,15 @@ sap.ui.define([
 										'Accept': 'application/json'
 									},
 									success: function (oData, response) {
-										//var but = oEvent.getSource();
 										planDialog.setBusy(false);
 										planDialog.close();
-										sap.m.MessageToast.show("Planning D saved succesfully.");
-
+										var texto1 = that.getResourceBundle().getText("planDSaveSuc");
+										sap.m.MessageToast.show(texto1);
 									},
 									error: function (oError) {
 										planDialog.setBusy(false);
 										planDialog.close();
 										sap.m.MessageToast.show("Error");
-
 									}
 								});
 							}
@@ -1127,7 +934,7 @@ sap.ui.define([
 						}
 					}),
 					endButton: new sap.m.Button({
-						text: 'No',
+						text: no,
 						press: function () {
 							dialog.close();
 						}
@@ -1140,6 +947,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Al pulsar la edición de la cabecera */
 		onEdit: function () {
 			this.showCustomActions(true);
 			this.byId("segButton").setEnabled(true);
@@ -1150,40 +958,43 @@ sap.ui.define([
 			this.oDeleteAction.setVisible(false);
 		},
 
+		/* Al borrar la planificación */
 		onDelete: function () {
 			var sPath = this.getView().getBindingContext().getPath();
 			var oModel = this.getOwnerComponent().getModel();
-			var text = "Are you sure?";
+			var text = this.getResourceBundle().getText("delPlan");
 			var that = this;
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oModel.remove(sPath, {
 							success: function (oData, response) {
-								//var but = oEvent.getSource();
 								var oEven = new sap.ui.getCore().getEventBus();
 								var uuid = that.byId("title").getText();
 								oEven.publish("Detail", "Delete_Plan", {
 									Number: uuid
 								});
-								sap.m.MessageToast.show("Planning deleted succesfully.");
+								var texto1 = that.getResourceBundle().getText("delPlanSuc");
+								sap.m.MessageToast.show(texto1);
 							},
 							error: function (oError) {
 								sap.m.MessageToast.show("Error");
 							}
 						});
 						dialog.close();
-
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -1195,6 +1006,7 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Al guardar la planificación */
 		onSave: function () {
 			this.showCustomActions(false);
 			this.oEditAction.setVisible(true);
@@ -1227,23 +1039,17 @@ sap.ui.define([
 					'Accept': 'application/json'
 				},
 				success: function (oData, response) {
-					//var but = oEvent.getSource();
-					// planDialog.setBusy(false);
-					// planDialog.close();
 					that.oldKey = that.byId("segButton").getSelectedKey();
-					sap.m.MessageBox.alert("Successfully saved!");
-
+					var texto1 = that.getResourceBundle().getText("saveSucc");
+					sap.m.MessageBox.alert(texto1);
 				},
 				error: function (oError) {
-					// planDialog.setBusy(false);
-					// planDialog.close();
 					sap.m.MessageToast.show("Error");
-
 				}
 			});
-
 		},
 
+		/* Cancelar la creación de la planificación */
 		onCancel: function () {
 			this.showCustomActions(false);
 			this.byId("segButton").setSelectedKey(this.oldKey);
@@ -1262,23 +1068,20 @@ sap.ui.define([
 			}
 		},
 
+		/* Mostrar las acciones que hemos añadido en la vista */
 		showCustomActions: function (bShow) {
 			this.byId("saveAction").setVisible(bShow);
 			this.byId("cancelAction").setVisible(bShow);
 		},
 
-		/**
-		 * Toggle between full and non full screen mode.
-		 */
+		/* Cambios de visualización de pantalla completa */
 		toggleFullScreen: function () {
 			var bFullScreen = this.getModel("appView").getProperty("/actionButtonsInfo/midColumn/fullScreen");
 			this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreen", !bFullScreen);
 			if (!bFullScreen) {
-				// store current layout and go full screen
 				this.getModel("appView").setProperty("/previousLayout", this.getModel("appView").getProperty("/layout"));
 				this.getModel("appView").setProperty("/layout", "MidColumnFullScreen");
 			} else {
-				// reset to previous layout
 				this.getModel("appView").setProperty("/layout", this.getModel("appView").getProperty("/previousLayout"));
 			}
 		}

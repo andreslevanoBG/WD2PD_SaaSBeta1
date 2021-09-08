@@ -13,32 +13,19 @@ sap.ui.define([
 
 		formatter: formatter,
 
-		/* =========================================================== */
-		/* lifecycle methods                                           */
-		/* =========================================================== */
-
-		/**
-		 * Called when the worklist controller is instantiated.
-		 * @public
-		 */
+		/* Al instanciar el objeto */
 		onInit: function () {
 			this.firstDisplay = "X";
 			var oViewModel,
 				iOriginalBusyDelay,
 				oTable = this.byId("table");
-
-			// Put down worklist table's original value for busy indicator delay,
-			// so it can be restored later on. Busy handling on the table is
-			// taken care of by the table itself.
 			iOriginalBusyDelay = oTable.getBusyIndicatorDelay();
-			// keeps the search state
 			this._aTableSearchState = [];
 			this._oTableFilterState = [];
+			this.keyList = "";
 			var router = this.getOwnerComponent().getRouter();
 			var target = router.getTarget("worklist");
 			target.attachDisplay(this.onDisplay, this);
-
-			// Model used to manipulate control states
 			oViewModel = new JSONModel({
 				worklistTableTitle: this.getResourceBundle().getText("worklistTableTitle"),
 				saveAsTileTitle: this.getResourceBundle().getText("saveAsTileTitle", this.getResourceBundle().getText("worklistViewTitle")),
@@ -49,15 +36,9 @@ sap.ui.define([
 				tableBusyDelay: 0
 			});
 			this.setModel(oViewModel, "worklistView");
-
-			// Make sure, busy indication is showing immediately so there is no
-			// break after the busy indication for loading the view's meta data is
-			// ended (see promise 'oWhenMetadataIsLoaded' in AppController)
 			oTable.attachEventOnce("updateFinished", function () {
-				// Restore original busy indicator delay for worklist's table
 				oViewModel.setProperty("/tableBusyDelay", iOriginalBusyDelay);
 			});
-			// Add the worklist page to the flp routing history
 			this.addHistoryEntry({
 				title: this.getResourceBundle().getText("worklistViewTitle"),
 				icon: "sap-icon://table-view",
@@ -65,26 +46,11 @@ sap.ui.define([
 			}, true);
 		},
 
-		/* =========================================================== */
-		/* event handlers                                              */
-		/* =========================================================== */
-
-		/**
-		 * Triggered by the table's 'updateFinished' event: after new table
-		 * data is available, this handler method updates the table counter.
-		 * This should only happen if the update was successful, which is
-		 * why this handler is attached to 'updateFinished' and not to the
-		 * table's list binding's 'dataReceived' method.
-		 * @param {sap.ui.base.Event} oEvent the update finished event
-		 * @public
-		 */
+		/* Al finalizar la carga de los datos del modelo del listado */
 		onUpdateFinished: function (oEvent) {
-			// update the worklist's object counter after the table update
 			var sTitle,
 				oTable = oEvent.getSource(),
 				iTotalItems = oEvent.getParameter("total");
-			// only update the counter if the length is final and
-			// the table is not empty
 			if (iTotalItems && oTable.getBinding("items").isLengthFinal()) {
 				sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
 			} else {
@@ -93,21 +59,24 @@ sap.ui.define([
 			this.getModel("worklistView").setProperty("/worklistTableTitle", sTitle);
 		},
 
-		/**
-		 * Event handler when a table item gets pressed
-		 * @param {sap.ui.base.Event} oEvent the table selectionChange event
-		 * @public
-		 */
+		/* Al seleccionar un elemento del listado */
 		onPress: function (oEvent) {
-			// The source is the list item that got pressed
 			this._showObject(oEvent.getSource());
 		},
 
+		/* Al cerrar el dialog de la gestión de Business Process Types */
 		closeManageBPs: function (oEvent) {
 			var dialogManageBPs = oEvent.getSource().getParent();
 			dialogManageBPs.close();
 		},
 
+		/* Al cerrar el dialog de la gestión de Custom fields */
+		closeManageLVs: function (oEvent) {
+			var dialogManageLVs = oEvent.getSource().getParent();
+			dialogManageLVs.close();
+		},
+
+		/* Evento que saltal al mostrar la vista Worklist */
 		onDisplay: function (oEvent) {
 			if (this.firstDisplay == "X") {
 				this.firstDisplay = "";
@@ -116,6 +85,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Refrescamos el modelo de datos del listado */
 		refresh: function () {
 			var oViewModel = this.getModel("appView");
 			var oModel = this.getOwnerComponent().getModel();
@@ -136,34 +106,37 @@ sap.ui.define([
 				},
 				error: function (oError) {
 					that.byId("table").setBusy(false);
-					//	oViewModel.setProperty("/busy", false);
 				}
 			});
 
 		},
 
+		/* Al seleccionar el borrado de una template */
 		deleteTemplate: function (oEvent) {
 			var sPath = oEvent.getSource().getParent().getBindingContext("templates").getPath();
 			var itemsModel = this.getView().getModel("templates");
 			var sPath2 = sPath + "/uuid";
 			var uuid = itemsModel.getProperty(sPath2);
 			var that = this;
-			var text = "Do you want to delete this Template?"
+			var text = this.getResourceBundle().getText("sureDelete");
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						that.deleteTempConfirm(uuid);
 						dialog.close();
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -175,6 +148,7 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Al confirmar el borrado de una template */
 		deleteTempConfirm: function (uuid) {
 			var oModel = this.getOwnerComponent().getModel();
 			this.byId("table").setBusy(true);
@@ -186,39 +160,31 @@ sap.ui.define([
 						uuid: uuid
 					},
 					success: function (oData, response) {
-						sap.m.MessageToast.show(oData.value);
+						if (oData.value) {
+							sap.m.MessageToast.show(oData.value);
+						} else {
+							sap.m.MessageToast.show(oData);
+						}
 						that.refresh();
 						that.byId("table").setBusy(false);
 					},
 					error: function (oError) {
 						that.byId("table").setBusy(false);
-						sap.m.MessageToast.show("Error");
+						var err = that.getResourceBundle().getText("error");
+						sap.m.MessageToast.show(err);
 					}
 				});
 		},
 
+		/* Recuperamos las templates de PeopleDoc */
 		call_Templates_Pd: function () {
 			var oPersTempModel = this.getOwnerComponent().getModel("templates_pers");
 			var templates = oPersTempModel.getData();
 			var oViewModel = this.getModel("appView");
 			var oModel = this.getOwnerComponent().getModel("templates");
-			//	var url = "/CPI-WD2PD-Deep/templates/templates_pd";
 			var url = "/CPI-WD2PD_Dest/di/templates/templates_pd";
 			var that = this;
-			// var entorno = 'DEV';
-			// if (entorno == 'DEV') {
-			// 	var cuscode = "C000000001";
-			// 	var cusclientid = "15ff0365-5b0c-420e-bb14-bcf28b458374";
-			// 	var cusscope = "cf0f8bd6-4d5c-4ea5-827d-22898796ce68";
-			// }
-			// if (entorno == 'TEST') {
-			// 	var cuscode = "T000000001";
-			// 	var cusclientid = "e4f496b6-4c9b-4d03-9665-86d13349b046";
-			// 	var cusscope = "f0adfc99-7fea-42d7-9439-46a4c9de4742";
-			// }
 			if (this.getOwnerComponent().settings) {
-				//this.settings = await this.getSubscriptionSettings();
-
 				var cuscode = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
 				var cusclientid = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
 				var cusscope = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
@@ -281,34 +247,36 @@ sap.ui.define([
 						oModel.setData(results);
 						oModel.refresh();
 						that.byId("table").setBusy(false);
-						//	oViewModel.setProperty("/busy", false);
 					},
 					error: function (e) {
 						that.byId("table").setBusy(false);
-						//	oViewModel.setProperty("/busy", false);
 					}
 				});
 			}
 		},
 
+		/* Al seleccionar la sincronización de Business Process Types */
 		onSyncBP: function (oEvent) {
 			var that = this;
-			var text = "Do you want to synchronize the Business Process Types from Workday?"
+			var text = this.getResourceBundle().getText("syncBpt");
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						that.onSyncBPConfirm();
 						dialog.close();
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -320,14 +288,48 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Al seleccionar la sincronización de Business Process Types */
+		onSyncLV: function (oEvent) {
+			var that = this;
+			var text1 = this.getResourceBundle().getText("syncLVs1");
+			var text2 = this.getResourceBundle().getText("syncLVs2");
+			var text3 = oEvent.getSource().getText().substring(5);
+			var text = text1 + " " + text3 + " " + text2;
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
+			var dialog = new sap.m.Dialog({
+				title: tit,
+				type: 'Message',
+				content: new sap.m.Text({
+					text: text
+				}),
+				beginButton: new sap.m.Button({
+					text: yes,
+					press: function () {
+						that.onSyncLVConfirm(text);
+						dialog.close();
+					}
+				}),
+				endButton: new sap.m.Button({
+					text: no,
+					press: function () {
+						dialog.close();
+					}
+				}),
+				afterClose: function () {
+					dialog.destroy();
+				}
+			});
+			dialog.open();
+		},
+
+		/* Al confirmar la sincronización de los Business Process Types */
 		onSyncBPConfirm: function () {
-			//llamar a CPI para que cargue Persistencia
 			var that = this;
 			this.byId("manageBPs").setBusy(true);
 			var url = "/CPI-WD2PD_Dest/di/workday/bpt/load";
 			if (this.getOwnerComponent().settings) {
-				//this.settings = await this.getSubscriptionSettings();
-
 				var cuscode = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
 				var cusclientid = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
 				var cusscope = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
@@ -343,18 +345,60 @@ sap.ui.define([
 					success: function (results) {
 						that.byId("manageBPs").setBusy(false);
 						sap.m.MessageToast.show(results.message);
-						//	oViewModel.setProperty("/busy", false);
 					},
 					error: function (e) {
-						sap.m.MessageToast.show("Workday Error: The requested resource is not available");
+						var err = that.getResourceBundle().getText("errorWd");
+						var error = e.responseJSON;
+						sap.m.MessageToast.show(error.message);
 						that.byId("manageBPs").setBusy(false);
 					}
 				});
 			}
 		},
 
+		/* Al confirmar la sincronización de los Custom Fields */
+		onSyncLVConfirm: function () {
+			var that = this;
+			var lvaid = this.keyList;
+			this.byId("manageLVs").setBusy(true);
+			var url = "/CPI-WD2PD_Dest/di/workday/customer_fields/load";
+
+			if (this.getOwnerComponent().settings) {
+				var cuscode = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
+				var cusclientid = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
+				var cusscope = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
+				//var data = {
+				//		"list_values_id": lvaid
+				//	};
+				//var datajson = JSON.stringify(data);
+				jQuery.ajax({
+					url: url,
+					beforeSend: function (xhr) {
+						xhr.setRequestHeader('Customer-Code', cuscode.value);
+						xhr.setRequestHeader('Customer-Client_Id', cusclientid.value);
+						xhr.setRequestHeader('Customer-Scope', cusscope.value);
+					},
+					type: "GET",
+					dataType: "json",
+					//	contentType: "application/json",
+					//	data: datajson,
+					success: function (results) {
+						that.fill_List_Values(lvaid);
+						that.byId("manageLVs").setBusy(false);
+						sap.m.MessageToast.show(results.message);
+					},
+					error: function (e) {
+						var err = that.getResourceBundle().getText("errorWd");
+						var error = e.responseJSON;
+						sap.m.MessageToast.show(error.message);
+						that.byId("manageLVs").setBusy(false);
+					}
+				});
+			}
+		},
+
+		/* Cargar los posibles Business Process Types */
 		onAddBP: function (oEvent) {
-			// cargar modelo de BPT de Workday para mostrar el select
 			var buttonId = oEvent.getSource().getId();
 			var sPath2 = "";
 			if (!buttonId.match("addBP")) {
@@ -368,20 +412,16 @@ sap.ui.define([
 				success: function (oData, oResponse) {
 					var results = oData.results;
 					delete oData.__metadata;
-					// for (var i = 0; i < results.length; i++) {
-					// 	results[i].templates = results[i].templates.results;
-					// }
 					BPWDModel.setData(results);
 					BPWDModel.refresh();
 					that.openAddBP(buttonId, sPath2);
 				},
-				error: function (oError) {
-					//	oViewModel.setProperty("/busy", false);
-				}
+				error: function (oError) {}
 			});
 
 		},
 
+		/* Abrir el popup para añadir un nuevo Business Process Type */
 		openAddBP: function (ID, Spath) {
 			var oBptModel = this.getModel("bpt");
 			var bptData = oBptModel.getData();
@@ -397,7 +437,6 @@ sap.ui.define([
 			} else {
 				action = "Edit";
 				var oBPTModel = this.getModel("BProcess");
-				//var sPath = oEvent.getSource().getParent().getParent().getBindingContext("BProcess").getPath();
 				var sPath = Spath;
 				var BPTData = oBPTModel.getData();
 				var bpt = Object.assign({}, oBPTModel.getProperty(sPath));
@@ -410,16 +449,17 @@ sap.ui.define([
 					name: "shapein.TemplatesConfiguration.view.fragments.bpt",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					if (action == "New") {
-						oDialog.setTitle("New Business Process Type");
+						var tit1 = this.getResourceBundle().getText("titNewBpt");
+						oDialog.setTitle(tit1);
 						this.byId("btonAddBpt").setVisible(true);
 						this.byId("btonEditBpt").setVisible(false);
 						this.byId("Name_bpt").setEnabled(true);
 					} else {
-						oDialog.setTitle("Edit Business Process Type");
+						var tit2 = this.getResourceBundle().getText("titEditBpt");
+						oDialog.setTitle(tit2);
 						this.byId("btonEditBpt").setVisible(true);
 						this.byId("btonAddBpt").setVisible(false);
 						if (bpt.templates) {
@@ -435,17 +475,15 @@ sap.ui.define([
 					oDialog.open();
 				}.bind(this));
 			} else {
-				//	var checkMapModel = this.getModel("checkMap");
-				//	checkMapModel.setData([]);
-				// this.byId("CheckEmployee").setValue("");
-				// this.byId("CheckEmployee").setValueState("None");
 				if (action == "New") {
-					this.byId("bpt").setTitle("New Business Process Type");
+					var tit1 = this.getResourceBundle().getText("titNewBpt");
+					this.byId("bpt").setTitle(tit1);
 					this.byId("btonAddBpt").setVisible(true);
 					this.byId("btonEditBpt").setVisible(false);
 					this.byId("Name_bpt").setEnabled(true);
 				} else {
-					this.byId("bpt").setTitle("Edit Business Process Type");
+					var tit2 = this.getResourceBundle().getText("titEditBpt");
+					this.byId("bpt").setTitle(tit2);
 					this.byId("btonEditBpt").setVisible(true);
 					this.byId("btonAddBpt").setVisible(false);
 					if (bpt.templates) {
@@ -462,6 +500,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Validar que los campos tienen valor apropiado */
 		_validateInputNewP: function (oInput) {
 			var sValueState = "None";
 			var bValidationError = false;
@@ -474,6 +513,7 @@ sap.ui.define([
 			return bValidationError;
 		},
 
+		/* Mostrar la referencia de uso de los Business Process Types */
 		RefBP: function (oEvent) {
 			var oButton = oEvent.getSource(),
 				oView = this.getView();
@@ -484,7 +524,6 @@ sap.ui.define([
 			var bpt = Object.assign({}, oBPTModel.getProperty(sPath));
 			oBptModel.setData(bpt);
 			oBptModel.refresh();
-			// create popover
 			if (!this._pPopover) {
 				this._pPopover = Fragment.load({
 					id: oView.getId(),
@@ -500,32 +539,28 @@ sap.ui.define([
 			});
 		},
 
+		/* Confirmar la creación un nuevo Business Process Type */
 		execNewBpt: function (oEvent) {
 			var oBPTModel = this.getModel("BProcess");
 			var BPTData = oBPTModel.getData();
 			var aInputs = [
-					//	this.byId("Name_bpt"),
 					this.byId("Desc_bpt")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInputNewP(oInput) || bValidationError;
 			}, this);
-			// }
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var valE = this.getResourceBundle().getText("valError");
+				sap.m.MessageBox.alert(valE);
 				return;
 			}
 			var that = this;
-			//var name = aInputs[0].getValue();
 			var name = this.byId("Name_bpt").getSelectedKey();
 			var bpt = BPTData.find(buspt => buspt.name === name);
 			if (bpt) {
-				sap.m.MessageBox.alert("This business process type is being used.");
+				var useBpt = this.getResourceBundle().getText("useBpt");
+				sap.m.MessageBox.alert(useBpt);
 				return;
 			}
 			var description = aInputs[0].getValue();
@@ -543,15 +578,18 @@ sap.ui.define([
 				retries_number: retries_number
 			};
 			var oModel = that.getOwnerComponent().getModel();
-			var text = "Are you sure to create a new business process type?";
+			var text = that.getResourceBundle().getText("sureNewBpt");
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oModel.create("/Di_Business_Process", data, {
 							headers: {
@@ -559,20 +597,19 @@ sap.ui.define([
 								'Accept': 'application/json'
 							},
 							success: function (oData, response) {
-								//	that.refreshAttribFilters(uuidtemp);
 								that.fill_Business_Process();
 								that.byId("bpt").close();
-								sap.m.MessageToast.show("Business Process Type created!!");
+								sap.m.MessageToast.show(that.getResourceBundle().getText("sucNewBpt"));
 							},
 							error: function (oError) {
-								sap.m.MessageToast.show("Error");
+								sap.m.MessageToast.show(that.getResourceBundle().getText("error"));
 							}
 						});
 						dialog.close();
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -583,26 +620,22 @@ sap.ui.define([
 			});
 			dialog.open();
 		},
+
+		/* Cambiar datos de un Business Proceess type */
 		execChangeBpt: function (oEvent) {
 			var aInputs = [
-					//	this.byId("Name_bpt"),
 					this.byId("Desc_bpt")
 				],
 				bValidationError = false;
 
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInputNewP(oInput) || bValidationError;
 			}, this);
-			// }
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				sap.m.MessageBox.alert(this.getResourceBundle().getText("valError"));
 				return;
 			}
 			var that = this;
-			//	var name = aInputs[0].getValue();
 			var name = this.byId("Name_bpt").getSelectedKey();
 			var description = aInputs[0].getValue();
 			var retry = this.byId("retry_bpt").getSelected();
@@ -622,16 +655,19 @@ sap.ui.define([
 				retries_number: retries_number
 			};
 			var oModel = that.getOwnerComponent().getModel();
-			var text = "Are you sure to save this business process type?";
+			var text = this.getResourceBundle().getText("sureSaveBpt");
 			var sPath = "/Di_Business_Process(guid'" + bpt_id + "')";
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oModel.update(sPath, data, {
 							headers: {
@@ -639,20 +675,19 @@ sap.ui.define([
 								'Accept': 'application/json'
 							},
 							success: function (oData, response) {
-								//	that.refreshAttribFilters(uuidtemp);
 								that.fill_Business_Process();
 								that.byId("bpt").close();
-								sap.m.MessageToast.show("Business Process Type saved!!");
+								sap.m.MessageToast.show(that.getResourceBundle().getText("sucSaveBpt"));
 							},
 							error: function (oError) {
-								sap.m.MessageToast.show("Error");
+								sap.m.MessageToast.show(that.getResourceBundle().getText("error"));
 							}
 						});
 						dialog.close();
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -664,11 +699,13 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Cancelar la acción sobre el Business Process Type */
 		cancelBpt: function (oEvent) {
 			var dialogNewBTP = oEvent.getSource().getParent();
 			dialogNewBTP.close();
 		},
 
+		/* Abrir el dialog para los filtros y ordenaciones */
 		onOpenViewSettings: function (oEvent) {
 			var sDialogTab = "filter";
 			if (oEvent.getSource() instanceof sap.m.Button) {
@@ -679,14 +716,12 @@ sap.ui.define([
 					sDialogTab = "group";
 				}
 			}
-			// load asynchronous XML fragment
 			if (!this.byId("viewSettingsDialog")) {
 				Fragment.load({
 					id: this.getView().getId(),
 					name: "shapein.TemplatesConfiguration.view.fragments.ViewSettingsDialog",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					oDialog.open(sDialogTab);
@@ -696,6 +731,7 @@ sap.ui.define([
 			}
 		},
 
+		/*Confirmar los filtros y ordenaciones seleccionados */
 		onConfirmViewSettingsDialog: function (oEvent) {
 			var aFilterItems = oEvent.getParameters().filterItems,
 				aFilters = [],
@@ -720,45 +756,15 @@ sap.ui.define([
 				new Filter("title", FilterOperator.Contains, sQuery),
 				new Filter("description", FilterOperator.Contains, sQuery)
 			], false)];
-
 			this._applySearch(aTableSearchState);
 		},
 
+		/* Resetear los filtros */
 		handleResetFilters: function () {
-			// var vLayout = this.byId("viewSettingsDialog").getFilterItems()[0].getCustomControl();
-			// var oCustomFilter = this.byId("viewSettingsDialog").getFilterItems()[0],
-			// 	fromDP = vLayout.getContent()[1],
-			// 	toDP = vLayout.getContent()[3];
-			// fromDP.setValue("");
-			// toDP.setValue("");
-			// oCustomFilter.setFilterCount(0);
-			// oCustomFilter.setSelected(false);
-			// var slider = this.byId("viewSettingsDialog").getFilterItems()[2].getCustomControl();
-			// var oCustomFilter2 = this.byId("viewSettingsDialog").getFilterItems()[2];
-			// slider.setValue(0);
-			// slider.setValue2(0);
-			// oCustomFilter2.setFilterCount(0);
-			// oCustomFilter2.setSelected(false);
+
 		},
 
-		/**
-		 * Event handler when the share in JAM button has been clicked
-		 * @public
-		 */
-		onShareInJamPress: function () {
-			var oViewModel = this.getModel("worklistView"),
-				oShareDialog = sap.ui.getCore().createComponent({
-					name: "sap.collaboration.components.fiori.sharing.dialog",
-					settings: {
-						object: {
-							id: location.href,
-							share: oViewModel.getProperty("/shareOnJamTitle")
-						}
-					}
-				});
-			oShareDialog.open();
-		},
-
+		/* Abrir para la gestión del Business Process Types */
 		onBPs: function () {
 			if (!this.byId("manageBPs")) {
 				Fragment.load({
@@ -766,25 +772,52 @@ sap.ui.define([
 					name: "shapein.TemplatesConfiguration.view.fragments.manageBPs",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					oDialog.open();
 				}.bind(this));
 			} else {
 				this.byId("manageBPs").open();
-				// this.byId("NameAttribuEdit").setValueState("None");
-				// this.byId("DescAttribuEdit").setValueState("None");
-				// this.byId("PathAttribuEdit").setValueState("None");
 			}
 		},
 
+		/* Abrir para la gestión de Custom Fields */
+		onListValues: function (oEvent) {
+			var menuItem = oEvent.getSource();
+			var key = menuItem.getKey();
+			this.keyList = key;
+			var text = menuItem.getText();
+			var textno = this.getResourceBundle().getText("no");
+			var textload = this.getResourceBundle().getText("load");
+			var text2 = textno + ' ' + text;
+			var text3 = textload + ' ' + text;
+			this.fill_List_Values();
+			if (!this.byId("manageLVs")) {
+				Fragment.load({
+					id: this.getView().getId(),
+					name: "shapein.TemplatesConfiguration.view.fragments.manageLVs",
+					controller: this
+				}).then(function (oDialog) {
+					this.getView().addDependent(oDialog);
+					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+					oDialog.setTitle(text);
+					this.byId("tableLVs").setNoDataText(text2);
+					this.byId("tableLVsHeader").setText(text);
+					this.byId("syncLV").setText(text3);
+					oDialog.open();
+				}.bind(this));
+			} else {
+				this.byId("manageLVs").setTitle(text);
+				this.byId("tableLVs").setNoDataText(text2);
+				this.byId("tableLVsHeader").setText(text);
+				this.byId("syncLV").setText(text3);
+				this.byId("manageLVs").open();
+			}
+		},
+
+		/* Buscar en el listado */
 		onSearch: function (oEvent) {
 			if (oEvent.getParameters().refreshButtonPressed) {
-				// Search field's 'refresh' button has been pressed.
-				// This is visible if you select any master list item.
-				// In this case no new search is triggered, we only
-				// refresh the list binding.
 				this.onRefresh();
 			} else {
 				var aTableSearchState = [];
@@ -797,57 +830,37 @@ sap.ui.define([
 				], false)];
 			}
 			this._applySearch(aTableSearchState);
-
 		},
 
-		/**
-		 * Event handler for refresh event. Keeps filter, sort
-		 * and group settings and refreshes the list binding.
-		 * @public
-		 */
+		/* Refrescar las valores del listado */
 		onRefresh: function () {
 			var oTable = this.byId("table");
 			oTable.getBinding("items").refresh();
 		},
 
-		/* =========================================================== */
-		/* internal methods                                            */
-		/* =========================================================== */
-
-		/**
-		 * Shows the selected item on the object page
-		 * On phones a additional history entry is created
-		 * @param {sap.m.ObjectListItem} oItem selected Item
-		 * @private
-		 */
+		/* Mostrar el Detalle del template seleccionado en el listado */
 		_showObject: function (oItem) {
-
 			this.getRouter().navTo("object", {
 				objectId: oItem.getBindingContext("templates").getProperty("id"),
 				version: oItem.getBindingContext("templates").getProperty("active_version")
 			});
 		},
 
-		/**
-		 * Internal helper method to apply both filter and search state together on the list binding
-		 * @param {sap.ui.model.Filter[]} aTableSearchState An array of filters for the search
-		 * @private
-		 */
+		/* Aplicar los filtros de la búsqueda */
 		_applySearch: function (aTableSearchState) {
 			var aFilters = aTableSearchState.concat(this._oTableFilterState);
 			var oTable = this.byId("table"),
 				oViewModel = this.getModel("worklistView");
 			oTable.getBinding("items").filter(aFilters, "Application");
-			// changes the noDataText of the list in case there are no filter results
 			if (aTableSearchState.length !== 0) {
 				oViewModel.setProperty("/tableNoDataText", this.getResourceBundle().getText("worklistNoDataWithSearchText"));
 			}
 		},
 
+		/* Recuperar los Business Process de persistencia */
 		fill_Business_Process: function () {
 			var oModel = this.getOwnerComponent().getModel();
 			var BPModel = this.getOwnerComponent().getModel("BProcess");
-
 			var that = this;
 			var sPath = "/Di_Business_Process";
 			oModel.read(sPath, {
@@ -863,12 +876,33 @@ sap.ui.define([
 					BPModel.setData(results);
 					BPModel.refresh();
 				},
-				error: function (oError) {
-					//	oViewModel.setProperty("/busy", false);
-				}
+				error: function (oError) {}
 			});
 		},
 
+		/* Recuperar los Custom Fields de persistencia */
+		fill_List_Values: function () {
+			var aFilter = [];
+			var lvaid = this.keyList;
+			var listFil = new sap.ui.model.Filter("lvaid", sap.ui.model.FilterOperator.EQ, lvaid);
+			var oModel = this.getOwnerComponent().getModel();
+			var LVModel = this.getOwnerComponent().getModel("LValues");
+			var that = this;
+			var sPath = "/Di_List_Values";
+			aFilter.push(listFil);
+			oModel.read(sPath, {
+				filters: aFilter,
+				success: function (oData, oResponse) {
+					var results = oData.results;
+					delete oData.__metadata;
+					LVModel.setData(results);
+					LVModel.refresh();
+				},
+				error: function (oError) {}
+			});
+		},
+
+		/* Borrar un determinado Business Process Type */
 		deleteBP: function (oEvent) {
 			var sPath = oEvent.getSource().getParent().getParent().getBindingContext("BProcess").getPath();
 			var itemsModel = this.getView().getModel("BProcess");
@@ -876,34 +910,34 @@ sap.ui.define([
 			var sPath2 = sPath + "/bpt_id";
 			var bpt_id = itemsModel.getProperty(sPath2);
 			var sPath1 = "/Di_Business_Process(guid'" + bpt_id + "')";
-			var text = "Are you sure to delete this Business Process Type?";
+			var text = this.getResourceBundle().getText("sureDelBpt");
 			var that = this;
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oModel.remove(sPath1, {
 							success: function (oData, response) {
-								//var but = oEvent.getSource();
-								//	that.refreshAttribFilters(uuidtemp);
 								that.fill_Business_Process();
-								sap.m.MessageToast.show("Bus. Proc. Type deleted succesfully.");
+								sap.m.MessageToast.show(that.getResourceBundle().getText("sucDelBpt"));
 							},
 							error: function (oError) {
-								sap.m.MessageToast.show("Error");
+								sap.m.MessageToast.show(that.getResourceBundle().getText("error"));
 							}
 						});
 						dialog.close();
-
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}

@@ -8,7 +8,7 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
 		<semantic:content>
 
 
-			<IconTabBar id="iconTab" expandable="false" expanded="true" applyContentPadding="false" backgroundDesign="Solid" upperCase="false" visible="true" selectedKey="Ok" select="searchFilters">
+			<IconTabBar id="iconTab" expandable="false" expanded="true" applyContentPadding="false" backgroundDesign="Solid" upperCase="false" visible="true" selectedKey="Ok" select="checkTab">
 				<items>
 					<IconTabFilter icon="" iconColor="Default" text="per Process" design="Vertical" showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false" key="proc">
 						<content>
@@ -17,9 +17,9 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
                             <List id="list" width="auto" class="sapFDynamicPageAlignContent" 
                             items="{ path: '/Di_Generation_Processes', parameters: {expand: 'message,template'}, 
                             sorter: { path: 'timestamp_start', descending: true }, groupHeaderFactory: '.createGroupHeader' }" 
-                            growingThreshold="10" busyIndicatorDelay="{masterView>/delay}" 
+                            busyIndicatorDelay="{masterView>/delay}" 
                             noDataText="{masterView>/noDataText}" mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" 
-                            growing="true" growingScrollToLoad="true" updateFinished=".onUpdateFinished" selectionChange=".onSelectionChange">
+                            updateFinished=".onUpdateFinished" selectionChange=".onSelectionChange">
                                 <headerToolbar>
                                     <OverflowToolbar>
                                         <SearchField id="searchField" showRefreshButton="true" tooltip="{i18n>masterSearchTooltip}" search=".onSearch" width="auto">
@@ -65,14 +65,13 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
                             sorter: { path: 'timestamp_start', descending: true }, groupHeaderFactory: '.createGroupHeader' }" 
                             growingThreshold="10" busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" 
                             mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" growing="true" 
-                            growingScrollToLoad="true" updateFinished=".onUpdateFinished" selectionChange=".onSelectionChange"> -->
-                            
+                            growingScrollToLoad="true" updateFinished=".onUpdateFinished" selectionChange=".onSelectionChange"> -->      
                             <List id="list_emp" width="auto" class="sapFDynamicPageAlignContent" 
                             items="{ path: '/Di_Employee', parameters: {expand: 'emp_template,worker'}, 
                             sorter: { path: 'employee_number', descending: false }, groupHeaderFactory: '.createGroupHeader' }" 
-                            growingThreshold="10" busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" 
-                            mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" growing="true" 
-                            growingScrollToLoad="true" updateFinished=".onUpdateFinished" selectionChange=".onSelectionChangeEmpl">
+                            busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" 
+                            mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
+                            updateFinished=".onUpdateFinished" selectionChange=".onSelectionChangeEmpl">
                                 <headerToolbar>
                                     <OverflowToolbar>
                                         <SearchField id="searchField_emp" showRefreshButton="true" tooltip="{i18n>masterSearchTooltip}" search=".onSearchEmpl" width="auto">
@@ -91,8 +90,7 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
                                     </Toolbar>
                                 </infoToolbar>
                                 <items>
-                                    <!--
-                                    number="{ path: 'worker/numberOfItems'}" 
+                                    <!--number="{ path: 'worker/numberOfItems'}" 
                                     numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }" 
                                     -->
                                     <ObjectListItem type="Navigation" press=".onSelectionChangeEmpl" 
@@ -127,9 +125,12 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
                             <!-- <List id="list_tem" width="auto" class="sapFDynamicPageAlignContent" 
                             items="{ path: '/Di_Generation_Processes', parameters: {expand: 'message,template'},
                             sorter: { path: 'timestamp_start', descending: true }, groupHeaderFactory: '.createGroupHeader' }" 
-                            growingThreshold="10" busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" 
-                            mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" growing="true" 
-                            growingScrollToLoad="true" updateFinished=".onUpdateFinished" selectionChange=".onSelectionChange">-->
+                            growingThreshold="10" 
+                            growing="true" 
+                            growingScrollToLoad="true" 
+                            busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" 
+                            mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" 
+                            updateFinished=".onUpdateFinished" selectionChange=".onSelectionChange">-->
                             <List id="list_tem" width="auto" class="sapFDynamicPageAlignContent" 
                             items="{ path: '/Di_Template',
                             sorter: [
@@ -137,9 +138,10 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
                             { path: 'template_version', descending: true }],
                             groupHeaderFactory: '.createGroupHeader' 
                             }" 
-                            growingThreshold="10" busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" 
-                            mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" growing="true" 
-                            growingScrollToLoad="true" updateFinished=".onUpdateFinished" selectionChange=".onSelectionChangeTemp">
+
+                            busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" 
+                            mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
+                            updateFinished=".onUpdateFinished" selectionChange=".onSelectionChangeTemp">
                                 <headerToolbar>
                                     <OverflowToolbar>
                                         <SearchField id="searchField_tem" showRefreshButton="true" tooltip="{i18n>masterSearchTooltip}" search=".onSearchTemp" width="auto">

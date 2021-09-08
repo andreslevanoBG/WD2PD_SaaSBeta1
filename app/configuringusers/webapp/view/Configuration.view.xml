@@ -2,16 +2,19 @@
 	<uxap:ObjectPageLayout showTitleInHeaderContent="true" showHeaderContent="true" showAnchorBar="true" showFooter="true" subSectionLayout="TitleOnTop">
 		<uxap:headerContent/>
 		<uxap:headerTitle>
-			<uxap:ObjectPageHeader objectImageURI="/webapp/resources/logo.png" objectTitle="Workday to PeopleDoc Integration" objectSubtitle="Configuration Settings" headerDesign="Light" objectImageShape="Square" isObjectIconAlwaysVisible="false" isObjectTitleAlwaysVisible="false" isObjectSubtitleAlwaysVisible="false" isActionAreaAlwaysVisible="false">
+			<uxap:ObjectPageHeader objectImageURI="/webapp/resources/logo.png" objectTitle="{i18n>objectPageHeaderTitle}" 
+            objectSubtitle="{i18n>objectPageHeaderSubTitle}" headerDesign="Light" objectImageShape="Square" 
+            isObjectIconAlwaysVisible="false" isObjectTitleAlwaysVisible="false" isObjectSubtitleAlwaysVisible="false" 
+            isActionAreaAlwaysVisible="false">
 				<uxap:actions/>
 				<uxap:breadCrumbsLinks/>
 				<uxap:navigationBar/>
 			</uxap:ObjectPageHeader>
 		</uxap:headerTitle>
 		<uxap:sections>
-			<uxap:ObjectPageSection showTitle="true" title="Page Section Title" titleUppercase="true" visible="true">
+			<uxap:ObjectPageSection showTitle="true" title="{i18n>objectPageSectionTitle}" titleUppercase="true" visible="true">
 				<uxap:subSections>
-					<uxap:ObjectPageSubSection title="Selection Data" mode="Expanded">
+					<uxap:ObjectPageSubSection title="{i18n>objectPageSubSectionTitle4}" mode="Expanded">
 						<uxap:blocks>
 							<form:Form width="100%" editable="true" visible="true">
 								<form:title/>
@@ -20,39 +23,39 @@
 										<form:formElements>
 											<form:FormElement visible="true">
 												<form:label>
-													<Label text="Exclude Contingent Workers" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+													<Label text="{i18n>viewLabel1}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 												</form:label>
 												<form:fields>
 													<RadioButtonGroup id="sap_uxap_ObjectPageLayout_0-sections-sap_uxap_ObjectPageSection-1-subSections-sap_uxap_ObjectPageSubSection-1-blocks-build_simple_form_Form-1600070272249-formContainers-build_simple_form_FormContainer-1-formElements-build_simple_form_FormElement-2-fields-sap_m_RadioButtonGroup-1600077158601" columns="8" selectedIndex="0" valueState="None" width="auto" editable="true" enabled="true" textDirection="Inherit" select="_onRadioButtonGroupSelect">
 														<buttons>
-															<RadioButton id="rb001" text="Yes" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_contingent_workers', formatter:'.booleanTrans'}"/>
-															<RadioButton id="rb002" text="No" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_contingent_workers', formatter:'.booleanTransOp'}"/>
+															<RadioButton id="rb001" text="{i18n>viewTextYes}" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_contingent_workers', formatter:'.booleanTrans'}"/>
+															<RadioButton id="rb002" text="{i18n>viewTextNo}" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_contingent_workers', formatter:'.booleanTransOp'}"/>
 														</buttons>
 													</RadioButtonGroup>
 												</form:fields>
 											</form:FormElement>
 											<form:FormElement visible="true">
 												<form:label>
-													<Label text="Exclude Employees" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+													<Label text="{i18n>viewLabel2}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 												</form:label>
 												<form:fields>
 													<RadioButtonGroup id="sap_uxap_ObjectPageLayout_0-sections-sap_uxap_ObjectPageSection-1-subSections-sap_uxap_ObjectPageSubSection-1-blocks-build_simple_form_Form-1600070272249-formContainers-build_simple_form_FormContainer-1-formElements-build_simple_form_FormElement-1600077208298-fields-sap_m_RadioButtonGroup-1" columns="8" selectedIndex="0" valueState="None" width="auto" editable="true" enabled="true" textDirection="Inherit" select="_onRadioButtonGroupSelect1">
 														<buttons>
-															<RadioButton id="rb003" text="Yes" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_employees', formatter:'.booleanTrans'}"/>
-															<RadioButton id="rb004" text="No" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_employees', formatter:'.booleanTransOp'}"/>
+															<RadioButton id="rb003" text="{i18n>viewTextYes}" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_employees', formatter:'.booleanTrans'}"/>
+															<RadioButton id="rb004" text="{i18n>viewTextNo}" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_employees', formatter:'.booleanTransOp'}"/>
 														</buttons>
 													</RadioButtonGroup>
 												</form:fields>
 											</form:FormElement>
 											<form:FormElement visible="true">
 												<form:label>
-													<Label text="Exclude Inactive Workers" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+													<Label text="{i18n>viewLabel3}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 												</form:label>
 												<form:fields>
 													<RadioButtonGroup id="sap_uxap_ObjectPageLayout_0-sections-sap_uxap_ObjectPageSection-1-subSections-sap_uxap_ObjectPageSubSection-1-blocks-build_simple_form_Form-1600070272249-formContainers-build_simple_form_FormContainer-1-formElements-build_simple_form_FormElement-1600251652154-fields-sap_m_RadioButtonGroup-1" columns="8" selectedIndex="0" valueState="None" width="auto" editable="true" enabled="true" textDirection="Inherit" select="_onRadioButtonGroupSelect2">
 														<buttons>
-															<RadioButton id="rb005" text="Yes" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_inactive_workers', formatter:'.booleanTrans'}"/>
-															<RadioButton id="rb006" text="No" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_inactive_workers', formatter:'.booleanTransOp'}"/>
+															<RadioButton id="rb005" text="{i18n>viewTextYes}" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_inactive_workers', formatter:'.booleanTrans'}"/>
+															<RadioButton id="rb006" text="{i18n>viewTextNo}" editable="true" enabled="true" visible="true" width="auto" valueState="None" selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/request_filter/exclude_inactive_workers', formatter:'.booleanTransOp'}"/>
 														</buttons>
 													</RadioButtonGroup>
 												</form:fields>
@@ -74,7 +77,7 @@
 											</form:FormElement>
 										</form:formElements>
 										<form:title>
-											<core:Title text="Request Filter" level="H4" icon="sap-icon://filter"/>
+											<core:Title text="{i18n>formContainerTitle1}" level="H4" icon="sap-icon://filter"/>
 										</form:title>
 									</form:FormContainer>
 								</form:formContainers>
@@ -89,9 +92,9 @@
 				</uxap:subSections>
 				<uxap:customAnchorBarButton/>
 			</uxap:ObjectPageSection>
-			<uxap:ObjectPageSection showTitle="true" title="Page Section Title" titleUppercase="true" visible="true">
+			<uxap:ObjectPageSection showTitle="true" title="{i18n>objectPageSectionTitle}" titleUppercase="true" visible="true">
 				<uxap:subSections>
-					<uxap:ObjectPageSubSection title="Mapping Configuration" mode="Expanded">
+					<uxap:ObjectPageSubSection title="{i18n>objectPageSubSectionTitle1}" mode="Expanded">
 						<uxap:blocks>
 							<form:Form width="100%" editable="true" visible="true">
 								<form:title/>
@@ -100,7 +103,7 @@
 										<form:formElements>
 											<form:FormElement id="element10_1603812780297">
 												<form:fields>
-													<Table items="{path:'ModelJSON>/global_configuration/mappings/email/filters/filter'}" mode="SingleSelectMaster" noDataText="Drop column list items here and columns in the area above" id="table0_1603812787387">
+													<Table items="{path:'ModelJSON>/global_configuration/mappings/email/filters/filter'}" mode="SingleSelectMaster" noDataText="{i18n>viewTextNoData}" id="table0_1603812787387">
 														<headerToolbar>
 															<Toolbar>
 																<Button icon="sap-icon://add" press="addRow_email"/>
@@ -110,13 +113,13 @@
 														<items>
 															<ColumnListItem type="Active" id="item15_1603812787384">
 																<cells>
-																	<ComboBox id="combo03" items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_USER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PUBLIC'}]}" selectedKey="{ModelJSON>usage_public}">
+																	<ComboBox id="combo03" items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PUBLIC'}]}" selectedKey="{ModelJSON>usage_public}">
 																		<core:Item key="{Base64>value}" text="{Base64>text}"/>
 																	</ComboBox>
-																	<ComboBox id="combo04" items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_USER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PRIMARY'}]}" selectedKey="{ModelJSON>type_data_primary}">
+																	<ComboBox id="combo04" items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PRIMARY'}]}" selectedKey="{ModelJSON>type_data_primary}">
 																		<core:Item key="{Base64>value}" text="{Base64>text}"/>
 																	</ComboBox>
-																	<ComboBox id="combo05" items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_USER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'TYPE'}]}" selectedKey="{ModelJSON>type_reference}">
+																	<ComboBox id="combo05" items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'TYPE'}]}" selectedKey="{ModelJSON>type_reference}">
 																		<core:Item key="{Base64>value}" text="{Base64>text}"/>
 																	</ComboBox>
 																	<MaskInput value="{ModelJSON>_secuence}" mask="99" id="text7"/>
@@ -126,22 +129,22 @@
 														<columns>
 															<Column id="column0_1603812787385">
 																<header>
-																	<Label text="Visibility" id="label11_1603812787385"/>
+																	<Label text="{i18n>viewLabelColumnVisibility}" id="label11_1603812787385"/>
 																</header>
 															</Column>
 															<Column id="column1_1603812787386">
 																<header>
-																	<Label text="Primary / Secondary Email" id="label12_1603812787386"/>
+																	<Label text="{i18n>viewLabelColumnPrimarySecondaryEmail}" id="label12_1603812787386"/>
 																</header>
 															</Column>
 															<Column id="column2_1603812787386">
 																<header>
-																	<Label text="Usage" id="label13_1603812787386"/>
+																	<Label text="{i18n>viewLabelColumnUsage}" id="label13_1603812787386"/>
 																</header>
 															</Column>
 															<Column id="column3_1603812787386">
 																<header>
-																	<Label text="Sequence" id="label10_1603812787385"/>
+																	<Label text="{i18n>viewLabelColumnSequence}" id="label10_1603812787385"/>
 																</header>
 															</Column>
 														</columns>
@@ -150,14 +153,14 @@
 											</form:FormElement>
 										</form:formElements>
 										<form:title>
-											<core:Title text="Email" level="H4" icon="sap-icon://email"/>
+											<core:Title text="{i18n>formContainerTitle4}" level="H4" icon="sap-icon://email"/>
 										</form:title>
 									</form:FormContainer>
-									<form:FormContainer title="Roles" id="container3">
+									<form:FormContainer title="{i18n>formContainerTitle10}" id="container3">
 										<form:formElements>
 											<form:FormElement id="element3">
 												<form:fields>
-													<Table items="{path:'ModelJSON>/global_configuration/mappings/roles/pd_role'}" mode="SingleSelectMaster" noDataText="Drop column list items here and columns in the area above" id="table0">
+													<Table items="{path:'ModelJSON>/global_configuration/mappings/roles/pd_role'}" mode="SingleSelectMaster" noDataText="{i18n>viewTextNoData}">
 														<headerToolbar>
 															<Toolbar>
 																<Button icon="sap-icon://add" press="addRow_roles"/>
@@ -167,8 +170,6 @@
 														<items>
 															<ColumnListItem type="Active" id="item10">
 																<cells>
-																	<!--<Text text="Row 1 Cell 1" id="text4"/>-->
-																	<!--<Text text="Row 1 Cell 2" id="text5"/>-->
 																	<Input value="{ModelJSON>_wd_role}" id="text4"/>
 																	<Input value="{ModelJSON>text}" id="text5"/>
 																</cells>
@@ -177,12 +178,12 @@
 														<columns>
 															<Column id="column0">
 																<header>
-																	<Label text="Workday Role" id="label3"/>
+																	<Label text="{i18n>viewLabelColumnWorkdayRole}" id="label3"/>
 																</header>
 															</Column>
 															<Column id="column1">
 																<header>
-																	<Label text="PeopleDoc Role" id="label4_1606751204652"/>
+																	<Label text="{i18n>viewLabelColumnPeopleDocRole}" id="label4_1606751204652"/>
 																</header>
 															</Column>
 														</columns>
@@ -191,14 +192,14 @@
 											</form:FormElement>
 										</form:formElements>
 										<form:title>
-											<core:Title xmlns:core="sap.ui.core" text="Role Mapping" level="H4" icon="sap-icon://role" id="title15"/>
+											<core:Title xmlns:core="sap.ui.core" text="{i18n>formContainerTitle11}" level="H4" icon="sap-icon://role" id="title15"/>
 										</form:title>
 									</form:FormContainer>
 									<form:FormContainer xmlns:u="sap.ui.unified" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" visible="true" id="container8">
 										<form:formElements>
 											<form:FormElement visible="true" id="element6">
 												<form:label>
-													<Label xmlns="sap.m" text="Default Language" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true" id="label4"/>
+													<Label xmlns="sap.m" text="{i18n>viewLabelColumnDefaultValue}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true" id="label4"/>
 												</form:label>
 												<form:fields>
 													<!--items="{ path: 'Base64>/Pd_Languages'}" -->
@@ -209,7 +210,7 @@
 											</form:FormElement>
 										</form:formElements>
 										<form:title>
-											<core:Title xmlns:core="sap.ui.core" text="Language" level="H4" icon="sap-icon://education" id="title14"/>
+											<core:Title xmlns:core="sap.ui.core" text="{i18n>formContainerTitle7}" level="H4" icon="sap-icon://education" id="title14"/>
 										</form:title>
 									</form:FormContainer>
 								</form:formContainers>
@@ -224,9 +225,9 @@
 				</uxap:subSections>
 				<uxap:customAnchorBarButton/>
 			</uxap:ObjectPageSection>
-			<uxap:ObjectPageSection showTitle="true" title="Page Section Title" titleUppercase="true" visible="true">
+			<uxap:ObjectPageSection showTitle="true" title="{i18n>objectPageSectionTitle}" titleUppercase="true" visible="true">
 				<uxap:subSections>
-					<uxap:ObjectPageSubSection title="Transformations" mode="Expanded">
+					<uxap:ObjectPageSubSection title="{i18n>objectPageSubSectionTitle2}" mode="Expanded">
 						<uxap:blocks>
 							<form:Form width="100%" editable="true" visible="true">
 								<form:title/>
@@ -235,7 +236,7 @@
 										<form:formElements>
 											<form:FormElement id="element11">
 												<form:fields>
-													<Table items="{path:'ModelJSON>/global_configuration/transformations/organization_code/transformation'}" mode="SingleSelectMaster" noDataText="Drop column list items here and columns in the area above" id="table1">
+													<Table items="{path:'ModelJSON>/global_configuration/transformations/organization_code/transformation'}" mode="SingleSelectMaster" noDataText="{i18n>viewTextNoData}" id="table1">
 														<headerToolbar>
 															<Toolbar>
 																<Button icon="sap-icon://add" press="addRow_trans"/>
@@ -256,31 +257,26 @@
 														<columns>
 															<Column id="column3">
 																<header>
-																	<Label text="Characters" id="label12"/>
+																	<Label text="{i18n>viewLabelColumnCharacters}" id="label12"/>
 																</header>
 															</Column>
 															<Column id="column4">
 																<header>
-																	<Label text="Separator" id="label13"/>
+																	<Label text="{i18n>viewLabelColumnSeparator}" id="label13"/>
 																</header>
 															</Column>
 															<Column id="column5">
 																<header>
-																	<Label text="Replace by" id="label14"/>
+																	<Label text="{i18n>viewLabelColumnReplaceby}" id="label14"/>
 																</header>
 															</Column>
-															<!--<Column id="column6">-->
-															<!--	<header>-->
-															<!--		<Label text="Sequential" id="label18"/>-->
-															<!--	</header>-->
-															<!--</Column>-->
 														</columns>
 													</Table>
 												</form:fields>
 											</form:FormElement>
 										</form:formElements>
 										<form:title>
-											<core:Title text="Special Characters" level="H4" icon="sap-icon://translate"/>
+											<core:Title text="{i18n>formContainerTitle8}" level="H4" icon="sap-icon://translate"/>
 										</form:title>
 									</form:FormContainer>
 								</form:formContainers>
@@ -300,7 +296,7 @@
 			<OverflowToolbar width="100%" height="46px" design="Auto" enabled="true" visible="true">
 				<content>
 					<ToolbarSpacer width=""/>
-					<Button text="Save" press="saveConfiguration" type="Accept" iconFirst="true" width="auto" enabled="true" visible="true" iconDensityAware="false"/>
+					<Button text="{i18n>viewTextSave}" press="saveConfiguration" type="Accept" iconFirst="true" width="auto" enabled="true" visible="true" iconDensityAware="false"/>
 				</content>
 			</OverflowToolbar>
 		</uxap:footer>

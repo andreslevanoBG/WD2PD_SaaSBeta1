@@ -1,54 +1,54 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
-	<Dialog id="newPlan" state="Success" icon="sap-icon://create-entry-time" title="New Planning" contentHeight="800px" contentWidth="550px">
+	<Dialog id="newPlan" state="Success" icon="sap-icon://create-entry-time" title="{i18n>newPlan2}" contentHeight="800px" contentWidth="550px">
 		<VBox class="sapUiTinyMargin">
 			<f:SimpleForm id="SimpleFormChange480_12" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="4" labelSpanL="4"
 				labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2"
 				columnsL="2" columnsM="1" singleContainerFullSize="false">
 				<f:content>
-					<core:Title text="Planning"/>
-					<Label labelFor="Comments" text="Comments"/>
+					<core:Title text="{i18n>planning}"/>
+					<Label labelFor="Comments" text="{i18n>comments}"/>
 					<Input id="Comments" required="true"/>
-					<Label labelFor="ProcessType" text="Processing Type"/>
+					<Label labelFor="ProcessType" text="{i18n>procType}"/>
 					<Select id="ProcessType" width="50%" change="changeTypeProcessing">
-						<core:Item key="I" text="Incremental Processing"/>
-						<core:Item key="R" text="Error Reprocessing"/>
+						<core:Item key="I" text="{i18n>incProc}"/>
+						<core:Item key="R" text="{i18n>errProc}"/>
 					</Select>
-					<Label labelFor="SegBut" text="Status"/>
+					<Label labelFor="SegBut" text="{i18n>Status}"/>
 					<SegmentedButton id="SegBut">
 						<items>
-							<SegmentedButtonItem text="Active" key="A"/>
-							<SegmentedButtonItem text="Inactive" key="U"/>
+							<SegmentedButtonItem text="{i18n>active}" key="A"/>
+							<SegmentedButtonItem text="{i18n>inactive}" key="U"/>
 						</items>
 					</SegmentedButton>
-					<core:Title text="Data" id="datatitle" />
+					<core:Title text="{i18n>data}" id="datatitle" />
 					<VBox id="datalayout" class="sapUiTinyMargin">
-						<Label labelFor="TimeZone" text="Time Zone"/>
+						<Label labelFor="TimeZone" text="{i18n>timeZone}"/>
 						<ComboBox id="TimeZone" items="{ path: 'timezones>/timezones', sorter: { path: 'Name', descending: false }}">
 							<core:Item key="{timezones>Key}" text="{timezones>Name}"/>
 						</ComboBox>
-						<Label labelFor="DTP1" text="Initial Date From"/>
+						<Label labelFor="DTP1" text="{i18n>initZone}"/>
 						<DateTimePicker id="DTP1" required="true" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
-						<Label labelFor="DTP2" text="Timestamp for Retroactive Changes (From)"/>
+						<Label labelFor="DTP2" text="{i18n>fromRetro}"/>
 						<DateTimePicker id="DTP2" required="true" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
-						<Label labelFor="DTP3" text="Timestamp for Future Changes (From)"/>
+						<Label labelFor="DTP3" text="{i18n>toFuture}"/>
 						<DateTimePicker id="DTP3" required="true" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
-						<Label labelFor="DTP4" text="Next Execution - Next Updated From" visible="false"/>
+						<Label labelFor="DTP4" text="{i18n>fromNext}" visible="false"/>
 						<DateTimePicker id="DTP4" required="true" valueFormat="yyyy-MM-ddTHH:mm:ss" visible="false" displayFormat="yyyy-MM-dd HH:mm:ss"/>
 					</VBox>
-					<core:Title text="Supervisory Organizations"/>
-					<Label labelFor="RefId" text="Reference Id"/>
+					<core:Title text="{i18n>superOrg}"/>
+					<Label labelFor="RefId" text="{i18n>refId}"/>
 					<Select id="RefId">
-						<core:Item key="WID" text="Workday ID"/>
-						<core:Item key="Organization_Reference_ID" text="Organization Reference ID"/>
+						<core:Item key="WID" text="{i18n>workId}"/>
+						<core:Item key="Organization_Reference_ID" text="{i18n>orgRefId}"/>
 					</Select>
-					<Label labelFor="multiInput11" text="Supervisory Organizations"/>
+					<Label labelFor="multiInput11" text="{i18n>superOrg}"/>
 					<MultiInput id="multiInput11" width="auto" showValueHelp="false"/>
 				</f:content>
 			</f:SimpleForm>
 		</VBox>
 		<buttons>
-			<Button text="Create" type="Accept" press="execNewPlan"/>
-			<Button text="Cancel" type="Reject" press="cancelNewPlan"/>
+			<Button text="{i18n>create}" type="Accept" press="execNewPlan"/>
+			<Button text="{i18n>cancel}" type="Reject" press="cancelNewPlan"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

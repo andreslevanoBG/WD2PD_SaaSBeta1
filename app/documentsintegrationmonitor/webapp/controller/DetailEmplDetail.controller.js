@@ -50,6 +50,8 @@ sap.ui.define([
             this.getRouter().getRoute("detailEmplDetail").attachPatternMatched(this._onObjectMatched, this);
 
             this.setModel(oViewModel, "detailDetailView");
+            this.setModel(new JSONModel(), "data");
+            this.setModel(new JSONModel(), "message");
 
             this.getOwnerComponent().getModel().metadataLoaded().then(this._onMetadataLoaded.bind(this));
 
@@ -57,6 +59,26 @@ sap.ui.define([
                 aFilter: [],
                 aSearch: []
             };
+
+            var oMessageTemplate = new sap.m.MessageItem({
+                type: '{message>type}',
+                title: '{message>title}',
+                activeTitle: "{message>active}",
+                description: '{message>description}',
+                subtitle: '{message>subtitle}',
+                counter: '{message>counter}'
+            });
+
+            oMessagePopover = new sap.m.MessagePopover({
+                items: {
+                    path: 'message>/',
+                    template: oMessageTemplate
+                },
+                activeTitlePress: function () {
+                    //MessageToast.show('Active title is pressed');
+                }
+            });
+            this.getView().addDependent(oMessagePopover);
         },
 
         /* =========================================================== */
@@ -114,17 +136,18 @@ sap.ui.define([
             var sSubObjectId = oEvent.getParameter("arguments").subObjectId;
             var oEmployee = oEvent.getParameter("arguments").employee;
             var oTemplate = oEvent.getParameter("arguments").template;
+
+            var localModel = this.getView().getModel("parameters");
+            localModel.oData.employee_uuid = oEmployee;
+            localModel.oData.template_uuid = oTemplate;
+            this.getView().setModel(localModel, "parameters");
+
             this.getModel().metadataLoaded().then(function () {
                 /*
                 var sObjectPath = this.getModel().createKey("Di_Generation_Processes_Doc", {
                     OrderID: sSubObjectId
                 });
                 */
-                var localModel = this.getModel("parameters");
-                localModel.oData.employee_uuid = oEmployee;
-                localModel.oData.template_uuid = oTemplate;
-                this.setModel(localModel, "parameters");
-
                 //var sObjectPath = "Di_Generation_Processes_Doc?$filter=generation_proc/template_uuid eq " + oTemplate + " and employee_external_id eq " + oEmployee;
                 var sObjectPath = "Di_Generation_Processes_Doc";
                 this._bindView("/" + sObjectPath);
@@ -170,7 +193,7 @@ sap.ui.define([
             var that = this;
             var oModelParam = this.getView().getModel("parameters");
 
-            var localModel = this.getModel("parameters");
+            var localModel = this.getView().getModel("parameters");
             var oLocalFilter = new Filter({
                 filters: [
                     new Filter("generation_proc/template_uuid", FilterOperator.EQ, localModel.oData.template_uuid),
@@ -183,7 +206,7 @@ sap.ui.define([
             oModel.read(sPath, {
                 filters: [oLocalFilter],
                 urlParameters: {
-                    "$expand": "generation_proc,message,doc_sign,last_temp_employee,worker"
+                    "$expand": "generation_proc,worker,doc_sign"
                 },
                 success: function (oData, oResponse) {
                     //var results = oData.worker.results;
@@ -192,7 +215,6 @@ sap.ui.define([
                     var ecount = 0;
                     that.reprocesses = [];
                     oViewModel.setProperty("/busy", false);
-
 
                     /*
                     oData.docs = null;
@@ -311,8 +333,10 @@ sap.ui.define([
 		 * Toggle between full and non full screen mode.
 		 */
         toggleFullScreen: function () {
-            var bFullScreen = this.getModel("appView").getProperty("/actionButtonsInfo/midColumn/fullScreen");
-            this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreen", !bFullScreen);
+            //var bFullScreen = this.getModel("appView").getProperty("/actionButtonsInfo/midColumn/fullScreen");
+            //this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreen", !bFullScreen);
+            var bFullScreen = this.getModel("appView").getProperty("/actionButtonsInfo/endColumn/fullScreen");
+            this.getModel("appView").setProperty("/actionButtonsInfo/endColumn/fullScreen", !bFullScreen);
             if (!bFullScreen) {
                 // store current layout and go full screen
                 this.getModel("appView").setProperty("/previousLayout", this.getModel("appView").getProperty("/layout"));
@@ -962,12 +986,6 @@ sap.ui.define([
                 bDescending,
                 aSorters = [];
             sPath = item.getKey();
-
-            if (sPath !== 'pernr') {
-                sPath = 'worker/' + item.getKey();
-            } else {
-                sPath = 'employee_number';
-            }
 
             bDescending = desc;
             aSorters.push(new Sorter(sPath, bDescending));

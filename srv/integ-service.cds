@@ -9,79 +9,87 @@ using {shapein.integrations as my} from '../db/schema';
 @requires        : 'Service'
 service IntegrationService {
     // entity Integrations as projection on my.Integrations;
-    entity Integrations                   as
+    entity Integrations                      as
         select from my.Integrations {
             *,
             0 as numberOfItems   : Integer,
             0 as numberOfSeconds : Decimal
         };
 
-    entity Status                         as projection on my.Status;
-    entity Integration_Items              as projection on my.Integration_Items;
-    entity Messages                       as projection on my.Messages;
-    entity Messages_Categories            as projection on my.Messages_Categories;
-    entity Integration_Pck                as projection on my.Integration_Pck;
-    entity Reprocess                      as projection on my.Reprocess;
-    entity Configurations                 as projection on my.Configurations;
-    entity Configuration_Types            as projection on my.Configuration_Types;
+    entity Status                            as projection on my.Status;
+    entity Integration_Items                 as projection on my.Integration_Items;
+    entity Messages                          as projection on my.Messages;
+    entity Messages_Categories               as projection on my.Messages_Categories;
+    entity Integration_Pck                   as projection on my.Integration_Pck;
+    entity Reprocess                         as projection on my.Reprocess;
+    entity Configurations                    as projection on my.Configurations;
+    entity Configuration_Types               as projection on my.Configuration_Types;
 
-    entity Workers                        as
+    entity Workers                           as
         select from my.Workers {
             *,
             0 as numberOfItems : Integer
         };
 
-    entity Users                          as
+    entity Users                             as
         select from my.Users {
             *,
             0 as numberOfItems : Integer
         };
 
-    entity Domain_Values                  as projection on my.Domain_Values;
+    entity Domain_Values                     as projection on my.Domain_Values;
 
-    entity Organizations                  as
+    entity Organizations                     as
         select from my.Organizations {
             *,
             0 as numberOfItems : Integer
         };
 
-    entity Countries                      as projection on my.Countries;
-    entity Pd_Languages                   as projection on my.Pd_Languages;
-    entity Integration_Pck_Planning       as projection on my.Integration_Pck_Planning;
-    entity Integration_Pck_Planning_D     as projection on my.Integration_Pck_Planning_D;
-    entity Integration_Pck_Planning_Adata as projection on my.Integration_Pck_Planning_Adata;
-    entity User_Future_Changes            as projection on my.User_Future_Changes;
-    entity Di_Template_Mappings           as projection on my.Di_Template_Mappings;
-    entity Di_Template_Worker_Attr        as projection on my.Di_Template_Worker_Attr;
-    entity Di_Template_Worker_Attr_Values as projection on my.Di_Template_Worker_Attr_Values;
-    entity Di_Template                    as projection on my.Di_Template;
-    entity Di_Business_Process            as projection on my.Di_Business_Process;
-    entity Di_Business_Process_Master     as projection on my.Di_Business_Process_Master;
-    entity Di_Parser_Xsd                  as projection on my.Di_Parser_Xsd;
-    entity Di_Parser_Xsd_Definition       as projection on my.Di_Parser_Xsd_Definition;
+    entity Countries                         as projection on my.Countries;
+    entity Pd_Languages                      as projection on my.Pd_Languages;
+    entity Integration_Pck_Planning          as projection on my.Integration_Pck_Planning;
+    entity Integration_Pck_Planning_D        as projection on my.Integration_Pck_Planning_D;
+    entity Integration_Pck_Planning_Adata    as projection on my.Integration_Pck_Planning_Adata;
+    entity User_Future_Changes               as projection on my.User_Future_Changes;
+    entity Di_Template_Mappings              as projection on my.Di_Template_Mappings;
+    entity Di_Template_Worker_Attr           as projection on my.Di_Template_Worker_Attr;
+    entity Di_Template_Worker_Attr_Values    as projection on my.Di_Template_Worker_Attr_Values;
+    entity Di_Template                       as projection on my.Di_Template;
+    entity Di_Business_Process               as projection on my.Di_Business_Process;
+    entity Di_Business_Process_Master        as projection on my.Di_Business_Process_Master;
+    entity Di_Parser_Xsd                     as projection on my.Di_Parser_Xsd;
+    entity Di_Parser_Xsd_Definition          as projection on my.Di_Parser_Xsd_Definition;
 
     //   entity Di_Generation_Processes        as projection on my.Di_Generation_Processes;
-    entity Di_Generation_Processes        as
+    entity Di_Generation_Processes           as
         select from my.Di_Generation_Processes {
             *,
             0 as numberOfItems   : Integer,
             0 as numberOfSeconds : Decimal
         };
 
-    entity Di_Generation_Processes_Doc    as projection on my.Di_Generation_Processes_Doc;
-    entity Di_Messages                    as projection on my.Di_Messages;
-    entity Di_Template_Mapping_Objects    as projection on my.Di_Template_Mapping_Objects;
-    entity Di_Document_Sign               as projection on my.Di_Document_Sign;
-    entity Di_Document_Sign_Log           as projection on my.Di_Document_Sign_Log;
-    entity Di_Template_Sign_Cfg           as projection on my.Di_Template_Sign_Cfg;
-    entity Subscription_Settings          as projection on my.Subscription_Settings;
-    entity Di_Employee                    as projection on my.Di_Employee;
-    entity Di_Employee_Template           as projection on my.Di_Employee_Template;
-    entity Di_Template_Mapping_Sources    as projection on my.Di_Template_Mapping_Sources;
-    entity Di_Template_Page_Content       as projection on my.Di_Template_Page_Content;
+    entity Di_Generation_Processes_Doc       as projection on my.Di_Generation_Processes_Doc;
+    entity Di_Messages                       as projection on my.Di_Messages;
+    entity Di_Template_Mapping_Objects       as projection on my.Di_Template_Mapping_Objects;
+    entity Di_Document_Sign                  as projection on my.Di_Document_Sign;
+    entity Di_Document_Sign_Log              as projection on my.Di_Document_Sign_Log;
+    entity Di_Template_Sign_Cfg              as projection on my.Di_Template_Sign_Cfg;
+    entity Subscription_Settings             as projection on my.Subscription_Settings;
+    entity Di_Employee                       as projection on my.Di_Employee;
+    entity Di_Employee_Template              as projection on my.Di_Employee_Template;
+    entity Di_Template_Mapping_Sources       as projection on my.Di_Template_Mapping_Sources;
+    entity Di_Template_Mapping_Sources_Types as projection on my.Di_Template_Mapping_Sources_Types;
+    entity Di_Template_Mapping_Types         as projection on my.Di_Template_Mapping_Types;
+    entity Di_List_Values                    as projection on my.Di_List_Values;
+    entity Di_Template_Page_Content          as projection on my.Di_Template_Page_Content;
+    entity Organizations_Types               as projection on my.Organizations_Types;
 
     event deleteInteg : {
         integ_id : String(32);
+    }
+
+    event deleteGeneration : {
+        gen_id : UUID;
     }
 
     event deleteFutureChanges : {
@@ -123,6 +131,12 @@ service IntegrationService {
         last_execution_timezone : String(10);
     }
 
+    type organization_type {
+        type      : String;
+        type_text : String;
+        subtype   : String;
+    }
+
     function set_user_future_changes(uuid : String(32), date : Date) returns String;
     function retention_period_workers() returns String;
     function delete_mappings(uuid : String(36)) returns String;
@@ -134,5 +148,7 @@ service IntegrationService {
     function delete_planning_repro(uuid : String(36)) returns String;
     //function di_business_process_type_master_insert(bpt_data: String) returns String;
     function di_business_process_type_master_delete_all() returns String;
+    function delete_list_values(lvaid : String(20)) returns String;
     function delete_complete_template(uuid : String(36)) returns String;
+    function get_type_organizations(text : Boolean) returns organization_type;
 }

@@ -50,6 +50,8 @@ sap.ui.define([
             this.getRouter().getRoute("detailTempDetail").attachPatternMatched(this._onObjectMatched, this);
 
             this.setModel(oViewModel, "detailDetailView");
+            this.setModel(new JSONModel(), "data");
+            this.setModel(new JSONModel(), "message");
 
             this.getOwnerComponent().getModel().metadataLoaded().then(this._onMetadataLoaded.bind(this));
 
@@ -60,18 +62,6 @@ sap.ui.define([
             //this.getOwnerComponent().getRouter().getRoute("detailEmplDetail").attachPatternMatched(this._onObjectMatched, this);
             //this.getOwnerComponent().getRouter().getRoute("detailEmplDetail").attachPatternMatched(this._onPatternMatch, this);
             
-            /*
-            this.getOwnerComponent().setModel(oViewModel, "detailEmplDetailView");
-            this.getOwnerComponent().setModel(new JSONModel(), "data");
-            this.getOwnerComponent().setModel(new JSONModel(), "message");
-
-            this.getOwnerComponent().getModel().metadataLoaded().then(this._onMetadataLoaded.bind(this));
-
-            this._oTableFilterState = {
-                aFilter: [],
-                aSearch: []
-            };
-
             var oMessageTemplate = new sap.m.MessageItem({
                 type: '{message>type}',
                 title: '{message>title}',
@@ -91,7 +81,6 @@ sap.ui.define([
                 }
             });
             this.getView().addDependent(oMessagePopover);
-            */
         },
 
         /* =========================================================== */
@@ -149,6 +138,12 @@ sap.ui.define([
             var sObjectId = oEvent.getParameter("arguments").objectId;
             var oEmployee = oEvent.getParameter("arguments").employee;
             var oTemplate = oEvent.getParameter("arguments").template;            
+
+            var localModel = this.getModel("parameters");
+            localModel.oData.employee_uuid = oEmployee;
+            localModel.oData.template_uuid = oTemplate;
+            this.setModel(localModel, "parameters");
+
             //this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
             this.getModel().metadataLoaded().then(function () {
                 /*
@@ -156,11 +151,6 @@ sap.ui.define([
                     uuid: sObjectId
                 });
                 */
-                var localModel = this.getModel("parameters");
-                localModel.oData.employee_uuid = oEmployee;
-                localModel.oData.template_uuid = oTemplate;
-                this.setModel(localModel, "parameters");
-
                 var sObjectPath = "Di_Generation_Processes_Doc";
                 this._bindView("/" + sObjectPath);
             }.bind(this));
@@ -206,7 +196,7 @@ sap.ui.define([
             var that = this;
             var oModelParam = this.getView().getModel("parameters");
 
-            var localModel = this.getModel("parameters");
+            var localModel = this.getView().getModel("parameters");
             var oLocalFilter = new Filter({
                 filters: [
                     new Filter("generation_proc/template_uuid", FilterOperator.EQ, localModel.oData.template_uuid),
@@ -219,7 +209,7 @@ sap.ui.define([
             oModel.read(sPath, {
                 filters: [oLocalFilter],
                 urlParameters: {
-                    "$expand": "generation_proc,worker"
+                    "$expand": "generation_proc,worker,doc_sign"
                 },
                 success: function (oData, oResponse) {
                     //var results = oData.worker.results;
@@ -998,12 +988,6 @@ sap.ui.define([
                 bDescending,
                 aSorters = [];
             sPath = item.getKey();
-
-            if (sPath !== 'pernr') {
-                sPath = 'worker/' + item.getKey();
-            } else {
-                sPath = 'employee_number';
-            }
 
             bDescending = desc;
             aSorters.push(new Sorter(sPath, bDescending));

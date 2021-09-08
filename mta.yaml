@@ -3,19 +3,19 @@
 #    GLOBALS                                 #
 # ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ #
 #
-_schema-version: '3.2'
-ID: wd2pdsaascbg
+_schema-version: "3.2"
+ID: wd2pdsaas
 version: 0.0.1
 parameters:
- # deploy_mode: html5-repo #no está
+  # deploy_mode: html5-repo #no está
   enable-parallel-deployments: true
   keep-existing-routes: true
 build-parameters:
   before-all:
-  - builder: custom
-    commands:
-    - npm install --production
-    - npx -p @sap/cds-dk cds build --production
+    - builder: custom
+      commands:
+        - npm install --production
+        - npx -p @sap/cds-dk cds build --production
 
 #
 # ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ #
@@ -28,309 +28,307 @@ modules:
   #   ║               CAP SERVICE             ║   #
   #   ╚═══════════════════════════════════════╝   #
   #
-- name: wd2pdsaascbg-srv
-  type: nodejs
-  path: gen/srv
-  parameters:
-    buildpack: nodejs_buildpack
-    disk-quota: 1024M
-    memory: 512M
-  properties:
-    SAP_JWT_TRUST_ACL: '[{"clientid":"*","identityzone":"sap-provisioning"}]'
-    EXIT: 1
-  requires:
-  - name: wd2pdsaascbg-uaa
-  - name: wd2pdsaascbg-theming
-  - name: wd2pdsaascbg-registry
-  - name: wd2pdsaascbg-sm
-  - name: wd2pdsaascbg_portal
-  - name: wd2pdsaascbg_destination
-  provides:
-  - name: srv_api
+  - name: wd2pdsaas-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+      disk-quota: 1024M
+      memory: 512M
     properties:
-      srv-url: ${default-url}
+      SAP_JWT_TRUST_ACL: '[{"clientid":"*","identityzone":"sap-provisioning"}]'
+      EXIT: 1
+    requires:
+      - name: wd2pdsaas-uaa
+      - name: wd2pdsaas-theming
+      - name: wd2pdsaas-registry
+      - name: wd2pdsaas-sm
+      - name: wd2pdsaas_portal
+      - name: wd2pdsaas_destination
+    provides:
+      - name: srv_api
+        properties:
+          srv-url: ${default-url}
 
-  #
-  #   ╔═══════════════════════════════════════╗   #
-  #   ║               APP ROUTER              ║   #
-  #   ╚═══════════════════════════════════════╝   #
-  #
-  
-- name: wd2pdsaascbg
-  type: approuter.nodejs
-  path: wd2pd-approuter
-  properties:
-    TENANT_HOST_PATTERN: '^(.*)-shapeinsubs-${app-name}.cfapps.eu10.hana.ondemand.com'
-  #  TENANT_HOST_PATTERN: ^(.*)-${space}-${app-name}.${default-domain}
-  #  TENANT_HOST_PATTERN: '^(.*)-shapeinsolutionsdev-${app-name}.cfapps.eu20.hana.ondemand.com'
-  requires:
-  - name: wd2pdsaascbg-uaa
-  - name: wd2pdsaascbg-theming
-  - name: wd2pdsaascbg_destination
-  - name: wd2pdsaascbg_portal
-  - name: wd2pdsaascbg_html5_repo_runtime
-  - name: wd2pdsaascbg-registry
-  - name: srv_api
-    group: destinations
+
+    #
+    #   ╔═══════════════════════════════════════╗   #
+    #   ║               APP ROUTER              ║   #
+    #   ╚═══════════════════════════════════════╝   #
+    #
+  - name: wd2pdsaas
+    type: approuter.nodejs
+    path: wd2pd-approuter
     properties:
-      forwardAuthToken: true
-      name: srv
-      timeout: 60000
-      url: ~{srv-url}
-  provides:
-  - name: app_api
-    properties:
-      application: ${app-name}
-      url: ${default-url}
-  parameters:
-    disk-quota: 1024M
-    memory: 256M
-  build-parameters:
-    #  ignore: ['default-env.json', 'node_modules/']
+      #  TENANT_HOST_PATTERN: '^(.*)-shapeinsubs-${app-name}.cfapps.eu10.hana.ondemand.com'
+      TENANT_HOST_PATTERN: ^(.*)-${space}-${app-name}.${default-domain}
+    #  TENANT_HOST_PATTERN: '^(.*)-shapeinsolutionsdev-${app-name}.cfapps.eu20.hana.ondemand.com'
+    requires:
+      - name: wd2pdsaas-uaa
+      - name: wd2pdsaas-theming
+      - name: wd2pdsaas_destination
+      - name: wd2pdsaas_portal
+      - name: wd2pdsaas_html5_repo_runtime
+      - name: wd2pdsaas-registry
+      - name: srv_api
+        group: destinations
+        properties:
+          forwardAuthToken: true
+          name: srv
+          timeout: 60000
+          url: ~{srv-url}
+    provides:
+      - name: app_api
+        properties:
+          application: ${app-name}
+          url: ${default-url}
+    parameters:
+      disk-quota: 1024M
+      memory: 256M
+    build-parameters:
+      #  ignore: ['default-env.json', 'node_modules/']
       builder: custom
       commands: []
-  #
-  #   ╔═══════════════════════════════════════╗   #
-  #   ║               HTML5 APPS              ║   #
-  #   ╚═══════════════════════════════════════╝   #
-  #
-- name: workerslist
-  type: html5
-  path: app/workerslist
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-- name: configuringworkers
-  type: html5
-  path: app/configuringworkers
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-- name: monitoringworkers
-  type: html5
-  path: app/monitoringworkers
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-- name: runintegrationsplanningworkers
-  type: html5
-  path: app/runintegrationsplanningworkers
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-- name: templatesconfiguration
-  type: html5
-  path: app/templatesconfiguration
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-- name: documentsintegrationmonitor
-  type: html5
-  path: app/documentsintegrationmonitor
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-- name: organizationslist
-  type: html5
-  path: app/organizationslist
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-- name: configuringorganizations
-  type: html5
-  path: app/configuringorganizations
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-- name: monitoringorganizations
-  type: html5
-  path: app/monitoringorganizations
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-- name: runintegrationsplanningorganizations
-  type: html5
-  path: app/runintegrationsplanningorganizations
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-- name: userslist
-  type: html5
-  path: app/userslist
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-- name: configuringusers
-  type: html5
-  path: app/configuringusers
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-- name: monitoringusers
-  type: html5
-  path: app/monitoringusers
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-- name: runintegrationsplanningusers
-  type: html5
-  path: app/runintegrationsplanningusers
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
+    #
+    #   ╔═══════════════════════════════════════╗   #
+    #   ║               HTML5 APPS              ║   #
+    #   ╚═══════════════════════════════════════╝   #
+    #
+  - name: workerslist
+    type: html5
+    path: app/workerslist
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+  - name: configuringworkers
+    type: html5
+    path: app/configuringworkers
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+  - name: monitoringworkers
+    type: html5
+    path: app/monitoringworkers
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+  - name: runintegrationsplanningworkers
+    type: html5
+    path: app/runintegrationsplanningworkers
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+  - name: templatesconfiguration
+    type: html5
+    path: app/templatesconfiguration
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+  - name: documentsintegrationmonitor
+    type: html5
+    path: app/documentsintegrationmonitor
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+  - name: organizationslist
+    type: html5
+    path: app/organizationslist
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+  - name: configuringorganizations
+    type: html5
+    path: app/configuringorganizations
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+  - name: monitoringorganizations
+    type: html5
+    path: app/monitoringorganizations
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+  - name: runintegrationsplanningorganizations
+    type: html5
+    path: app/runintegrationsplanningorganizations
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+  - name: userslist
+    type: html5
+    path: app/userslist
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+  - name: configuringusers
+    type: html5
+    path: app/configuringusers
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+  - name: monitoringusers
+    type: html5
+    path: app/monitoringusers
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+  - name: runintegrationsplanningusers
+    type: html5
+    path: app/runintegrationsplanningusers
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
 
-
-  #
-  #   ╔═══════════════════════════════════════╗   #
-  #   ║            HTML5 DEPLOYER             ║   #
-  #   ╚═══════════════════════════════════════╝   #
-  #
-- name: wd2pdsaascbg-app-content
-  type: com.sap.application.content
-  path: html5-deployer
-  requires:
-  - name: wd2pdsaascbg-repo-host
-    parameters:
-      content-target: true
-  build-parameters:
-    build-result: resources
+    #
+    #   ╔═══════════════════════════════════════╗   #
+    #   ║            HTML5 DEPLOYER             ║   #
+    #   ╚═══════════════════════════════════════╝   #
+    #
+  - name: wd2pdsaas-app-content
+    type: com.sap.application.content
+    path: html5-deployer
     requires:
-    - name: workerslist
-      artifacts:
-      - workerslist.zip   
-      target-path: resources/
-    - name: configuringworkers
-      artifacts:
-      - configuringworkers.zip   
-      target-path: resources/
-    - name: monitoringworkers
-      artifacts:
-      - monitoringworkers.zip   
-      target-path: resources/
-    - name: runintegrationsplanningworkers
-      artifacts:
-      - runintegrationsplanningworkers.zip   
-      target-path: resources/
-    - name: templatesconfiguration
-      artifacts:
-      - templatesconfiguration.zip   
-      target-path: resources/
-    - name: documentsintegrationmonitor
-      artifacts:
-      - documentsintegrationmonitor.zip   
-      target-path: resources/
-    - name: organizationslist
-      artifacts:
-      - organizationslist.zip   
-      target-path: resources/
-    - name: configuringorganizations
-      artifacts:
-      - configuringorganizations.zip   
-      target-path: resources/
-    - name: monitoringorganizations
-      artifacts:
-      - monitoringorganizations.zip   
-      target-path: resources/
-    - name: runintegrationsplanningorganizations
-      artifacts:
-      - runintegrationsplanningorganizations.zip   
-      target-path: resources/
-    - name: userslist
-      artifacts:
-      - userslist.zip   
-      target-path: resources/
-    - name: configuringusers
-      artifacts:
-      - configuringusers.zip   
-      target-path: resources/
-    - name: monitoringusers
-      artifacts:
-      - monitoringusers.zip   
-      target-path: resources/
-    - name: runintegrationsplanningusers
-      artifacts:
-      - runintegrationsplanningusers.zip   
-      target-path: resources/
+      - name: wd2pdsaas-repo-host
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: resources
+      requires:
+        - name: workerslist
+          artifacts:
+            - workerslist.zip
+          target-path: resources/
+        - name: configuringworkers
+          artifacts:
+            - configuringworkers.zip
+          target-path: resources/
+        - name: monitoringworkers
+          artifacts:
+            - monitoringworkers.zip
+          target-path: resources/
+        - name: runintegrationsplanningworkers
+          artifacts:
+            - runintegrationsplanningworkers.zip
+          target-path: resources/
+        - name: templatesconfiguration
+          artifacts:
+            - templatesconfiguration.zip
+          target-path: resources/
+        - name: documentsintegrationmonitor
+          artifacts:
+            - documentsintegrationmonitor.zip
+          target-path: resources/
+        - name: organizationslist
+          artifacts:
+            - organizationslist.zip
+          target-path: resources/
+        - name: configuringorganizations
+          artifacts:
+            - configuringorganizations.zip
+          target-path: resources/
+        - name: monitoringorganizations
+          artifacts:
+            - monitoringorganizations.zip
+          target-path: resources/
+        - name: runintegrationsplanningorganizations
+          artifacts:
+            - runintegrationsplanningorganizations.zip
+          target-path: resources/
+        - name: userslist
+          artifacts:
+            - userslist.zip
+          target-path: resources/
+        - name: configuringusers
+          artifacts:
+            - configuringusers.zip
+          target-path: resources/
+        - name: monitoringusers
+          artifacts:
+            - monitoringusers.zip
+          target-path: resources/
+        - name: runintegrationsplanningusers
+          artifacts:
+            - runintegrationsplanningusers.zip
+          target-path: resources/
 
-  #
-  #   ╔═══════════════════════════════════════╗   #
-  #   ║            PORTAL DEPLOYER            ║   #
-  #   ╚═══════════════════════════════════════╝   #
-  #
-- name: flp
-  type: com.sap.application.content
-  path: flp
-  parameters:
+    #
+    #   ╔═══════════════════════════════════════╗   #
+    #   ║            PORTAL DEPLOYER            ║   #
+    #   ╚═══════════════════════════════════════╝   #
+    #
+  - name: flp
+    type: com.sap.application.content
+    path: flp
+    parameters:
       config:
       #  TENANT_HOST_PATTERN: '^(.*)-shapeinsubs-${app-name}.${default-domain}'
-  requires:
-  - name: wd2pdsaascbg_portal
-    parameters:
-      content-target: true
-      service-key:
-        config:
-          content-endpoint: developer
-        name: content-deploy-key
-  - name: wd2pdsaascbg-uaa
-  - name: wd2pdsaascbg-repo-host
-  - name: wd2pdsaascbg-registry
-
+    requires:
+      - name: wd2pdsaas_portal
+        parameters:
+          content-target: true
+          service-key:
+            config:
+              content-endpoint: developer
+            name: content-deploy-key
+      - name: wd2pdsaas-uaa
+      - name: wd2pdsaas-repo-host
+      - name: wd2pdsaas-registry
 
 #
 # ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ #
@@ -338,124 +336,120 @@ modules:
 # ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ #
 #
 resources:
- #
+  #
   #   ┌─────────────────────────────────────┐   #
   #   │            DESTINATIONS             │   #
   #   └─────────────────────────────────────┘   #
   #
-- name: wd2pdsaascbg_destination
-  type: org.cloudfoundry.managed-service
-  parameters:
-    service: destination
-    service-plan: lite
+  - name: wd2pdsaas_destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
 
+    #
+    #   ┌─────────────────────────────────────┐   #
+    #   │           SERVICE MANAGER           │   #
+    #   └─────────────────────────────────────┘   #
+    #
+  - name: wd2pdsaas-sm
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        acquireTimeoutMillis: max
+        polling_timeout_seconds: 480
+      polling_timeout_seconds: 240
+      service: service-manager
+      service-plan: container
+    requires:
+      - name: wd2pdsaas-uaa
+    #
+    #   ┌─────────────────────────────────────┐   #
+    #   │                XSUAA                │   #
+    #   └─────────────────────────────────────┘   #
+    #
+  - name: wd2pdsaas-uaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        xsappname: ${xsuaa-app}
+      path: ./xs-security.json
+      service: xsuaa
+      service-plan: application
+      xsuaa-app: ${space}-~{app_api/application}
+      #xsuaa-app: shapeinsubs-~{app_api/application}
+    properties:
+      XSAPPNAME: ${xsuaa-app}
+    #   tenant-mode: shared
+    requires:
+      - name: app_api
 
-  #
-  #   ┌─────────────────────────────────────┐   #
-  #   │           SERVICE MANAGER           │   #
-  #   └─────────────────────────────────────┘   #
-  #
-- name: wd2pdsaascbg-sm
-  type: org.cloudfoundry.managed-service
-  parameters:
-    config:
-      acquireTimeoutMillis: max
-      polling_timeout_seconds: 480
-    polling_timeout_seconds: 240
-    service: service-manager
-    service-plan: container
-  requires:
-  - name: wd2pdsaascbg-uaa
-  #
-  #   ┌─────────────────────────────────────┐   #
-  #   │                XSUAA                │   #
-  #   └─────────────────────────────────────┘   #
-  #
-- name: wd2pdsaascbg-uaa
-  type: org.cloudfoundry.managed-service
-  parameters:
-    config:
-      xsappname: ${xsuaa-app}
-    path: ./xs-security.json
-    service: xsuaa
-    service-plan: application
-    #xsuaa-app: ${space}-~{app_api/application}
-    xsuaa-app: shapeinsubs-~{app_api/application}
-  properties:
-    XSAPPNAME: ${xsuaa-app}
- #   tenant-mode: shared
-  requires:
-  - name: app_api
+    #
+    #   ┌─────────────────────────────────────┐   #
+    #   │                SAAS                 │   #
+    #   └─────────────────────────────────────┘   #
+    #
+  - name: wd2pdsaas-registry
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        appName: wd2pdsaas
+        appUrls:
+        #  getDependencies: https://bigcore-shapeinlabs-shapeinsubs-wd2pdsaas-srv.cfapps.eu10.hana.ondemand.com/mtx/v1/provisioning/dependencies
+          getDependencies: https://${org}-${space}-wd2pdsaas-srv.${default-domain}/mtx/v1/provisioning/dependencies
+        #    onSubscription: https://bigcore-shapeinlabs-shapeinsubs-wd2pdsaas-srv.cfapps.eu10.hana.ondemand.com/mtx/v1/provisioning/tenant/{tenantId}
+          onSubscription: https://${org}-${space}-wd2pdsaas-srv.${default-domain}/mtx/v1/provisioning/tenant/{tenantId}
+          category: SHAPEiN Solutions
+          description: Workday 2 PeopleDoc Integration
+          displayName: WD2PD Integration App
+        xsappname: ~{wd2pdsaas-uaa/XSAPPNAME}
+      service: saas-registry
+      service-plan: application
+    requires:
+      - name: wd2pdsaas-uaa
 
-  #
-  #   ┌─────────────────────────────────────┐   #
-  #   │                SAAS                 │   #
-  #   └─────────────────────────────────────┘   #
-  #
-- name: wd2pdsaascbg-registry
+    #
+    #   ┌─────────────────────────────────────┐   #
+    #   │            HTML5 RUNTIME            │   #
+    #   └─────────────────────────────────────┘   #
+    #
+  - name: wd2pdsaas_html5_repo_runtime
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service-plan: app-runtime
+      service: html5-apps-repo
 
-  type: org.cloudfoundry.managed-service
-  parameters:
-    config:
-      appName: wd2pdsaascbg
-      appUrls:
-        getDependencies: https://bigcore-shapeinlabs-shapeinsubs-wd2pdsaascbg-srv.cfapps.eu10.hana.ondemand.com/mtx/v1/provisioning/dependencies
-        onSubscription: https://bigcore-shapeinlabs-shapeinsubs-wd2pdsaascbg-srv.cfapps.eu10.hana.ondemand.com/mtx/v1/provisioning/tenant/{tenantId}
-    #  onSubscription: https://${org}-${space}-wd2pdsaas-srv.${default-domain}/mtx/v1/provisioning/tenant/{tenantId}
-      category: SaaS Multitenant Apps
-      description: Business Application
-      displayName: WD2PD SaaS Cbg
-      xsappname: ~{wd2pdsaascbg-uaa/XSAPPNAME}
-    service: saas-registry
-    service-plan: application
-  requires:
-  - name: wd2pdsaascbg-uaa
-
- #
-  #   ┌─────────────────────────────────────┐   #
-  #   │            HTML5 RUNTIME            │   #
-  #   └─────────────────────────────────────┘   #
-  #
-- name: wd2pdsaascbg_html5_repo_runtime
-  type: org.cloudfoundry.managed-service
-  parameters:
-    service-plan: app-runtime
-    service: html5-apps-repo
- 
- 
-  #
-  #   ┌─────────────────────────────────────┐   #
-  #   │              HTML5 HOST             │   #
-  #   └─────────────────────────────────────┘   #
-  #
-- name: wd2pdsaascbg-repo-host
-  type: org.cloudfoundry.managed-service
-  parameters:
-    service: html5-apps-repo
-    service-name: wd2pdsaascbg-html5-srv
-    service-plan: app-host
-    config:
+    #
+    #   ┌─────────────────────────────────────┐   #
+    #   │              HTML5 HOST             │   #
+    #   └─────────────────────────────────────┘   #
+    #
+  - name: wd2pdsaas-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-name: wd2pdsaas-html5-srv
+      service-plan: app-host
+      config:
         sizeLimit: 2
- 
-  #
-  #   ┌─────────────────────────────────────┐   #
-  #   │            PORTAL SERVICE           │   #
-  #   └─────────────────────────────────────┘   #
-  #
-- name: wd2pdsaascbg_portal
-  type: org.cloudfoundry.managed-service
-  parameters:
-    service: portal
-    service-plan: standard
- #
-  #   ┌─────────────────────────────────────┐   #
-  #   │            THEME                    │   #
-  #   └─────────────────────────────────────┘   #
-  #
-- name: wd2pdsaascbg-theming
-  type: org.cloudfoundry.managed-service
-  parameters:
-    service: theming
-    service-plan: standard
- 
 
+    #
+    #   ┌─────────────────────────────────────┐   #
+    #   │            PORTAL SERVICE           │   #
+    #   └─────────────────────────────────────┘   #
+    #
+  - name: wd2pdsaas_portal
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: portal
+      service-plan: standard
+    #
+    #   ┌─────────────────────────────────────┐   #
+    #   │            THEME                    │   #
+    #   └─────────────────────────────────────┘   #
+    #
+  - name: wd2pdsaas-theming
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: theming
+      service-plan: standard

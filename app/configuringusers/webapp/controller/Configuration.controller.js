@@ -8,27 +8,21 @@ sap.ui.define([
 	return Controller.extend("shapein.ConfiguringUsers.controller.Configuration", {
 		onInit: function () {
 			var vThat = this;
-			// //carga modelo local-inicio
-			// var oModelJSON = this.getOwnerComponent().getModel("mock_json_model");
-			// this.getView().setModel(oModelJSON, "ModelJSON");
-
-			// oModelJSON.attachRequestCompleted(function () {
-			// 	//var dataModelCountryLogic = vThat.formatCountryLogic(oModelJSON);
-			// 	//vThat.getView().setModel(dataModelCountryLogic, "CountryLogic");
-			// }, this);
-			// //carga modelo local-fin
-
 			var modelBase64 = this.getOwnerComponent().getModel();
-			this.getView().setModel(modelBase64, "Base64");
+            this.getView().setModel(modelBase64, "Base64");
+            
+            var oGlobalBusyDialog = new sap.m.BusyDialog();
+            oGlobalBusyDialog.open();
+
 			modelBase64.attachBatchRequestCompleted(function (oEvent) {
 				var requests = oEvent.getParameter('requests');
 				for (var i = 0; i < requests.length; i++) {
 					if (requests[i].url == "Subscription_Settings") {
-						vThat.readBase64(modelBase64);
+                        vThat.readBase64(modelBase64);
+                        oGlobalBusyDialog.close();
 					}
 				}
 			});
-			//this.readBase64(modelBase64);
 		},
 		booleanTrans: function (parameter) {
 			if (parameter === 'True') {
@@ -82,7 +76,7 @@ sap.ui.define([
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 			}
 		},
 		addRow_trans: function (oArg) {
@@ -90,16 +84,16 @@ sap.ui.define([
 
 			if (dataModel.oData.global_configuration.transformations.organization_code.transformation.length == undefined) {
 				dataModel.oData.global_configuration.transformations.organization_code.transformation = ([{
-					characters: " ",
-					separator: " ",
-					replace_by: " ",
+					characters: "",
+					separator: "",
+					replace_by: "",
 					_secuence: null
 				}]);
 			} else {
 				dataModel.oData.global_configuration.transformations.organization_code.transformation.push({
-					characters: " ",
-					separator: " ",
-					replace_by: " ",
+					characters: "",
+					separator: "",
+					replace_by: "",
 					_secuence: null
 				});
 			}
@@ -123,7 +117,7 @@ sap.ui.define([
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 			}
 		},
 		addRow_roles: function (oArg) {
@@ -158,7 +152,7 @@ sap.ui.define([
 					}
 				}
 			} else {
-				sap.m.MessageToast.show('Please, select a row to delete.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 			}
 		},
 		readBase64: function (oModel) {
@@ -181,10 +175,6 @@ sap.ui.define([
 					}
 					var oModelJSON = vThat.getJsonModel(oJSON);
 					vThat.getView().setModel(oModelJSON, "ModelJSON");
-
-					// var dataModelCountryLogic = vThat.formatCountryLogic(oModelJSON);
-					// vThat.getView().setModel(dataModelCountryLogic, "CountryLogic");
-					// vThat.callCPIShapeIn();
 					vThat.callCPIShapeIn_Language();
 				}
 			});
@@ -363,28 +353,18 @@ sap.ui.define([
 				var sUrl = "/Configurations(pck_code='SYN_USER',conf_code='SCE-CONFIG')";
 				vServiceModel.update(sUrl, changedData, {
 					success: function (oData, response) {
-						sap.m.MessageToast.show('Users Configurations updated.');
+						sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage7"));
 					},
 					error: function (oData, response) {
-						sap.m.MessageToast.show('Data can not be updated. Please try again');
+						sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage5"));
 					}
 				});
 			} else {
-				sap.m.MessageToast.show('There is a field with wrong value.');
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage6"));
 			}
 		},
 		validation2Save: function () {
 			var aux = true;
-			// var oItems = this.getView().byId("table0_1603812570312").getItems();
-			// for (var i = 0; i < oItems.length; i++) {
-			// 	var oItemState = oItems[i].getAggregation("cells")[0].getValueState();
-			// 	if (oItemState === "Error") {
-			// 		aux = false;
-			// 		break;
-			// 	} else {
-			// 		aux = true;
-			// 	}
-			// }
 			return aux;
 		},
 		getUpdatedArray: function () {
@@ -521,17 +501,6 @@ sap.ui.define([
 			//	var url = "/CPI-WD2PD/pd/client";
 			var url = "/CPI-WD2PD_Dest/md/peopledoc/client";
 			var vThat = this;
-			// var entorno = 'DEV';
-			// if (entorno == 'DEV') {
-			// 	var cuscode = "C000000001";
-			// 	var cusclientid = "15ff0365-5b0c-420e-bb14-bcf28b458374";
-			// 	var cusscope = "cf0f8bd6-4d5c-4ea5-827d-22898796ce68";
-			// }
-			// if (entorno == 'TEST') {
-			// 	var cuscode = "T000000001";
-			// 	var cusclientid = "e4f496b6-4c9b-4d03-9665-86d13349b046";
-			// 	var cusscope = "f0adfc99-7fea-42d7-9439-46a4c9de4742";
-			// }
 			if (this.getOwnerComponent().settings) {
 				//this.settings = await this.getSubscriptionSettings();
 

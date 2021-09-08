@@ -1,0 +1,4 @@
+code,type,text,xsd_id,metadata
+PD-EMPLOYEES,XSD,PeopleDoc - Employees,PD_EMPLOYEE_GET,
+WD-WORKERS,XSD,Workday - Workers,GET_WORKERS_35.2,
+WD-WORKERS-CF,LVA,Workday - Workers - Custom Fields,,{\"LVAID\":\"WD-WORKERS-CF\"}

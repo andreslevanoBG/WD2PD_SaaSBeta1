@@ -302,12 +302,15 @@ entity Di_Template_Mappings {
         mapping        : String;
         required       : Boolean;
         source         : String(20);
+        metadata       : String;
         template       : Association to Di_Template
                              on template.uuid = template_uuid;
         object         : Association to Di_Template_Mapping_Objects
                              on object.code = mapping_object;
         source_link    : Association to Di_Template_Mapping_Sources
                              on source_link.code = source;
+        typeMap        : Association to Di_Template_Mapping_Types
+                             on typeMap.code = mapping_type;
 }
 
 entity Di_Template_Mapping_Objects {
@@ -320,10 +323,21 @@ entity Di_Template_Mapping_Objects {
 //XPATH Sources
 entity Di_Template_Mapping_Sources {
     key code       : String(20);
+        type       : String(5);
         text       : String;
         xsd_id     : String(20);
+        metadata   : String;
         parser_xsd : Association to many Di_Parser_Xsd
                          on parser_xsd.xsd_id = xsd_id;
+        typeSource : Association to Di_Template_Mapping_Sources_Types
+                         on typeSource.code = type;
+}
+
+entity Di_List_Values {
+    key lvaid : String(20);
+    key seqno : Integer;
+        value : String(100);
+        text  : String(200);
 }
 
 
@@ -410,6 +424,7 @@ entity Di_Generation_Processes_Doc : managed {
         employee_external_id      : String;
         employee_number           : String;
         doc_id                    : String;
+        pd_doc_id                 : String(15);
         status                    : String(10);
         error_code                : String(10);
         error_http_code           : String(100);
@@ -551,4 +566,25 @@ entity Subscription_Settings {
     key code        : String(20);
         value       : String;
         description : String;
+}
+
+entity Di_Template_Mapping_Sources_Types {
+    key code        : String(5);
+        description : localized String;
+        sources     : Association to many Di_Template_Mapping_Sources
+                          on sources.type = code;
+
+}
+
+entity Di_Template_Mapping_Types {
+    key code        : String(5);
+        description : localized String;
+        mappings    : Association to many Di_Template_Mappings
+                          on mappings.mapping_type = code;
+
+}
+
+entity Organizations_Types {
+    key code : String(50);
+    description: String;
 }

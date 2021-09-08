@@ -31,6 +31,9 @@ module.exports = cds.service.impl(srv => {
     const { Di_Employee } = srv.entities('shapein.integrations')
     const { Di_Employee_Template } = srv.entities('shapein.integrations')
     const { Di_Business_Process_Master } = srv.entities('shapein.integrations')
+    const { Di_List_Values } = srv.entities('shapein.integrations')
+    const { Organizations_Types } = srv.entities('shapein.integrations')
+
 
     srv.before('READ', 'Integrations', async (req) => {
         try {
@@ -111,7 +114,7 @@ module.exports = cds.service.impl(srv => {
                     var event = {
                         integ_id: integ_id
                     }
-                    srv.emit('deleteInteg', event)
+                    await srv.emit('deleteInteg', event)
                     event = null;
                 }
                 items = null;
@@ -510,7 +513,7 @@ module.exports = cds.service.impl(srv => {
                     var event = {
                         gen_id: gen_id
                     }
-                    srv.emit('deleteGeneration', event)
+                    await srv.emit('deleteGeneration', event)
                     event = null;
                 }
                 items = null;
@@ -527,7 +530,7 @@ module.exports = cds.service.impl(srv => {
             do {
                 try {
                     times++;
-                    srv.run(DELETE.from(Integrations).where({ id: msg.data.integ_id }))
+                    await srv.run(DELETE.from(Integrations).where({ id: msg.data.integ_id }));
                     del = "X";
                 }
                 catch (e) {
@@ -550,7 +553,7 @@ module.exports = cds.service.impl(srv => {
             do {
                 try {
                     times++;
-                    srv.run(DELETE.from(Di_Generation_Processes).where({ uuid: msg.data.gen_id }))
+                    await srv.run(DELETE.from(Di_Generation_Processes).where({ uuid: msg.data.gen_id }))
                     del = "X";
                 }
                 catch (e) {
@@ -599,8 +602,8 @@ module.exports = cds.service.impl(srv => {
     srv.on('updateOrg', async (msg) => {
         try {
             //var original_external_id = msg.data.original_external_id;
-            var org = await srv.run(SELECT.one.from(Organizations).where({ external_id: msg.data.external_id }));
-            if (org) {
+            var org = await srv.run(SELECT.from(Organizations).where({ external_id: msg.data.external_id }));
+            if (org.length > 0) {
                 if (!msg.data.original_external_id) {
                     msg.data.original_external_id = org[0].original_external_id;
                 }
@@ -658,30 +661,29 @@ module.exports = cds.service.impl(srv => {
 
     srv.on('updateWorker', async (msg) => {
         try {
-            var worker = await srv.run(SELECT.one.from(Workers).where({ external_id: msg.data.external_id }));
-            if (worker) {
+            var worker = await srv.run(SELECT.from(Workers).where({ external_id: msg.data.external_id }));
+            if (worker.length > 0) {
                 if (!msg.data.original_external_id) {
-                    msg.data.original_external_id = worker.original_external_id;
+                    msg.data.original_external_id = worker[0].original_external_id;
                 }
                 if (!msg.data.email) {
-                    msg.data.email = worker.email;
+                    msg.data.email = worker[0].email;
                 }
                 if (!msg.data.employee_number) {
-                    msg.data.employee_number = worker.employee_number;
+                    msg.data.employee_number = worker[0].employee_number;
                 }
                 if (!msg.data.lastname) {
-                    msg.data.lastname = worker.lastname;
+                    msg.data.lastname = worker[0].lastname;
                 }
                 if (!msg.data.organization_id) {
-                    msg.data.organization_id = worker.organization_id;
+                    msg.data.organization_id = worker[0].organization_id;
                 }
                 if (!msg.data.last_item_id) {
-                    msg.data.last_item_id = worker.last_item_id;
+                    msg.data.last_item_id = worker[0].last_item_id;
                 }
                 if (!msg.data.last_status) {
-                    msg.data.last_status = worker.last_status;
+                    msg.data.last_status = worker[0].last_status;
                 }
-                //console.log('CBG:' + msg.data.firstname);
                 srv.run(
                     UPDATE(Workers).set(
                         {
@@ -716,7 +718,6 @@ module.exports = cds.service.impl(srv => {
                 if (!msg.data.last_status) {
                     msg.data.last_status = null;
                 }
-                //console.log('CBGins:' + msg.data.firstname);
                 srv.run(
                     INSERT.into(Workers).entries(
                         {
@@ -735,8 +736,8 @@ module.exports = cds.service.impl(srv => {
 
     srv.on('updateUser', async (msg) => {
         try {
-            var user = await srv.run(SELECT.one.from(Users).where({ external_id: msg.data.external_id }));
-            if (user) {
+            var user = await srv.run(SELECT.from(Users).where({ external_id: msg.data.external_id }));
+            if (user.length > 0) {
                 if (!msg.data.original_external_id) {
                     msg.data.original_external_id = user[0].original_external_id;
                 }
@@ -976,101 +977,92 @@ module.exports = cds.service.impl(srv => {
             // //var text = atob(integ_item.request);
             var objectValue = JSON.parse(text);
             var external_id = integ_item.external_id;
-            var firstname = objectValue['firstname'];
-            //console.log('CBGfirst:' + firstname);
+            // var firstname = objectValue['firstname'];
             var pck_code = integ_item.pck_code;
-            var configuration = await srv.run(SELECT.one.from(Configurations).where({
+            var configuration = await srv.run(SELECT.from(Configurations).where({
                 pck_code: pck_code,
                 conf_code: 'SCE-CONFIG'
             }));
-            if (configuration) {
-                //console.log('CBGconf:' + configuration.pck_code);
-                var buff = Buffer.from(configuration.value, 'base64');
-                var text = buff.toString('UTF8');
-                var xml2js = require('xml2js');
-                var resultado, res2;
-                xml2js.parseString(text, (err, result) => {
-                    if (err) {
-                        throw err;
-                    }
-                    resultado = result;
-                });
-                xml2js = null;
-                configuration = null;
-                buff = null;
-                text = null;
-                var glo_conf = resultado['global_configuration'];
-                var ret_period = glo_conf['retention_period'];
-                if (ret_period) {
-                    var logic_type = ret_period['0']['logic_type'][0];
-                } else {
-                    var logic_type = '02';
+
+            var buff = Buffer.from(configuration[0].value, 'base64');
+            var text = buff.toString('UTF8');
+            var xml2js = require('xml2js');
+            var resultado, res2;
+            xml2js.parseString(text, (err, result) => {
+                if (err) {
+                    throw err;
                 }
-                //console.log('CBGlogic:' + logic_type);
-                if (logic_type != '01') {
-                    if (pck_code == "SYN_WORKER") {
-                        if (objectValue['registration_references']) {
-                            var reg_ref = objectValue['registration_references'];
-                            var employee_number = reg_ref[0].employee_number;
-                            var organization_id = reg_ref[0].organization_id;
-                        }
-                        //var organization_id = "Sales_Marketing_supervisory";
-                        // var employee_number = "21185";
-                        var event = {
-                            external_id: external_id,
-                            last_item_id: integ_item.item_id,
-                            last_status: integ_item.status_code,
-                            original_external_id: integ_item.original_external_id,
-                            employee_number: employee_number,
-                            firstname: objectValue['firstname'],
-                            lastname: objectValue['lastname'],
-                            email: objectValue['email'],
-                            // firstname: "Nobu",
-                            //lastname: "Matsuda",
-                            //email: "nmatsuda@workday.net",
-                            organization_id: organization_id,
-                            last_timestamp: integ_item.timestamp_start
-                        }
-
-                        srv.emit('updateWorker', event)
-                        //   event = null;
-
-                    } else if (pck_code == "SYN_ORG") {
-                        var event = {
-                            external_id: external_id,
-                            last_item_id: integ_item.item_id,
-                            last_status: integ_item.status_code,
-                            original_external_id: integ_item.original_external_id,
-                            name: objectValue['name'],
-                            corporate_name: objectValue['corporate_name'],
-                            last_timestamp: integ_item.timestamp_start
-                        }
-
-                        srv.emit('updateOrg', event)
-                        //   event = null;
-
-                    } else if (pck_code == "SYN_USER") {
-                        if (objectValue['registration_references']) {
-                            var reg_ref = objectValue['registration_references'];
-                            var employee_number = reg_ref[0].employee_number;
-                            var organization_id = reg_ref[0].organization_id;
-                        }
-                        var event = {
-                            external_id: external_id,
-                            last_item_id: integ_item.item_id,
-                            last_status: integ_item.status_code,
-                            original_external_id: integ_item.original_external_id,
-                            employee_number: employee_number,
-                            firstname: objectValue['firstname'],
-                            lastname: objectValue['lastname'],
-                            email: objectValue['email'],
-                            organization_id: organization_id,
-                            last_timestamp: integ_item.timestamp_start
-                        }
-
-                        srv.emit('updateUser', event)
-                        //  event = null;
+                resultado = result;
+            });
+            xml2js = null;
+            configuration = null;
+            buff = null;
+            text = null;
+            var glo_conf = resultado['global_configuration'];
+            var ret_period = glo_conf['retention_period'];
+            if (ret_period) {
+                var logic_type = ret_period['0']['logic_type'][0];
+            } else {
+                var logic_type = '02';
+            }
+            if (logic_type != '01') {
+                if (pck_code == "SYN_WORKER") {
+                    if (objectValue['registration_references']) {
+                        var reg_ref = objectValue['registration_references'];
+                        var employee_number = reg_ref[0].employee_number;
+                        var organization_id = reg_ref[0].organization_id;
                     }
+                    var event = {
+                        external_id: external_id,
+                        last_item_id: integ_item.item_id,
+                        last_status: integ_item.status_code,
+                        original_external_id: integ_item.original_external_id,
+                        employee_number: employee_number,
+                        firstname: objectValue['firstname'],
+                        lastname: objectValue['lastname'],
+                        email: objectValue['email'],
+                        organization_id: organization_id,
+                        last_timestamp: integ_item.timestamp_start
+                    }
+
+                    srv.emit('updateWorker', event)
+                    event = null;
+
+                } else if (pck_code == "SYN_ORG") {
+                    var event = {
+                        external_id: external_id,
+                        last_item_id: integ_item.item_id,
+                        last_status: integ_item.status_code,
+                        original_external_id: integ_item.original_external_id,
+                        name: objectValue['name'],
+                        corporate_name: objectValue['corporate_name'],
+                        last_timestamp: integ_item.timestamp_start
+                    }
+
+                    srv.emit('updateOrg', event)
+                    event = null;
+
+                } else if (pck_code == "SYN_USER") {
+                    if (objectValue['registration_references']) {
+                        var reg_ref = objectValue['registration_references'];
+                        var employee_number = reg_ref[0].employee_number;
+                        var organization_id = reg_ref[0].organization_id;
+                    }
+                    var event = {
+                        external_id: external_id,
+                        last_item_id: integ_item.item_id,
+                        last_status: integ_item.status_code,
+                        original_external_id: integ_item.original_external_id,
+                        employee_number: employee_number,
+                        firstname: objectValue['firstname'],
+                        lastname: objectValue['lastname'],
+                        email: objectValue['email'],
+                        organization_id: organization_id,
+                        last_timestamp: integ_item.timestamp_start
+                    }
+
+                    srv.emit('updateUser', event)
+                    event = null;
                 }
             }
         } catch (err) {
@@ -1405,30 +1397,30 @@ module.exports = cds.service.impl(srv => {
                 var map_del = await srv.run(SELECT.from(Di_Template_Mappings).where({ template_uuid: req.data.uuid }));
                 if (map_del && Array.isArray(map_del)) {
                     for (var i = 0; i < map_del.length; i++) {
-                        srv.run(DELETE.from(Di_Template_Mappings).where({ uuid: map_del[i].uuid }));
+                        await srv.run(DELETE.from(Di_Template_Mappings).where({ uuid: map_del[i].uuid }));
                     }
                 }
 
                 var signConfs = await srv.run(SELECT.from(Di_Template_Sign_Cfg).where({ template_uuid: req.data.uuid }));
                 if (signConfs && Array.isArray(signConfs)) {
                     for (var i = 0; i < signConfs.length; i++) {
-                        srv.run(DELETE.from(Di_Template_Sign_Cfg).where({ uuid: signConfs[i].uuid }));
+                        await srv.run(DELETE.from(Di_Template_Sign_Cfg).where({ uuid: signConfs[i].uuid }));
                     }
                 }
 
                 if (temp_del.planning_uuid && temp_del.planning_uuid !== null) {
                     var planning_del = await srv.run(SELECT.one.from(Integration_Pck_Planning).where({ uuid: temp_del.planning_uuid }));
                     if (planning_del) {
-                        srv.run(DELETE.from(Integration_Pck_Planning).where({ uuid: planning_del.uuid }));
+                        await srv.run(DELETE.from(Integration_Pck_Planning).where({ uuid: planning_del.uuid }));
                     }
                     var pland_del = await srv.run(SELECT.one.from(Integration_Pck_Planning_D).where({ planning_uuid: temp_del.planning_uuid }));
                     if (pland_del) {
-                        srv.run(DELETE.from(Integration_Pck_Planning_D).where({ uuid: pland_del.uuid }));
+                        await srv.run(DELETE.from(Integration_Pck_Planning_D).where({ uuid: pland_del.uuid }));
                     }
                     var planadata_del = await srv.run(SELECT.from(Integration_Pck_Planning_Adata).where({ planning_uuid: temp_del.planning_uuid }));
                     if (planadata_del && Array.isArray(planadata_del)) {
                         for (var i = 0; i < planadata_del.length; i++) {
-                            srv.run(DELETE.from(Integration_Pck_Planning_Adata).where({ uuid: planadata_del[i].uuid }));
+                            await srv.run(DELETE.from(Integration_Pck_Planning_Adata).where({ uuid: planadata_del[i].uuid }));
                         }
                     }
                 }
@@ -1436,11 +1428,11 @@ module.exports = cds.service.impl(srv => {
                 if (temp_del.planning_rep_uuid && temp_del.planning_rep_uuid !== null) {
                     var planning_rep_del = await srv.run(SELECT.one.from(Integration_Pck_Planning).where({ uuid: temp_del.planning_rep_uuid }));
                     if (planning_rep_del) {
-                        srv.run(DELETE.from(Integration_Pck_Planning).where({ uuid: planning_rep_del.uuid }));
+                        await srv.run(DELETE.from(Integration_Pck_Planning).where({ uuid: planning_rep_del.uuid }));
                     }
                     var pland_rep_del = await srv.run(SELECT.one.from(Integration_Pck_Planning_D).where({ planning_uuid: temp_del.planning_rep_uuid }));
                     if (pland_rep_del) {
-                        srv.run(DELETE.from(Integration_Pck_Planning_D).where({ uuid: pland_rep_del.uuid }));
+                        await srv.run(DELETE.from(Integration_Pck_Planning_D).where({ uuid: pland_rep_del.uuid }));
                     }
                 }
 
@@ -1450,14 +1442,14 @@ module.exports = cds.service.impl(srv => {
                         var attr_values_del = await srv.run(SELECT.from(Di_Template_Worker_Attr_Values).where({ attr_uuid: worker_attr_del[i].attr_uuid }));
                         if (attr_values_del && Array.isArray(attr_values_del)) {
                             for (var j = 0; j < attr_values_del.length; j++) {
-                                srv.run(DELETE.from(Di_Template_Worker_Attr_Values).where({ uuid: attr_values_del[j].uuid }));
+                                await srv.run(DELETE.from(Di_Template_Worker_Attr_Values).where({ uuid: attr_values_del[j].uuid }));
                             }
                         }
-                        srv.run(DELETE.from(Di_Template_Worker_Attr).where({ uuid: worker_attr_del[i].uuid }));
+                        await srv.run(DELETE.from(Di_Template_Worker_Attr).where({ uuid: worker_attr_del[i].uuid }));
                     }
                 }
 
-                srv.run(DELETE.from(Di_Template).where({ uuid: req.data.uuid }));
+                await srv.run(DELETE.from(Di_Template).where({ uuid: req.data.uuid }));
                 return "Template Configuration deleted successfully."
 
             } else {
@@ -1485,7 +1477,7 @@ module.exports = cds.service.impl(srv => {
                     var map_del = await srv.run(SELECT.from(Di_Template_Mappings).where({ template_uuid: temp_new_uuid, mapping_object: 'TEMPL_MAPP' }));
                     if (map_del && Array.isArray(map_del)) {
                         for (var i = 0; i < map_del.length; i++) {
-                            srv.run(DELETE.from(Di_Template_Mappings).where({ uuid: map_del[i].uuid }));
+                            await srv.run(DELETE.from(Di_Template_Mappings).where({ uuid: map_del[i].uuid }));
                         }
                     }
                     var mappings = await srv.run(SELECT.from(Di_Template_Mappings).where({ template_uuid: temp_ori_uuid, mapping_object: 'TEMPL_MAPP' }));
@@ -1495,7 +1487,7 @@ module.exports = cds.service.impl(srv => {
                             delete mappings[i].uuid;
                         }
                         if (mappings.length > 0) {
-                            srv.run(
+                            await srv.run(
                                 INSERT(mappings).into(Di_Template_Mappings)
                             )
                         }
@@ -1505,7 +1497,7 @@ module.exports = cds.service.impl(srv => {
                     var meta_del = await srv.run(SELECT.from(Di_Template_Mappings).where({ template_uuid: temp_new_uuid, mapping_object: 'DOCID_META' }));
                     if (meta_del && Array.isArray(meta_del)) {
                         for (var i = 0; i < meta_del.length; i++) {
-                            srv.run(DELETE.from(Di_Template_Mappings).where({ uuid: meta_del[i].uuid }));
+                            await srv.run(DELETE.from(Di_Template_Mappings).where({ uuid: meta_del[i].uuid }));
                         }
                     }
                     var metadatas = await srv.run(SELECT.from(Di_Template_Mappings).where({ template_uuid: temp_ori_uuid, mapping_object: 'DOCID_META' }));
@@ -1515,7 +1507,7 @@ module.exports = cds.service.impl(srv => {
                             delete metadatas[i].uuid;
                         }
                         if (metadatas.length > 0) {
-                            srv.run(
+                            await srv.run(
                                 INSERT(metadatas).into(Di_Template_Mappings)
                             )
                         }
@@ -1525,7 +1517,7 @@ module.exports = cds.service.impl(srv => {
                     var var_del = await srv.run(SELECT.from(Di_Template_Mappings).where({ template_uuid: temp_new_uuid, mapping_object: 'GLOBAL_VAR' }));
                     if (var_del && Array.isArray(var_del)) {
                         for (var i = 0; i < var_del.length; i++) {
-                            srv.run(DELETE.from(Di_Template_Mappings).where({ uuid: var_del[i].uuid }));
+                            await srv.run(DELETE.from(Di_Template_Mappings).where({ uuid: var_del[i].uuid }));
                         }
                     }
 
@@ -1536,28 +1528,28 @@ module.exports = cds.service.impl(srv => {
                             delete variables[i].uuid;
                         }
                         if (variables.length > 0) {
-                            srv.run(
+                            await srv.run(
                                 INSERT(variables).into(Di_Template_Mappings)
                             )
                         }
                     }
                 }
                 if (req.data.sign_conf == 'true') {
-                    var signConfs = await srv.run(SELECT.from(Di_Template_Sign_Cfg).where({ template_uuid: temp_new_uuid }));
-                    if (signConfs && Array.isArray(signConfs)) {
-                        for (var i = 0; i < signConfs.length; i++) {
-                            srv.run(DELETE.from(Di_Template_Sign_Cfg).where({ uuid: signConfs[i].uuid }));
-                        }
+                    var signConf = await srv.run(SELECT.one.from(Di_Template_Sign_Cfg).where({ template_uuid: temp_new_uuid }));
+                    if (signConf) {
+                        // for (var i = 0; i < signConfs.length; i++) {
+                        await srv.run(DELETE.from(Di_Template_Sign_Cfg).where({ uuid: signConf.uuid }));
+                        //  }
                     }
-                    var sign_Config = await srv.run(SELECT.from(Di_Template_Sign_Cfg).where({ template_uuid: temp_ori_uuid }));
-                    if (sign_Config && Array.isArray(sign_Config)) {
-                        if (sign_Config.length > 0) {
-                            sign_Config[0].template_uuid = temp_new_uuid;
-                            delete sign_Config[0].uuid;
-                            srv.run(
-                                INSERT(sign_Config[0]).into(Di_Template_Sign_Cfg)
-                            )
-                        }
+                    var sign_Config = await srv.run(SELECT.one.from(Di_Template_Sign_Cfg).where({ template_uuid: temp_ori_uuid }));
+                    if (sign_Config) {
+                        //  if (sign_Config.length > 0) {
+                        sign_Config.template_uuid = temp_new_uuid;
+                        delete sign_Config.uuid;
+                        await srv.run(
+                            INSERT(sign_Config).into(Di_Template_Sign_Cfg)
+                        )
+                        // }
                     }
                 }
                 if (temp_ori.planning_uuid && temp_ori.planning_uuid !== "") {
@@ -1566,16 +1558,16 @@ module.exports = cds.service.impl(srv => {
                         if (temp_new.planning_uuid && temp_new.planning_uuid !== null) {
                             var planning_del = await srv.run(SELECT.one.from(Integration_Pck_Planning).where({ uuid: temp_new.planning_uuid }));
                             if (planning_del) {
-                                srv.run(DELETE.from(Integration_Pck_Planning).where({ uuid: planning_del.uuid }));
+                                await srv.run(DELETE.from(Integration_Pck_Planning).where({ uuid: planning_del.uuid }));
                             }
                             var pland_del = await srv.run(SELECT.one.from(Integration_Pck_Planning_D).where({ planning_uuid: temp_new.planning_uuid }));
                             if (pland_del) {
-                                srv.run(DELETE.from(Integration_Pck_Planning_D).where({ uuid: pland_del.uuid }));
+                                await srv.run(DELETE.from(Integration_Pck_Planning_D).where({ uuid: pland_del.uuid }));
                             }
                             var planadata_del = await srv.run(SELECT.from(Integration_Pck_Planning_Adata).where({ planning_uuid: temp_new.planning_uuid }));
                             if (planadata_del && Array.isArray(planadata_del)) {
                                 for (var i = 0; i < planadata_del.length; i++) {
-                                    srv.run(DELETE.from(Integration_Pck_Planning_Adata).where({ uuid: planadata_del[i].uuid }));
+                                    await srv.run(DELETE.from(Integration_Pck_Planning_Adata).where({ uuid: planadata_del[i].uuid }));
                                 }
                             }
                         }
@@ -1593,7 +1585,7 @@ module.exports = cds.service.impl(srv => {
                                 delete plan_d.uuid;
                                 plan_d.planning_uuid = new_plan.uuid;
 
-                                srv.run(
+                                await srv.run(
                                     INSERT(plan_d).into(Integration_Pck_Planning_D)
                                 )
                             }
@@ -1607,7 +1599,7 @@ module.exports = cds.service.impl(srv => {
                                     }
                                 }
                                 if (plan_adata.length > 0) {
-                                    srv.run(
+                                    await srv.run(
                                         INSERT(plan_adata).into(Integration_Pck_Planning_Adata)
                                     )
                                 }
@@ -1621,11 +1613,11 @@ module.exports = cds.service.impl(srv => {
                         if (temp_new.planning_rep_uuid && temp_new.planning_rep_uuid !== null) {
                             var planning_rep_del = await srv.run(SELECT.one.from(Integration_Pck_Planning).where({ uuid: temp_new.planning_rep_uuid }));
                             if (planning_rep_del) {
-                                srv.run(DELETE.from(Integration_Pck_Planning).where({ uuid: planning_rep_del.uuid }));
+                                await srv.run(DELETE.from(Integration_Pck_Planning).where({ uuid: planning_rep_del.uuid }));
                             }
                             var pland_rep_del = await srv.run(SELECT.one.from(Integration_Pck_Planning_D).where({ planning_uuid: temp_new.planning_rep_uuid }));
                             if (pland_rep_del) {
-                                srv.run(DELETE.from(Integration_Pck_Planning_D).where({ uuid: pland_rep_del.uuid }));
+                                await srv.run(DELETE.from(Integration_Pck_Planning_D).where({ uuid: pland_rep_del.uuid }));
                             }
                         }
                         // Copiamos la de la otra template
@@ -1641,7 +1633,7 @@ module.exports = cds.service.impl(srv => {
                             if (plan_d_rep) {
                                 delete plan_d_rep.uuid;
                                 plan_d_rep.planning_uuid = new_plan_rep.uuid;
-                                srv.run(
+                                await srv.run(
                                     INSERT(plan_d_rep).into(Integration_Pck_Planning_D)
                                 )
                             }
@@ -1655,10 +1647,10 @@ module.exports = cds.service.impl(srv => {
                             var attr_values_del = await srv.run(SELECT.from(Di_Template_Worker_Attr_Values).where({ attr_uuid: worker_attr_del[i].attr_uuid }));
                             if (attr_values_del && Array.isArray(attr_values_del)) {
                                 for (var j = 0; j < attr_values_del.length; j++) {
-                                    srv.run(DELETE.from(Di_Template_Worker_Attr_Values).where({ uuid: attr_values_del[j].uuid }));
+                                    await srv.run(DELETE.from(Di_Template_Worker_Attr_Values).where({ uuid: attr_values_del[j].uuid }));
                                 }
                             }
-                            srv.run(DELETE.from(Di_Template_Worker_Attr).where({ uuid: worker_attr_del[i].uuid }));
+                            await srv.run(DELETE.from(Di_Template_Worker_Attr).where({ uuid: worker_attr_del[i].uuid }));
                         }
                     }
 
@@ -1677,7 +1669,7 @@ module.exports = cds.service.impl(srv => {
                                     delete attr_values[j].uuid;
                                     attr_values[j].attr_uuid = new_worker_attr.uuid;
                                 }
-                                srv.run(
+                                await srv.run(
                                     INSERT(attr_values).into(Di_Template_Worker_Attr_Values)
                                 )
                             }
@@ -1718,6 +1710,7 @@ module.exports = cds.service.impl(srv => {
                     )
                 }
             }
+            return "Success";
         } catch (err) {
 
         }
@@ -1769,6 +1762,7 @@ module.exports = cds.service.impl(srv => {
                 }
                 future_change = null;
             }
+            return "Success";
         } catch (err) {
 
         }
@@ -1778,7 +1772,7 @@ module.exports = cds.service.impl(srv => {
         try {
             var configuration = await srv.run(SELECT.from(Configurations).where({
                 pck_code: 'SYN_WORKER',
-                conf_code: 'SCE-CONFIf'
+                conf_code: 'SCE-CONFIG'
             }));
             if (Array.isArray(configuration) && configuration.length > 0) {
                 var buff = Buffer.from(configuration[0].value, 'base64');
@@ -1797,103 +1791,110 @@ module.exports = cds.service.impl(srv => {
                 text = null;
                 var glo_conf = resultado['global_configuration'];
                 var ret_period = glo_conf['retention_period'];
-                var logic_type = ret_period['0']['logic_type'][0];
-                if (logic_type == '03') {
-                    var days_complete_employee = parseInt(ret_period['0']['complete_employee_data'][0]);
-                    var days_employee_details = parseInt(ret_period['0']['employee_details'][0]);
+                if (ret_period && Array.isArray(ret_period)) {
+                    var logic_type = ret_period['0']['logic_type'][0];
+                    if (logic_type == '03') {
+                        var days_complete_employee = parseInt(ret_period['0']['complete_employee_data'][0]);
+                        var days_employee_details = parseInt(ret_period['0']['employee_details'][0]);
 
-                    if (days_employee_details >= 1) {
-                        var date = new Date();
-                        date.setDate(date.getDate() - days_employee_details);
-                        var day = (date.getDate() < 10) ? "0" + (date.getDate()) : date.getDate(),
-                            month = (date.getMonth() + 1 < 10) ? "0" + (date.getMonth() + 1) : date.getMonth() + 1,
-                            year = date.getFullYear(),
-                            hours = (date.getHours() < 10) ? "0" + (date.getHours()) : date.getHours(),
-                            minutes = (date.getMinutes() < 10) ? "0" + (date.getMinutes()) : date.getMinutes(),
-                            seconds = (date.getSeconds() < 10) ? "0" + (date.getSeconds()) : date.getSeconds();
+                        if (days_employee_details >= 1) {
+                            var date = new Date();
+                            date.setDate(date.getDate() - days_employee_details);
+                            var day = (date.getDate() < 10) ? "0" + (date.getDate()) : date.getDate(),
+                                month = (date.getMonth() + 1 < 10) ? "0" + (date.getMonth() + 1) : date.getMonth() + 1,
+                                year = date.getFullYear(),
+                                hours = (date.getHours() < 10) ? "0" + (date.getHours()) : date.getHours(),
+                                minutes = (date.getMinutes() < 10) ? "0" + (date.getMinutes()) : date.getMinutes(),
+                                seconds = (date.getSeconds() < 10) ? "0" + (date.getSeconds()) : date.getSeconds();
 
-                        var limit = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds + 'Z';
-                        var workeritems = await srv.run(SELECT.from(Integration_Items).where({
-                            pck_code: 'SYN_WORKER',
-                            // request_deleted: { '<>': 'X' }, 
-                            request_deleted: null,
-                            createdAt: { '<=': limit }
-                        }));
+                            var limit = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds + 'Z';
+                            var workeritems = await srv.run(SELECT.from(Integration_Items).where({
+                                pck_code: 'SYN_WORKER',
+                                // request_deleted: { '<>': 'X' }, 
+                                request_deleted: null,
+                                createdAt: { '<=': limit }
+                            }));
 
-                        if (workeritems.length > 0) {
-                            for (var i = 0; i < workeritems.length; i++) {
-                                var date2 = new Date();
-                                var day2 = (date2.getDate() < 10) ? "0" + (date2.getDate()) : date2.getDate(),
-                                    month2 = (date2.getMonth() + 1 < 10) ? "0" + (date2.getMonth() + 1) : date2.getMonth() + 1,
-                                    year2 = date2.getFullYear(),
-                                    hours2 = (date2.getHours() < 10) ? "0" + (date2.getHours()) : date2.getHours(),
-                                    minutes2 = (date2.getMinutes() < 10) ? "0" + (date2.getMinutes()) : date2.getMinutes(),
-                                    seconds2 = (date2.getSeconds() < 10) ? "0" + (date2.getSeconds()) : date2.getSeconds();
+                            if (workeritems.length > 0) {
+                                for (var i = 0; i < workeritems.length; i++) {
+                                    var date2 = new Date();
+                                    var day2 = (date2.getDate() < 10) ? "0" + (date2.getDate()) : date2.getDate(),
+                                        month2 = (date2.getMonth() + 1 < 10) ? "0" + (date2.getMonth() + 1) : date2.getMonth() + 1,
+                                        year2 = date2.getFullYear(),
+                                        hours2 = (date2.getHours() < 10) ? "0" + (date2.getHours()) : date2.getHours(),
+                                        minutes2 = (date2.getMinutes() < 10) ? "0" + (date2.getMinutes()) : date2.getMinutes(),
+                                        seconds2 = (date2.getSeconds() < 10) ? "0" + (date2.getSeconds()) : date2.getSeconds();
 
-                                var limit2 = year2 + '-' + month2 + '-' + day2 + 'T' + hours2 + ':' + minutes2 + ':' + seconds2 + 'Z';
-                                var updItem = srv.run(
-                                    UPDATE(Integration_Items).set(
-                                        {
-                                            request_deleted: 'X',
-                                            request: '',
-                                            request_deleted_date: limit2
-                                        })
-                                        .where({ item_id: workeritems[i].item_id })
-                                )
+                                    var limit2 = year2 + '-' + month2 + '-' + day2 + 'T' + hours2 + ':' + minutes2 + ':' + seconds2 + 'Z';
+                                    var updItem = srv.run(
+                                        UPDATE(Integration_Items).set(
+                                            {
+                                                request_deleted: 'X',
+                                                request: '',
+                                                request_deleted_date: limit2
+                                            })
+                                            .where({ item_id: workeritems[i].item_id })
+                                    )
+                                }
+                                workeritems = null;
+                            } else {
+                                workeritems = null;
+                                //    return 'Ningun item.';
                             }
-                            workeritems = null;
-                        } else {
-                            workeritems = null;
-                            //    return 'Ningun item.';
                         }
-                    }
 
-                    if (days_complete_employee >= 1) {
-                        var date3 = new Date();
-                        date3.setDate(date3.getDate() - days_complete_employee);
-                        var day3 = (date3.getDate() < 10) ? "0" + (date3.getDate()) : date3.getDate(),
-                            month3 = (date3.getMonth() + 1 < 10) ? "0" + (date3.getMonth() + 1) : date3.getMonth() + 1,
-                            year3 = date3.getFullYear(),
-                            hours3 = (date3.getHours() < 10) ? "0" + (date3.getHours()) : date3.getHours(),
-                            minutes3 = (date3.getMinutes() < 10) ? "0" + (date3.getMinutes()) : date3.getMinutes(),
-                            seconds3 = (date3.getSeconds() < 10) ? "0" + (date3.getSeconds()) : date3.getSeconds();
+                        if (days_complete_employee >= 1) {
+                            var date3 = new Date();
+                            date3.setDate(date3.getDate() - days_complete_employee);
+                            var day3 = (date3.getDate() < 10) ? "0" + (date3.getDate()) : date3.getDate(),
+                                month3 = (date3.getMonth() + 1 < 10) ? "0" + (date3.getMonth() + 1) : date3.getMonth() + 1,
+                                year3 = date3.getFullYear(),
+                                hours3 = (date3.getHours() < 10) ? "0" + (date3.getHours()) : date3.getHours(),
+                                minutes3 = (date3.getMinutes() < 10) ? "0" + (date3.getMinutes()) : date3.getMinutes(),
+                                seconds3 = (date3.getSeconds() < 10) ? "0" + (date3.getSeconds()) : date3.getSeconds();
 
-                        var limit3 = year3 + '-' + month3 + '-' + day3 + 'T' + hours3 + ':' + minutes3 + ':' + seconds3 + 'Z';
-                        var integrations = await srv.run(SELECT.from(Integrations).where({
-                            pck_code: 'SYN_WORKER',
-                            createdAt: { '<=': limit3 }
-                        }));
+                            var limit3 = year3 + '-' + month3 + '-' + day3 + 'T' + hours3 + ':' + minutes3 + ':' + seconds3 + 'Z';
+                            var integrations = await srv.run(SELECT.from(Integrations).where({
+                                pck_code: 'SYN_WORKER',
+                                createdAt: { '<=': limit3 }
+                            }));
 
-                        if (integrations.length > 0) {
-                            for (var i = 0; i < integrations.length; i++) {
-                                var items = await srv.run(SELECT.from(Integration_Items).where({
-                                    integ_id: integrations[i].id
-                                }));
-
-                                for (var j = 0; j < items.length; j++) {
-                                    var workers = await srv.run(SELECT.from(Workers).where({
-                                        last_item_id: items[j].item_id
+                            if (integrations.length > 0) {
+                                for (var i = 0; i < integrations.length; i++) {
+                                    var items = await srv.run(SELECT.from(Integration_Items).where({
+                                        integ_id: integrations[i].id
                                     }));
-                                    if (workers.length == 1) {
-                                        const event3 = {
-                                            worker_uuid: workers[0].uuid
+
+                                    for (var j = 0; j < items.length; j++) {
+                                        var workers = await srv.run(SELECT.from(Workers).where({
+                                            last_item_id: items[j].item_id
+                                        }));
+                                        if (workers.length == 1) {
+                                            const event3 = {
+                                                worker_uuid: workers[0].uuid
+                                            }
+                                            srv.emit('deleteWorker', event3)
                                         }
-                                        srv.emit('deleteWorker', event3)
+                                        const event2 = {
+                                            item_id: items[j].item_id
+                                        }
+                                        srv.emit('deleteIntegItem', event2)
                                     }
-                                    const event2 = {
-                                        item_id: items[j].item_id
+                                    const event = {
+                                        integ_id: integrations[i].id
                                     }
-                                    srv.emit('deleteIntegItem', event2)
+                                    srv.emit('deleteInteg', event)
                                 }
-                                const event = {
-                                    integ_id: integrations[i].id
-                                }
-                                srv.emit('deleteInteg', event)
+                                return 'Borrados';
+                            } else {
+                                return 'Ninguna integración';
                             }
-                        } else {
-                            return 'Ninguna integracion';
                         }
+                    } else {
+                        return 'No es del tipo';
                     }
+                } else {
+                    return 'No existe retention period en configuración';
                 }
             } else {
                 return 'No existe configuración';
@@ -1915,6 +1916,90 @@ module.exports = cds.service.impl(srv => {
 
         }
         return "Business Process Types Master deleted successfully"
+    })
+
+
+    //Import Function: Delete the List Values "LVAID"
+    srv.on('delete_list_values', async (req) => {
+        try {
+            await srv.run(
+                DELETE.from(Di_List_Values).where({ lvaid: req.data.lvaid })
+            )
+        } catch (err) {
+
+        }
+        return "List Values deleted successfully"
+    })
+
+    srv.on('get_type_organizations', async (req) => {
+        try {
+            var configuration = await srv.run(SELECT.one.from(Configurations).where({
+                pck_code: 'SYN_ORG',
+                conf_code: 'SCE-CONFIG'
+            }));
+            if (configuration) {
+                var buff = Buffer.from(configuration.value, 'base64');
+                var text = buff.toString('UTF8');
+                var xml2js = require('xml2js');
+                var resultado, res2;
+                xml2js.parseString(text, (err, result) => {
+                    if (err) {
+                        throw err;
+                    }
+                    resultado = result;
+                });
+                xml2js = null;
+                configuration = null;
+                buff = null;
+                text = null;
+                var glo_conf = resultado['global_configuration'];
+                if (glo_conf) {
+                    var web_services = glo_conf['web_services'];
+                    if (web_services) {
+                        var ws_org = web_services[0]['ws_get_organizations'];
+                        if (ws_org) {
+                            var req_filter = ws_org[0]['request_filter'];
+                            if (req_filter) {
+                                var typeOrg = req_filter[0]['type'][0];
+                                var subtypeOrg = req_filter[0]['subtype'][0];
+                                if (req.data.text == 'true') {
+                                    var typeTxt = await srv.run(SELECT.one.from(Organizations_Types).where({
+                                        code: typeOrg
+                                    }));
+                                    var result = {
+                                        type: typeOrg,
+                                        type_text: typeTxt.description,
+                                        subtype: subtypeOrg
+                                    };
+                                } else {
+                                    var result = {
+                                        type: typeOrg,
+                                        subtype: subtypeOrg
+                                    };
+                                }
+
+                                return result;
+                            } else {
+                                return "Request_Filter Node not found in configuration."
+                            }
+                        } else {
+                            return "Ws_Get_Organization Node not found in configuration."
+                        }
+                    } else {
+                        return "Web_Services Node not found in configuration."
+                    }
+                } else {
+                    return "Global_Configuration Node not found in configuration."
+                }
+
+            } else {
+                return "Organizations Configuration not found."
+            }
+
+        } catch (err) {
+
+        }
+
     })
 
     /*

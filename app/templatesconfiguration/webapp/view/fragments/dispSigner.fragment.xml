@@ -1,70 +1,75 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
-	<Dialog id="dispSigner" state="None" icon="sap-icon://detail-view" title="Display Signer" contentHeight="450px" contentWidth="500px">
+	<Dialog id="dispSigner" state="None" icon="sap-icon://detail-view" title="{i18n>titDisSig}" contentHeight="450px" contentWidth="500px">
 		<VBox class="sapUiTinyMargin">
 			<f:SimpleForm id="SimpleFormDisplaye3" editable="false" layout="ResponsiveGridLayout" title="" labelSpanXL="4" labelSpanL="4"
 				labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2"
 				columnsL="2" columnsM="1" singleContainerFullSize="false">
 				<f:content>
-					<!--<core:Title text="Configuration"/>-->
-					<Label labelFor="Signature_Type_Dis" text="Signature Type"/>
+					<Label labelFor="Signature_Type_Dis" text="{i18n>sinType}"/>
 					<Select id="Signature_Type_Dis" width="300px" change="changeSignType_Dis" enabled="false" selectedKey="{ path: 'signer>/type'}">
-						<core:Item key="organization" text="organization"/>
-						<core:Item key="employee" text="employee"/>
-						<core:Item key="manager" text="manager"/>
-						<core:Item key="external" text="external"/>
+						<core:Item key="organization" text="{i18n>organization}"/>
+						<core:Item key="employee" text="{i18n>employee}"/>
+						<core:Item key="manager" text="{i18n>manager}"/>
+						<core:Item key="external" text="{i18n>external}"/>
 					</Select>
-					<Label labelFor="Sign_Order_Dis" text="Signing Order"/>
+					<Label labelFor="Sign_Order_Dis" text="{i18n>sinOrder}"/>
 					<Input id="Sign_Order_Dis" type="Number" required="true" enabled="false" value="{ path: 'signer>/signing_order'}"/>
-					<Label labelFor="Pdf_Sign_Field_Dis" text="Pdf Sign Field"/>
+					<Label labelFor="Pdf_Sign_Field_Dis" text="{i18n>pdfSing}"/>
 					<Input id="Pdf_Sign_Field_Dis" required="true" enabled="false" value="{ path: 'signer>/pdf_sign_field'}"/>
-					<Label text="Sign Field Page" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/>
-					<Input id="sfpage_Dis"  enabled="false" width="30%" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"
-					value="{ parts: [{path: 'signer>/generate_pdf_sign_field/page'}, { path: 'signer>/generate_pdf_sign_field/llx'}] ,formatter: '.formatter.lastPage' }"/>
-					<Label text="Lower Left Corner Coordenates" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/>
-					<HBox alignItems="Center" width="auto" height="auto" justifyContent="Start" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }" displayInline="false">
+					<Label text="{i18n>sigPage}" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/>
+					<Input id="sfpage_Dis" enabled="false" width="30%" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"
+						value="{ parts: [{path: 'signer>/generate_pdf_sign_field/page'}, { path: 'signer>/generate_pdf_sign_field/llx'}] ,formatter: '.formatter.lastPage' }"/>
+					<Label text="{i18n>lowLeft}" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/>
+					<HBox alignItems="Center" width="auto" height="auto" justifyContent="Start"
+						visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }" displayInline="false">
 						<items>
-							<Input id="llx_Dis" type="Number" enabled="false" width="60%" value="{ path: 'signer>/generate_pdf_sign_field/llx'}" class="sapUiSmallMarginEnd"/>
-							<Input id="lly_Dis" type="Number" enabled="false" width="60%" class="sapUiSmallMarginEnd" value="{ path: 'signer>/generate_pdf_sign_field/lly'}"/>
+							<Input id="llx_Dis" type="Number" enabled="false" width="60%" value="{ path: 'signer>/generate_pdf_sign_field/llx'}"
+								class="sapUiSmallMarginEnd"/>
+							<Input id="lly_Dis" type="Number" enabled="false" width="60%" class="sapUiSmallMarginEnd"
+								value="{ path: 'signer>/generate_pdf_sign_field/lly'}"/>
 						</items>
 					</HBox>
-					<Label text="Upper Right Corner Coordenates" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/>
-					<HBox alignItems="Center" width="auto" height="auto" justifyContent="Start" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }" displayInline="false">
+					<Label text="{i18n>uppRight}" visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }"/>
+					<HBox alignItems="Center" width="auto" height="auto" justifyContent="Start"
+						visible="{ path: 'signature>/signature_type',formatter: '.formatter.visibleOpenTrust' }" displayInline="false">
 						<items>
-							<Input id="upx_Dis" type="Number" enabled="false" width="60%" class="sapUiSmallMarginEnd" value="{ path: 'signer>/generate_pdf_sign_field/urx'}"/>
-							<Input id="upy_Dis" type="Number" enabled="false" width="60%" class="sapUiSmallMarginEnd" value="{ path: 'signer>/generate_pdf_sign_field/ury'}"/>
+							<Input id="upx_Dis" type="Number" enabled="false" width="60%" class="sapUiSmallMarginEnd"
+								value="{ path: 'signer>/generate_pdf_sign_field/urx'}"/>
+							<Input id="upy_Dis" type="Number" enabled="false" width="60%" class="sapUiSmallMarginEnd"
+								value="{ path: 'signer>/generate_pdf_sign_field/ury'}"/>
 						</items>
 					</HBox>
-					<Label labelFor="Reg_Reference_Dis" text="Reg. Reference" />
+					<Label labelFor="Reg_Reference_Dis" text="{i18n>regRef}"/>
 					<Input id="Reg_Reference_Dis" enabled="false" required="false" visible="false" value="{ path: 'signer>/registration_reference'}"/>
-					<Label labelFor="Tech_Id_Dis" text="Technical Id"/>
+					<Label labelFor="Tech_Id_Dis" text="{i18n>techID}"/>
 					<Input id="Tech_Id_Dis" required="false" visible="false" enabled="false" value="{ path: 'signer>/technical_id'}"/>
-					<Label labelFor="Email_address_Dis" text="Email Address"/>
+					<Label labelFor="Email_address_Dis" text="{i18n>emailAd}"/>
 					<Input id="Email_address_Dis" required="true" enabled="false" value="{ path: 'signer>/email_address'}"/>
-					<Label labelFor="Phone_number_Dis" text="Phone Number"/>
+					<Label labelFor="Phone_number_Dis" text="{i18n>phoneNu}"/>
 					<Input id="Phone_number_Dis" type="Number" enabled="false" required="false" visible="false" value="{ path: 'signer>/phone_number'}"/>
-					<Label labelFor="First_name_Dis" text="First Name" />
+					<Label labelFor="First_name_Dis" text="{i18n>firstNa}"/>
 					<Input id="First_name_Dis" required="false" enabled="false" visible="false" value="{ path: 'signer>/first_name'}"/>
-					<Label labelFor="Last_name_Dis" text="Last Name" />
-					<Input id="Last_name_Dis" required="false"  enabled="false" visible="false" value="{ path: 'signer>/last_name'}"/>
-					<Label id="Language_label_Dis" labelFor="Language_Sign_Dis" text="Language" />
+					<Label labelFor="Last_name_Dis" text="{i18n>lastNa}"/>
+					<Input id="Last_name_Dis" required="false" enabled="false" visible="false" value="{ path: 'signer>/last_name'}"/>
+					<Label id="Language_label_Dis" labelFor="Language_Sign_Dis" text="{i18n>langu}"/>
 					<Select id="Language_Sign_Dis" width="300px" enabled="false" visible="false" selectedKey="{ path: 'signer>/language'}">
-						<core:Item key="de" text="German"/>
-						<core:Item key="en" text="English"/>
-						<core:Item key="es" text="Spanish"/>
-						<core:Item key="fr" text="French"/>
-						<core:Item key="it" text="Italian"/>
-						<core:Item key="nl" text="Dutch"/>
-						<core:Item key="nb" text="Norwegian"/>
-						<core:Item key="pt_BR" text="Portuguese (Brazil)"/>
+						<core:Item key="nl" text="{i18n>dutch}"/>
+						<core:Item key="en" text="{i18n>english}"/>
+						<core:Item key="fr" text="{i18n>french}"/>
+						<core:Item key="de" text="{i18n>german}"/>
+						<core:Item key="it" text="{i18n>italian}"/>
+						<core:Item key="nb" text="{i18n>norwegian}"/>
+						<core:Item key="pt_BR" text="{i18n>portu}"/>
+						<core:Item key="es" text="{i18n>spanish}"/>
 					</Select>
-					<CheckBox id="checkSMSnot_Dis" text="With SMS Notification" enabled="false" selected="{ path: 'signer>/with_sms_notification'}"/>
-					<CheckBox id="checkSMSau_Dis" text="With SMS Authentication" enabled="false" selected="{ path: 'signer>/with_sms_authentication'}"/>
-					<CheckBox id="checkSMSsend_Dis" text="Send Signed Document" enabled="false" selected="{ path: 'signer>/send_signed_document'}"/>
+					<CheckBox id="checkSMSnot_Dis" text="{i18n>smsNot}" enabled="false" selected="{ path: 'signer>/with_sms_notification'}"/>
+					<CheckBox id="checkSMSau_Dis" text="{i18n>smsAut}" enabled="false" selected="{ path: 'signer>/with_sms_authentication'}"/>
+					<CheckBox id="checkSMSsend_Dis" text="{i18n>sendSig}" enabled="false" selected="{ path: 'signer>/send_signed_document'}"/>
 				</f:content>
 			</f:SimpleForm>
 		</VBox>
 		<buttons>
-			<Button text="Close" type="Reject" press="closeDisplaySigner"/>
+			<Button text="{i18n>close}" type="Reject" press="closeDisplaySigner"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

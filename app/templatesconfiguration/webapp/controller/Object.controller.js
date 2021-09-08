@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/routing/History"
 ], function (BaseController, JSONModel, XMLModel, formatter, xml2json, Fragment, History) {
-	"use strict";
-
+    "use strict";
 	var oIndex = 1;
 	var oQuery;
 
@@ -18,18 +17,8 @@ sap.ui.define([
 
 		formatter: formatter,
 
-		/* =========================================================== */
-		/* lifecycle methods                                           */
-		/* =========================================================== */
-
-		/**
-		 * Called when the worklist controller is instantiated.
-		 * @public
-		 */
+		/* Al instanciar el objeto */
 		onInit: function () {
-			// Model used to manipulate control states. The chosen values make sure,
-			// detail page is busy indication immediately so there is no break in
-			// between the busy indication for loading the view's meta data
 			var iOriginalBusyDelay,
 				oViewModel = new JSONModel({
 					busy: true,
@@ -59,36 +48,20 @@ sap.ui.define([
 			this.pathButtonSel = "";
 			this.code_id_filled = "";
 			this.sourceGVEdit = "";
+			this.typeGVEdit = "";
 			this.oldFilters = [];
 			this.oSemanticPage = this.byId("pageSemantic");
-			// this.oEditAction = this.byId("editAction");
-			// this.oDeleteAction = this.byId("deleteAction");
 			this.showCustomActions(false);
-
 			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
-
-			// Store original busy indicator delay, so it can be restored later on
 			iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
 			this.setModel(oViewModel, "objectView");
 			var templateMod = this.getModel("template");
 			this.getView().setModel(templateMod, "template");
 			this.getOwnerComponent().getModel().metadataLoaded().then(function () {
-				// Restore original busy indicator delay for the object view
 				oViewModel.setProperty("/delay", iOriginalBusyDelay);
 			});
 
 			var oModelXML = new XMLModel();
-
-			// oModelXML.loadData("data/Workday-Human_Resources.xml");
-			// var oThat = this;
-			// oModelXML.attachRequestCompleted(function (oEvent) {
-			// 	var xml2json = new X2JS();
-			// 	var json = xml2json.xml2json(oEvent.getSource().getData());
-			// 	var oModel1 = new JSONModel();
-			// 	oModel1.setData(json);
-			// 	oThat.getView().setModel(oModel1, "ModelTreeTable");
-			// });
-
 			var daysModel = new JSONModel();
 			var data = [];
 			var item = {};
@@ -99,84 +72,41 @@ sap.ui.define([
 				data.push(item);
 			}
 			item = {};
-			item.text = "Last Day";
+			var text = this.getResourceBundle().getText("lastDay");
+			item.text = text;
 			item.key = "last_day";
 			data.push(item);
 			daysModel.setData(data);
-
 			this.setModel(daysModel, "days");
-
-			//	this.setModel(newPlanModel, "newPlan");
 			var oModelTime = this.getOwnerComponent().getModel("timezones");
 			oModelTime.setSizeLimit(1000);
 		},
 
-		/* =========================================================== */
-		/* event handlers                                              */
-		/* =========================================================== */
-
-		/**
-		 * Event handler when the share in JAM button has been clicked
-		 * @public
-		 */
-		onShareInJamPress: function () {
-			var oViewModel = this.getModel("objectView"),
-				oShareDialog = sap.ui.getCore().createComponent({
-					name: "sap.collaboration.components.fiori.sharing.dialog",
-					settings: {
-						object: {
-							id: location.href,
-							share: oViewModel.getProperty("/shareOnJamTitle")
-						}
-					}
-				});
-			oShareDialog.open();
-		},
-
-		/* =========================================================== */
-		/* internal methods                                            */
-		/* =========================================================== */
-
-		/**
-		 * Binds the view to the object path.
-		 * @function
-		 * @param {sap.ui.base.Event} oEvent pattern match event in route 'object'
-		 * @private
-		 */
+		/* Evento al matchear el objeto seleccionado */
 		_onObjectMatched: function (oEvent) {
 			this.initModels();
 			var oViewModel = this.getModel("objectView");
 			oViewModel.setProperty("/busy", true);
 			var sObjectId = oEvent.getParameter("arguments").objectId;
 			var version = oEvent.getParameter("arguments").version;
-			//var sVersion = oEvent.getParameter("arguments").version;
-			// this.getModel().metadataLoaded().then( function() {
 			var sObjectPath = "templates/" + sObjectId + "," + version;
 			var oTempModel = this.getModel("templates");
 			var templates = oTempModel.getData();
-
 			if (!Array.isArray(templates)) {
-				//	this.sleep(20000);
 				this.sleep(7000).then(() => {
 					this._bindView(sObjectId, version);
 				});
 			} else {
 				this._bindView(sObjectId, version);
 			}
-			//	this._bindView(sObjectId);
-			// }.bind(this));
 		},
 
+		/* Función para esperar unos segundos */
 		sleep: function (ms) {
 			return new Promise(resolve => setTimeout(resolve, ms));
 		},
 
-		/**
-		 * Binds the view to the object path.
-		 * @function
-		 * @param {string} sObjectPath path to the object to be bound
-		 * @private
-		 */
+		/* Bindeamos la vista al objeto seleccionado con sus detalles */
 		_bindView: function (sObjectId, version) {
 			var oViewModel = this.getModel("objectView"),
 				oTempModel = this.getModel("templates"),
@@ -190,10 +120,8 @@ sap.ui.define([
 				oGlobalVar = this.getModel("globalVar"),
 				oDocTypesModel = this.getModel("doctypes");
 			var templates = oTempModel.getData();
-			//var temp = templates.find(template => template.id === sObjectId );
 			var act_version = String(version);
 			var temp = templates.find(template => template.id === sObjectId && template.active_version == act_version);
-
 			this.template_id = temp.id;
 			this.template_version = temp.active_version;
 			this.template_language = temp.locale;
@@ -201,10 +129,7 @@ sap.ui.define([
 			this.updated_at = temp.updated_at;
 			this.description = temp.description;
 			var oModel = this.getOwnerComponent().getModel();
-
 			var that = this;
-			//this.getView().byId("lineItemsList").setBusy(true);
-			//	oViewModel.setProperty("/busy", true);
 			var aFilter = [];
 			var templateFil = new sap.ui.model.Filter("template_id", sap.ui.model.FilterOperator.EQ, temp.id);
 			var templateVers = new sap.ui.model.Filter("template_version", sap.ui.model.FilterOperator.EQ, temp.active_version);
@@ -213,16 +138,13 @@ sap.ui.define([
 			oViewModel.refresh();
 			var head = {};
 			var sPath = "/Di_Template";
+			/* Recuperamos la info de la template seleccionada de persistencia 
+			con todos los objetos asociados */
 			oModel.read(sPath, {
-				// urlParameters: {
-				// 	"$expand": "business_process, mappings"
-				// },
 				filters: aFilter,
 				success: function (oData, oResponse) {
 					var results = oData.results[0];
 					delete oData.__metadata;
-					//	oHeaderModel.setData(results);
-					//	oHeaderModel.refresh();
 					if (results) {
 						var sPath1 = sPath + "(guid'" + results.uuid + "')"
 						head.uuid = results.uuid;
@@ -314,7 +236,6 @@ sap.ui.define([
 										case "INITIAL_DATE_FROM":
 											item.initial_date_from = entry.value;
 											item.initial_date_from_uuid = entry.uuid;
-
 											break;
 										case "RETRO_CHG_EFFECTIVE_FROM":
 											item.retro_effec_from = entry.value;
@@ -328,7 +249,6 @@ sap.ui.define([
 											item.next_upd_from = entry.value;
 											item.next_upd_from_uuid = entry.uuid;
 											break;
-
 										default:
 										}
 									});
@@ -343,7 +263,6 @@ sap.ui.define([
 										ontime: false,
 										periodicity_values: "2-4-6",
 										time_frecuency: "1m",
-										//	time_measure: "m",
 										time_start: "00:00:00",
 										time_end: "23:59:00",
 										time_zone: "UTC"
@@ -354,7 +273,6 @@ sap.ui.define([
 									};
 									planning.plan_d = datanewPlan;
 									planning.adata = [];
-									// TODO no existe planning aún
 								}
 								if (planning_rep) {
 									that.exist_plan_Rep = "X";
@@ -363,7 +281,6 @@ sap.ui.define([
 									} else {
 										planning_rep.enable = "U";
 									}
-									//planning_rep.adata = results2.planning_rep.adata.results;
 									planning_rep.plan_d = results2.planning_rep.integs_plan_d.results[0];
 									sPath1 = sPath + "/begda";
 									var begdaD = planning_rep.plan_d.begda;
@@ -398,36 +315,6 @@ sap.ui.define([
 									planning_rep.plan_d.time_end = time_end;
 									planning_rep.plan_d.time_frecuency = planning_rep.plan_d.time_frecuency + planning_rep.plan_d.time_measure;
 									var item = {};
-									// planning_rep.adata.forEach(function (entry) {
-									// 	delete entry.__metadata;
-									// 	switch (entry.level2) {
-									// 	case "TIME_ZONE":
-									// 		item.time_zone = entry.value;
-									// 		item.time_zone_uuid = entry.uuid;
-									// 		item.planning_uuid = entry.planning_uuid;
-									// 		break;
-									// 	case "INITIAL_DATE_FROM":
-									// 		item.initial_date_from = entry.value;
-									// 		item.initial_date_from_uuid = entry.uuid;
-
-									// 		break;
-									// 	case "RETRO_CHG_EFFECTIVE_FROM":
-									// 		item.retro_effec_from = entry.value;
-									// 		item.retro_effec_from_uuid = entry.uuid;
-									// 		break;
-									// 	case "FUTURE_CHG_UPDATED_FROM":
-									// 		item.fut_upd_from = entry.value;
-									// 		item.fut_upd_from_uuid = entry.uuid;
-									// 		break;
-									// 	case "NEXT_UPDATED_FROM":
-									// 		item.next_upd_from = entry.value;
-									// 		item.next_upd_from_uuid = entry.uuid;
-									// 		break;
-
-									// 	default:
-									// 	}
-									// });
-									// planning_rep.adata = item;
 								} else {
 									that.exist_plan_Rep = "";
 									var datanewPlan = {
@@ -438,7 +325,6 @@ sap.ui.define([
 										ontime: false,
 										periodicity_values: "2-4-6",
 										time_frecuency: "1m",
-										//	time_measure: "m",
 										time_start: "00:00:00",
 										time_end: "23:59:00",
 										time_zone: "UTC"
@@ -448,8 +334,6 @@ sap.ui.define([
 										enable: "U"
 									};
 									planning_rep.plan_d = datanewPlan;
-									//planning_rep.adata = [];
-									// TODO no existe planning aún
 								}
 								var attributes = results2.attributes.results;
 								var atrData = [];
@@ -479,16 +363,9 @@ sap.ui.define([
 										}
 									}
 								}
-								//	that.oldFilters = Array.from(filData);
-								//	var filData2 = Array.from(filData);
-								//let oldValues = Object.assign({}, filData);
-								//let oldVal = Object.values(oldValues);
-								//that.oldFilters = [...oldVal];
-								//	that.oldFilters = jQuery.extend({}, oldVal);
 								if (sign_conf) {
 									var signData = JSON.parse(sign_conf.json_cfg);
 									signData.uuid = sign_conf.uuid;
-									//		var arrayValues = Object.entries(sign_conf);
 								} else {
 									var signData = {};
 									signData.uuid = "";
@@ -523,37 +400,18 @@ sap.ui.define([
 								results2.business_process = results2.business_process.results;
 								delete oData2.__metadata;
 								that.call_Template_details(results2, temp, "");
-
 							},
 							error: function (oError) {
 								oViewModel.setProperty("/busy", false);
 							}
 						});
 					} else {
-						// var results2 = {
-						// 	mappings: [],
-						// };
-						// that.call_Template_details(results2, temp);
-
-						//	var url = "/CPI-WD2PD-Deep/templates/template/detail";
+						/* Si no existe la template configurada */
 						var url = "/CPI-WD2PD_Dest/di/templates/template/detail";
 						var sCurrentLocale = sap.ui.getCore().getConfiguration().getLanguage();
 						var langu = sCurrentLocale + "-" + sCurrentLocale;
 						url = url + "?Template-Id=" + temp.id + "&Template-Version=" + temp.active_version + "&Template-Language=" + langu;
-						// var entorno = 'DEV';
-						// if (entorno == 'DEV') {
-						// 	var cuscode = "C000000001";
-						// 	var cusclientid = "15ff0365-5b0c-420e-bb14-bcf28b458374";
-						// 	var cusscope = "cf0f8bd6-4d5c-4ea5-827d-22898796ce68";
-						// }
-						// if (entorno == 'TEST') {
-						// 	var cuscode = "T000000001";
-						// 	var cusclientid = "e4f496b6-4c9b-4d03-9665-86d13349b046";
-						// 	var cusscope = "f0adfc99-7fea-42d7-9439-46a4c9de4742";
-						// }
 						if (that.getOwnerComponent().settings) {
-							//this.settings = await this.getSubscriptionSettings();
-
 							var cuscode = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
 							var cusclientid = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
 							var cusscope = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
@@ -578,15 +436,13 @@ sap.ui.define([
 									} else {
 										results.pages_preview = [];
 									}
-									//results.variables = [];
 									for (var j = 0; j < results.variables.length; j++) {
-										//	var variablePers = resultsPers.mappings.find(mapping => mapping.variable === results.variables[j].slug);
-										//	if (variablePers) {
 										results.variables[j].path = "";
 										results.variables[j].map = "";
-										//	results.variables[j].uuid = variablePers.uuid;
+										results.variables[j].type = "";
+										results.variables[j].source = "";
+										results.variables[j].metadata = "";
 									}
-
 									results.id = temp.id;
 									results.description = temp.description;
 									results.title = temp.title;
@@ -613,9 +469,9 @@ sap.ui.define([
 					oViewModel.setProperty("/busy", false);
 				}
 			});
-
 		},
 
+		/* Al refrescar los objetos asociadas a la template */
 		refreshObjectsTemplate: function (uuidTemp, mapCop, metaCop) {
 			var oViewModel = this.getModel("objectView"),
 				oTempModel = this.getModel("templates"),
@@ -635,7 +491,7 @@ sap.ui.define([
 			var sPath1 = sPath + "(guid'" + uuidTemp + "')"
 			oModel.read(sPath1, {
 				urlParameters: {
-					"$expand": "business_process,mappings,sign_cfg,planning/integs_plan_d,planning/adata,planning_rep/integs_plan_d,planning_rep/adata,attributes/values_attr"
+					"$expand": "business_process,pages,mappings,sign_cfg,planning/integs_plan_d,planning/adata,planning_rep/integs_plan_d,planning_rep/adata,attributes/values_attr"
 				},
 				success: function (oData2, oResponse2) {
 					var results2 = oData2;
@@ -724,7 +580,6 @@ sap.ui.define([
 							ontime: false,
 							periodicity_values: "2-4-6",
 							time_frecuency: "1m",
-							//	time_measure: "m",
 							time_start: "00:00:00",
 							time_end: "23:59:00",
 							time_zone: "UTC"
@@ -735,7 +590,6 @@ sap.ui.define([
 						};
 						planning.plan_d = datanewPlan;
 						planning.adata = [];
-						// TODO no existe planning aún
 					}
 					if (planning_rep) {
 						that.exist_plan_Rep = "X";
@@ -819,7 +673,6 @@ sap.ui.define([
 							ontime: false,
 							periodicity_values: "2-4-6",
 							time_frecuency: "1m",
-							//	time_measure: "m",
 							time_start: "00:00:00",
 							time_end: "23:59:00",
 							time_zone: "UTC"
@@ -830,7 +683,6 @@ sap.ui.define([
 						};
 						planning_rep.plan_d = datanewPlan;
 						planning_rep.adata = [];
-						// TODO no existe planning aún
 					}
 					var attributes = results2.attributes.results;
 					var atrData = [];
@@ -861,7 +713,6 @@ sap.ui.define([
 					if (sign_conf) {
 						var signData = JSON.parse(sign_conf.json_cfg);
 						signData.uuid = sign_conf.uuid;
-						//		var arrayValues = Object.entries(sign_conf);
 					} else {
 						var signData = {};
 						signData.uuid = "";
@@ -895,14 +746,7 @@ sap.ui.define([
 					oGlobalVar.refresh();
 					results2.business_process = results2.business_process.results;
 					delete oData2.__metadata;
-					//	var temp = templates.find(template => template.id === that.template_id);
 					var temp = templates.find(template => template.id === that.template_id && template.active_version == that.template_version);
-
-					// var temp = {};
-					// temp.id = that.template_id;
-					// temp.active_version = that.template_version;
-					// temp.locale = that.template_language;
-					// temp.description = that.description;
 					if (mapCop && metaCop) {
 						that.call_Template_details(results2, temp, "X", "X", uuidTemp);
 					} else if (mapCop && !metaCop) {
@@ -912,15 +756,14 @@ sap.ui.define([
 					} else {
 						that.call_Template_details(results2, temp, "", "");
 					}
-
 				},
 				error: function (oError) {
 					oViewModel.setProperty("/busy", false);
 				}
 			});
-
 		},
 
+		/* Obtenemos los datos del cliente para poder llamar a CPI */
 		getSubscriptionSettings: async function () {
 			var oModel = this.getOwnerComponent().getModel();
 			var sPath = "/Subscription_Settings";
@@ -943,25 +786,20 @@ sap.ui.define([
 			})
 		},
 
+		/* Llamamos a CPI para chequear los valores de los mapeos para algún ejemplo */
 		checkMappings: function (oEvent) {
 			this.byId("tableChecks").setBusy(true);
 			var dialogcheckMap = oEvent.getSource().getParent();
 			var aInputs = [
-					//	oView.byId("BusinessProcess"),
 					this.byId("CheckEmployee")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
-			// if (this.byId("ProcessType").getSelectedKey() === "I") {
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInputNewP(oInput) || bValidationError;
 			}, this);
-			// }
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("valError");
+				sap.m.MessageBox.alert(text);
 				this.byId("tableChecks").setBusy(false);
 				return;
 			}
@@ -977,27 +815,15 @@ sap.ui.define([
 						variable: ckeckMapData[i].variable,
 						mapping: ckeckMapData[i].path,
 						source: ckeckMapData[i].source,
+						mapping_type: ckeckMapData[i].type,
+						metadata: ckeckMapData[i].metadata,
 						mapping_object: "TEMPL_MAPP"
 					}
 					mappings.push(item);
 				}
 			}
-			//var url = "/CPI-WD2PD-Deepv2/templates/template/mapping_test";
 			var url = "/CPI-WD2PD_Dest/di/templates/template/mapping_test";
-			// var entorno = 'DEV';
-			// if (entorno == 'DEV') {
-			// 	var cuscode = "C000000001";
-			// 	var cusclientid = "15ff0365-5b0c-420e-bb14-bcf28b458374";
-			// 	var cusscope = "cf0f8bd6-4d5c-4ea5-827d-22898796ce68";
-			// }
-			// if (entorno == 'TEST') {
-			// 	var cuscode = "T000000001";
-			// 	var cusclientid = "e4f496b6-4c9b-4d03-9665-86d13349b046";
-			// 	var cusscope = "f0adfc99-7fea-42d7-9439-46a4c9de4742";
-			// }
 			if (this.getOwnerComponent().settings) {
-				//this.settings = await this.getSubscriptionSettings();
-
 				var cuscode = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
 				var cusclientid = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
 				var cusscope = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
@@ -1010,7 +836,6 @@ sap.ui.define([
 					"mapping": mappings
 				};
 				var datajson = JSON.stringify(data);
-				//	var datajson = JSON.stringify({"mockdata":{"employee_id":"21602","ws_response":null},"mapping":[{"variable":"firstName","mapping":"/Get_Workers_Response/Response_Data/Worker/Worker_Data/Personal_Data/Name_Data/Legal_Name_Data/Name_Detail_Data/First_Name","mapping_object":"TEMPL_MAPP"}]});
 				jQuery.ajax({
 					url: url,
 					type: "POST",
@@ -1031,25 +856,28 @@ sap.ui.define([
 								error: "",
 								value: results.mapping_result[i].value,
 								path: map.path,
-								source: map.source
+								source: map.source,
+								metadata: map.metadata,
+								type: map.type
 							};
 							checkMaps.push(item);
 						}
 						for (var i = 0; i < results.mapping_error.length; i++) {
-							var mapEr = ckeckMapData.find(mapData => mapData.variable === results.mapping_result[i].variable);
+							var mapEr = ckeckMapData.find(mapData => mapData.variable === results.mapping_error[i].variable);
 							var item_error = {
 								variable: results.mapping_error[i].variable,
 								error: "X",
 								value: results.mapping_error[i].value,
 								path: mapEr.path,
-								source: mapEr.source
+								source: mapEr.source,
+								metadata: mapEr.metadata,
+								type: mapEr.type
 							};
 							checkMaps.push(item_error);
 						}
 						checkMapModel.setData(checkMaps);
 						checkMapModel.refresh();
 						that.byId("tableChecks").setBusy(false);
-						//dialogcheckMap.close();
 					},
 					error: function (error) {
 						var variables = ckeckMapData;
@@ -1061,6 +889,8 @@ sap.ui.define([
 									error: "C",
 									path: variables[i].path,
 									source: variables[i].source,
+									metadata: variables[i].metadata,
+									type: variables[i].type,
 									value: ""
 								}
 								mappings.push(item);
@@ -1068,17 +898,17 @@ sap.ui.define([
 						}
 						checkMapModel.setData(mappings);
 						checkMapModel.refresh();
-						//sap.m.MessageToast.show("Error Check Mappings");
 						var mensaje = JSON.parse(error.responseText).message_error.substring(66);
 						sap.m.MessageToast.show(mensaje);
 						that.byId("tableChecks").setBusy(false);
-						//dialogcheckMap.close();
 					}
 				});
 			}
 
 		},
 
+		/* Recuperamos de PeopleDoc las templates activas y las cruzamos con las templates
+		configuradas en persistencia */
 		call_Template_details: function (resultsPers, temp, mapCop, metaCop, uuidTemp) {
 			var oViewModel = this.getModel("objectView"),
 				oDataModel = this.getModel("template"),
@@ -1087,26 +917,17 @@ sap.ui.define([
 				oSignTypesModel = this.getModel("signtypes");
 			var that = this;
 			var head = oHeaderModel.getData();
-			//	var url = "/CPI-WD2PD-Deep/templates/template/detail";
 			var url = "/CPI-WD2PD_Dest/di/templates/template/detail";
 			var sCurrentLocale = sap.ui.getCore().getConfiguration().getLanguage();
 			var langu = sCurrentLocale + "-" + sCurrentLocale;
 			url = url + "?Template-Id=" + temp.id + "&Template-Version=" + temp.active_version + "&Template-Language=" + langu;
-			// var entorno = 'DEV';
-			// if (entorno == 'DEV') {
-			// 	var cuscode = "C000000001";
-			// 	var cusclientid = "15ff0365-5b0c-420e-bb14-bcf28b458374";
-			// 	var cusscope = "cf0f8bd6-4d5c-4ea5-827d-22898796ce68";
-			// }
-			// if (entorno == 'TEST') {
-			// 	var cuscode = "T000000001";
-			// 	var cusclientid = "e4f496b6-4c9b-4d03-9665-86d13349b046";
-			// 	var cusscope = "f0adfc99-7fea-42d7-9439-46a4c9de4742";
-			// }
 			if (this.getOwnerComponent().settings) {
-				//this.settings = await this.getSubscriptionSettings();
 				var sendPage = false;
-				if (resultsPers.pages.results.length == 0) {
+				if (resultsPers.pages.results) {
+					if (resultsPers.pages.results.length == 0) {
+						sendPage = true;
+					}
+				} else {
 					sendPage = true;
 				}
 				var cuscode = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
@@ -1137,7 +958,6 @@ sap.ui.define([
 								}
 								results.signature_types.unshift(newsigntype);
 							}
-							//		var arrayValues = Object.entries(sign_conf);
 						}
 						oSignTypesModel.setData(results.signature_types);
 						oSignTypesModel.refresh();
@@ -1149,7 +969,6 @@ sap.ui.define([
 								head.doc_type_text = dt_name.label;
 								oHeaderModel.setData(head);
 								oHeaderModel.refresh();
-								//	for (var i = 0; i < DTData.length; i++) {
 								if (dt_name.metadata && Array.isArray(dt_name.metadata)) {
 									for (var j = 0; j < dt_name.metadata.length; j++) {
 										dt_name.metadata[j].dtype_id = dt_name.id;
@@ -1169,37 +988,40 @@ sap.ui.define([
 								results.pages_preview = [];
 							}
 						} else {
-							results.pages_preview = resultsPers.pages.results;
-							results.pages_preview.sort(function (a, b) {
-								return a.page - b.page
-							});
-							if (results.pages_preview) {
-								for (var i = 0; i < results.pages_preview.length; i++) {
-									results.pages_preview[i].base64 = results.pages_preview[i].content;
-									delete results.pages_preview[i].content;
-									//		//var particiones = results.pages_preview[i].base64.match(/.{1,5000}/g);
+							if (resultsPers.pages.results) {
+								results.pages_preview = resultsPers.pages.results;
+								results.pages_preview.sort(function (a, b) {
+									return a.page - b.page
+								});
+								if (results.pages_preview) {
+									for (var i = 0; i < results.pages_preview.length; i++) {
+										results.pages_preview[i].base64 = results.pages_preview[i].content;
+										delete results.pages_preview[i].content;
+									}
+								} else {
+									results.pages_preview = [];
 								}
-							} else {
-								results.pages_preview = [];
 							}
 						}
-
 						if (resultsPers.mappings) {
 							for (var j = 0; j < results.variables.length; j++) {
 								var variablePers = resultsPers.mappings.find(mapping => mapping.variable === results.variables[j].slug);
 								if (variablePers) {
 									results.variables[j].source = variablePers.source;
+									results.variables[j].type = variablePers.mapping_type;
+									results.variables[j].metadata = variablePers.metadata;
 									results.variables[j].path = variablePers.mapping;
 									if (results.variables[j].path === "") {
 										results.variables[j].map = "";
 									} else {
 										results.variables[j].map = "X";
 									}
-									//	results.variables[j].uuid = variablePers.uuid;
 								} else {
 									results.variables[j].path = "";
 									results.variables[j].map = "";
 									results.variables[j].source = "";
+									results.variables[j].type = "";
+									results.variables[j].metadata = "";
 								}
 							}
 						}
@@ -1208,17 +1030,20 @@ sap.ui.define([
 								var metadataPers = resultsPers.metadata.find(meta => meta.variable === results.metadata[j].code);
 								if (metadataPers) {
 									results.metadata[j].source = metadataPers.source;
+									results.metadata[j].type = metadataPers.mapping_type;
+									results.metadata[j].metadata = metadataPers.metadata;
 									results.metadata[j].path = metadataPers.mapping;
 									if (results.metadata[j].path === "") {
 										results.metadata[j].map = "";
 									} else {
 										results.metadata[j].map = "X";
 									}
-									//	results.variables[j].uuid = variablePers.uuid;
 								} else {
 									results.metadata[j].path = "";
 									results.metadata[j].map = "";
 									results.metadata[j].source = "";
+									results.metadata[j].type = "";
+									results.metadata[j].metadata = "";
 								}
 							}
 						}
@@ -1245,16 +1070,15 @@ sap.ui.define([
 						if (sendPage) {
 							that.createPagesBatch(resultsPers.uuid);
 						}
-
 					},
 					error: function (e) {
 						oViewModel.setProperty("/busy", false);
 					}
 				});
 			}
-
 		},
 
+		/* Abrimos el dialog para la gestión de los valores de los filtors */
 		openValues: function (oEvent) {
 			var property = oEvent.getSource().getParent().getBindingContext("attributes").getPath() + "/name";
 			var attribute_name = this.getView().getModel("attributes").getProperty(property);
@@ -1269,7 +1093,6 @@ sap.ui.define([
 					name: "shapein.TemplatesConfiguration.view.fragments.manageValues",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					this.byId("tableFilHeader").setText(attribute_name);
 					this.byId("tablefil").getBinding("items").filter([oFilter1]);
@@ -1283,11 +1106,17 @@ sap.ui.define([
 			}
 		},
 
+		/* Al querer añadir un nuevo firmante en la configuración de la firma */
 		addSigner: function (oEvent) {
+			var oSignatureModel = this.getModel("signature");
+			var signData = oSignatureModel.getData();
+			var signers = signData.signers;
+			var order = signers.length + 1;
 			var oSignerModel = this.getModel("signer");
 			var signerData = oSignerModel.getData();
 			signerData = {
-				type: "organization"
+				type: "organization",
+				signing_order: order
 			};
 			oSignerModel.setData(signerData);
 			oSignerModel.refresh();
@@ -1297,20 +1126,16 @@ sap.ui.define([
 					name: "shapein.TemplatesConfiguration.view.fragments.newSigner",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					oDialog.open();
 				}.bind(this));
 			} else {
-				//	var checkMapModel = this.getModel("checkMap");
-				//	checkMapModel.setData([]);
-				// this.byId("CheckEmployee").setValue("");
-				// this.byId("CheckEmployee").setValueState("None");
 				this.byId("newSigner").open();
 			}
 		},
 
+		/* Al querer visualizar los datos de un firmante configurado */
 		displaySigner: function (oEvent) {
 			var oSignerModel = this.getModel("signer");
 			var sPath = oEvent.getSource().getParent().getParent().getBindingContext("signature").getPath();
@@ -1318,14 +1143,12 @@ sap.ui.define([
 			var signer = signatModel.getProperty(sPath);
 			oSignerModel.setData(signer);
 			oSignerModel.refresh();
-
 			if (!this.byId("dispSigner")) {
 				Fragment.load({
 					id: this.getView().getId(),
 					name: "shapein.TemplatesConfiguration.view.fragments.dispSigner",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					var item = this.byId("Signature_Type_Dis").getItemByKey(signer.type);
 					var params = {
@@ -1336,10 +1159,6 @@ sap.ui.define([
 					oDialog.open();
 				}.bind(this));
 			} else {
-				//	var checkMapModel = this.getModel("checkMap");
-				//	checkMapModel.setData([]);
-				// this.byId("CheckEmployee").setValue("");
-				// this.byId("CheckEmployee").setValueState("None");
 				var item = this.byId("Signature_Type_Dis").getItemByKey(signer.type);
 				var params = {
 					selectedItem: item
@@ -1349,27 +1168,24 @@ sap.ui.define([
 			}
 		},
 
+		/* Al querer editar los datos de un firmante configurado */
 		editSigner: function (oEvent) {
 			var oSignerModel = this.getModel("signer");
 			var sPath = oEvent.getSource().getParent().getParent().getBindingContext("signature").getPath();
 			var signatModel = this.getModel("signature");
 			var signatData = signatModel.getData();
-			//	let signer = signatModel.getProperty(sPath);
-			//let signer = signatData.signers[0];
 			let signer = Object.assign({}, signatModel.getProperty(sPath));
 			oSignerModel.setData(signer);
 			oSignerModel.refresh();
 			var sPaths = sPath.split('/');
 			var indice = parseInt(sPaths[sPaths.length - 1]);
 			this.editIndex = indice;
-
 			if (!this.byId("editSigne")) {
 				Fragment.load({
 					id: this.getView().getId(),
 					name: "shapein.TemplatesConfiguration.view.fragments.editSigne",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					var item = this.byId("Signature_Type_Edit").getItemByKey(signer.type);
 					var params = {
@@ -1380,10 +1196,6 @@ sap.ui.define([
 					oDialog.open();
 				}.bind(this));
 			} else {
-				//	var checkMapModel = this.getModel("checkMap");
-				//	checkMapModel.setData([]);
-				// this.byId("CheckEmployee").setValue("");
-				// this.byId("CheckEmployee").setValueState("None");
 				var item = this.byId("Signature_Type_Edit").getItemByKey(signer.type);
 				var params = {
 					selectedItem: item
@@ -1393,6 +1205,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Abrimos el pop-up para hacer gestionar el chequeo de los mapeos de variables */
 		onCheckMap: function (oEvent) {
 			var checkMapModel = this.getModel("checkMap");
 			var ckeckMapData = checkMapModel.getData();
@@ -1401,11 +1214,14 @@ sap.ui.define([
 			var mappings = [];
 			var that = this;
 			for (var i = 0; i < variables.length; i++) {
+				//	if (variables[i].path != "" && variables[i].type != "CTE") {
 				if (variables[i].path != "") {
 					var item = {
 						variable: variables[i].slug,
 						path: variables[i].path,
 						source: variables[i].source,
+						type: variables[i].type,
+						metadata: variables[i].metadata,
 						error: "C",
 						value: ""
 					}
@@ -1420,24 +1236,26 @@ sap.ui.define([
 					name: "shapein.TemplatesConfiguration.view.fragments.checkMappings",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-					oDialog.setTitle("Check Mappings");
-					this.byId("tableChecks").setNoDataText("No Mapping Checks");
+					var text1 = this.getResourceBundle().getText("checkMap");
+					oDialog.setTitle(text1);
+					var text2 = this.getResourceBundle().getText("noMapCheck");
+					this.byId("tableChecks").setNoDataText(text2);
 					oDialog.open();
 				}.bind(this));
 			} else {
-				//	var checkMapModel = this.getModel("checkMap");
-				//	checkMapModel.setData([]);
 				this.byId("CheckEmployee").setValue("");
 				this.byId("CheckEmployee").setValueState("None");
-				this.byId("checkMap").setTitle("Check Mappings");
-				this.byId("tableChecks").setNoDataText("No Mapping Checks");
+				var text1 = this.getResourceBundle().getText("checkMap");
+				this.byId("checkMap").setTitle(text1);
+				var text2 = this.getResourceBundle().getText("noMapCheck");
+				this.byId("tableChecks").setNoDataText(text2);
 				this.byId("checkMap").open();
 			}
 		},
 
+		/* Abrimos el pop-up para hacer gestionar el chequeo de los mapeos de metadatas */
 		onCheckMapMeta: function (oEvent) {
 			var checkMapModel = this.getModel("checkMap");
 			var ckeckMapData = checkMapModel.getData();
@@ -1446,11 +1264,14 @@ sap.ui.define([
 			var metadatas = [];
 			var that = this;
 			for (var i = 0; i < metadata.length; i++) {
+				//	if (metadata[i].path != "" && metadata[i].type != "CTE") {
 				if (metadata[i].path != "") {
 					var item = {
 						variable: metadata[i].code,
 						path: metadata[i].path,
 						source: metadata[i].source,
+						type: metadata[i].type,
+						metadata: metadata[i].metadata,
 						error: "C",
 						value: ""
 					}
@@ -1465,24 +1286,26 @@ sap.ui.define([
 					name: "shapein.TemplatesConfiguration.view.fragments.checkMappings",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-					this.byId("tableChecks").setNoDataText("No Metadata Checks");
-					oDialog.setTitle("Check Metadata");
+					var text2 = this.getResourceBundle().getText("noMetaCheck");
+					this.byId("tableChecks").setNoDataText(text2);
+					var text1 = this.getResourceBundle().getText("checkMeta");
+					oDialog.setTitle(text1);
 					oDialog.open();
 				}.bind(this));
 			} else {
-				//	var checkMapModel = this.getModel("checkMap");
-				//	checkMapModel.setData([]);
 				this.byId("CheckEmployee").setValue("");
 				this.byId("CheckEmployee").setValueState("None");
-				this.byId("checkMap").setTitle("Check Metadata");
-				this.byId("tableChecks").setNoDataText("No Metadata Checks");
+				var text1 = this.getResourceBundle().getText("checkMap");
+				this.byId("checkMap").setTitle(text1);
+				var text2 = this.getResourceBundle().getText("noMapCheck");
+				this.byId("tableChecks").setNoDataText(text2);
 				this.byId("checkMap").open();
 			}
 		},
 
+		/* Al seleccionar la página de la template sobre la que se quiere firmar */
 		pressPage: function (oEvent) {
 			this.byId("cancelBtnCoord").setVisible(false);
 			var src = oEvent.getSource().getSrc();
@@ -1490,18 +1313,17 @@ sap.ui.define([
 			var splits = page.split('-');
 			var indice = parseInt(splits[splits.length - 1]);
 			var page = indice + 1;
-			//	this.byId("imagePage").setSrc(src);
 			this.byId("carouselContainerCoordenates").setVisible(false);
 			var num_pages = this.byId("carouselContainerCoordenates").getPages().length;
 			if (page == num_pages) {
-				//	sap.m.MessageToast.show("Last page");
 				page = "";
 			}
 			this.byId("imagePage").setVisible(true);
 			var imag = this.byId("imagePage");
 			this.stepCoordenates = 2;
 			this.byId("ScrollCoordenates").scrollTo(0, 0);
-			this.byId("messageCoord").setText("2. Click in lower left corner field sign.")
+			var text2 = this.getResourceBundle().getText("step2Coord");
+			this.byId("messageCoord").setText(text2);
 			imag.setSrc(src);
 			var oSignerModel = this.getModel("signer");
 			var signerData = oSignerModel.getData();
@@ -1511,22 +1333,17 @@ sap.ui.define([
 			signerData.generate_pdf_sign_field = Object.assign({}, item);
 			oSignerModel.setData(signerData);
 			oSignerModel.refresh();
-			//sap.m.MessageToast.show("pagina: " +  page);
-
 		},
 
+		/* Al seleccionar las coordenadas de las esquinas de la zona sobre las que irá la firma en la template */
 		selectCoordenates: function (oEvent) {
-			//var src = oEvent.getSource().getSrc();
-			//	var id = oEvent.getSource().getId();
 			var that = this;
-
 			if (!this.byId("imagen")) {
 				Fragment.load({
 					id: this.getView().getId(),
 					name: "shapein.TemplatesConfiguration.view.fragments.imageSign",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					var that = this;
@@ -1545,28 +1362,25 @@ sap.ui.define([
 									var lly = Math.round(this.height - relativeY);
 									that.stepCoordenates = 3;
 									that.byId("ScrollCoordenates").scrollTo(0, 0);
-									that.byId("messageCoord").setText("3. Click in upper right corner field sign.")
+									var text3 = that.getResourceBundle().getText("step3Coord");
+									that.byId("messageCoord").setText(text3);
 									signerData.generate_pdf_sign_field.llx = llx;
 									signerData.generate_pdf_sign_field.lly = lly;
 									oSignerModel.setData(signerData);
 									oSignerModel.refresh();
-									//sap.m.MessageToast.show(llx + ':' + lly);
-
-									//alert();
 								} else if (step == 3) {
 									var offset = $(this).offset();
 									var relativeX = (e.pageX - offset.left);
 									var relativeY = (e.pageY - offset.top);
-
 									var urx = Math.round(relativeX);
 									var ury = Math.round(this.height - relativeY);
-									//	sap.m.MessageToast.show(llx + ':' + lly);
 									that.stepCoordenates = 1;
 									$(".position").val("afaf");
 									that.byId("carouselContainerCoordenates").setVisible(true);
 									that.byId("imagePage").setVisible(false);
 									that.byId("imagePage").setSrc("");
-									that.byId("messageCoord").setText("1. Click to select Page to sign.");
+									var text1 = that.getResourceBundle().getText("step1Coord");
+									that.byId("messageCoord").setText(text1);
 									signerData.generate_pdf_sign_field.urx = urx;
 									signerData.generate_pdf_sign_field.ury = ury;
 									oSignerModel.setData(signerData);
@@ -1574,31 +1388,24 @@ sap.ui.define([
 									var dialog = that.byId("imagen");
 									dialog.close();
 								}
-								//	$(".position").val("afaf");
 							});
 						}
 					});
-					//this.byId("ScrollCoordenates").scrollTo(0, 0);
 					var mesStrip = this.byId("messageCoord");
 					var scroll = this.byId("ScrollCoordenates");
 					if (scroll) {
 						jQuery.sap.delayedCall(0, null, function () {
-							//Scroll to the newly added item
 							scroll.scrollToElement(mesStrip);
 						});
 
 					}
-					//	var imag = this.byId("imagePage");
-					//	this.byId("imagePage").setSrc(src);
 					oDialog.open();
 				}.bind(this));
 			} else {
-				//	this.byId("imagePage").setSrc(src);
 				var paginas = this.byId("carouselContainerCoordenates").getPages();
 				this.byId("carouselContainerCoordenates").setActivePage(paginas[0]);
 				this.byId("cancelBtnCoord").setVisible(true);
 				this.byId("imagen").open();
-				//this.byId("ScrollCoordenates").scrollTo(0, 0);
 				var mesStrip = this.byId("messageCoord");
 				var scroll = this.byId("ScrollCoordenates");
 				if (scroll) {
@@ -1607,6 +1414,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Al cancelar la selección de la zona para firmar */
 		cancelImage: function (oEvent) {
 			this.byId("carouselContainerCoordenates").setVisible(true);
 			this.byId("imagePage").setVisible(false);
@@ -1616,22 +1424,7 @@ sap.ui.define([
 			dialogNewAttr.close();
 		},
 
-		// onBeforeRendering: function () {
-		// 	var imag = this.byId("imagePage");
-		// 	imag.addEventDelegate({
-		// 		onAfterRendering: function () {
-
-		// 			imag.$().click(function (e) {
-		// 				var offset = $(this).offset();
-		// 				var relativeX = (e.pageX - offset.left);
-		// 				var relativeY = (e.pageY - offset.top);
-		// 				alert(relativeX + ':' + relativeY);
-		// 				$(".position").val("afaf");
-		// 			});
-		// 		}
-		// 	});
-		// },
-
+		/* Al querer añadir un nuevo atributo */
 		onAddAttr: function (oEvent) {
 			if (!this.byId("newAttribute")) {
 				Fragment.load({
@@ -1639,7 +1432,6 @@ sap.ui.define([
 					name: "shapein.TemplatesConfiguration.view.fragments.newAttribute",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					oDialog.open();
@@ -1655,6 +1447,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Al querer añadir una nueva variable global, abrir pop-up de gestión */
 		onAddGlobalVar: function (oEvent) {
 			var oGVModel = this.getModel("globalVari");
 			var GVData = oGVModel.getData();
@@ -1665,9 +1458,11 @@ sap.ui.define([
 				GVData = {
 					variable: '',
 					mapping_type: 'EXPRE',
+					mapping_type2: 'EXPRE',
 					mapping: ''
 				};
 				this.sourceGVEdit = "";
+				this.typeGVEdit = "";
 				oGVModel.setData(GVData);
 				oGVModel.refresh();
 			} else {
@@ -1675,9 +1470,16 @@ sap.ui.define([
 				var oGVarModel = this.getModel("globalVar");
 				var sPath = oEvent.getSource().getParent().getParent().getBindingContext("globalVar").getPath();
 				var sPathSourc = sPath + "/source";
+				var sPathSourc2 = sPath + "/mapping_type";
 				var GVarData = oGVarModel.getData();
 				this.sourceGVEdit = oGVarModel.getProperty(sPathSourc);
+				this.typeGVEdit = oGVarModel.getProperty(sPathSourc2);
 				var globalVariable = Object.assign({}, oGVarModel.getProperty(sPath));
+				if (globalVariable.mapping_type == "LVA" || globalVariable.mapping_type == "CTE") {
+					globalVariable.mapping_type2 = "XPATH";
+				} else {
+					globalVariable.mapping_type2 = globalVariable.mapping_type;
+				}
 				oGVModel.setData(globalVariable);
 				oGVModel.refresh();
 			}
@@ -1687,37 +1489,35 @@ sap.ui.define([
 					name: "shapein.TemplatesConfiguration.view.fragments.globalVar",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					if (action == "New") {
 						this.byId("Name_GV").setEnabled(true);
 						oDialog.setTitle("New Global Variable");
+						var text = this.getResourceBundle().getText("newGloVar");
+						oDialog.setTitle(text);
 						this.byId("btonAddGV").setVisible(true);
 						this.byId("btonEditGV").setVisible(false);
 					} else {
 						this.byId("Name_GV").setEnabled(false);
-						oDialog.setTitle("Edit Global Variable");
+						var text = this.getResourceBundle().getText("editGloVar");
+						oDialog.setTitle(text);
 						this.byId("btonEditGV").setVisible(true);
 						this.byId("btonAddGV").setVisible(false);
 					}
 					oDialog.open();
 				}.bind(this));
 			} else {
-				// this.byId("NameAttribu").setValue("");
-				// this.byId("DescAttribu").setValue("");
-				// this.byId("PathAttribu").setValue("");
-				// this.byId("NameAttribu").setValueState("None");
-				// this.byId("DescAttribu").setValueState("None");
-				// this.byId("PathAttribu").setValueState("None");
 				if (action == "New") {
 					this.byId("Name_GV").setEnabled(true);
-					this.byId("globalVariable").setTitle("New Global Variable");
+					var text = this.getResourceBundle().getText("newGloVar");
+					this.byId("globalVariable").setTitle(text);
 					this.byId("btonAddGV").setVisible(true);
 					this.byId("btonEditGV").setVisible(false);
 				} else {
 					this.byId("Name_GV").setEnabled(false);
-					this.byId("globalVariable").setTitle("Edit Global Variable");
+					var text = this.getResourceBundle().getText("editGloVar");
+					this.byId("globalVariable").setTitle(text);
 					this.byId("btonEditGV").setVisible(true);
 					this.byId("btonAddGV").setVisible(false);
 				}
@@ -1725,37 +1525,32 @@ sap.ui.define([
 			}
 		},
 
+		/* Cancelar la gestión de la variable global */
 		cancelGVar: function (oEvent) {
 			var dialogNewGV = oEvent.getSource().getParent();
 			dialogNewGV.close();
 		},
 
+		/* Al editar una variable global */
 		execEditGV: function (oEvent) {
 			var aInputs = [
-					//	oView.byId("BusinessProcess"),
 					this.byId("Name_GV"),
 					this.byId("Value_GV")
-					//	oView.byId("SegButAct")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
-			// if (this.byId("ProcessType").getSelectedKey() === "I") {
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInputNewP(oInput) || bValidationError;
 			}, this);
-			// }
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("valError");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
 			var that = this;
 			var oGlobalVariModel = this.getModel("globalVari");
 			var editData = oGlobalVariModel.getData();
 			var uuid_GV = editData.uuid;
-			var text = "Are you sure to edit this global variable?";
+			var text = this.getResourceBundle().getText("sureGloVar");
 			var oHeaderModel = this.getModel("header");
 			var uuidtemp = oHeaderModel.getData().uuid;
 			var sPath = "/Di_Template_Mappings(guid'" + uuid_GV + "')";
@@ -1763,28 +1558,43 @@ sap.ui.define([
 			var path = this.byId("Value_GV").getValue();
 			var type = this.byId("Type_GV").getSelectedKey();
 			var sourceGV = null;
+			var metadataGV = null;
 			if (type === "XPATH") {
 				sourceGV = this.byId("Source_GV").getValue();
+				if(sourceGV == ""){
+					sourceGV = null;
+				}
+				var typeGV = editData.type;
+				if (typeGV == 'LVA') {
+					metadataGV = editData.metadata;
+				}
+			} else {
+				typeGV = type;
 			}
 			var oHeaderModel = this.getModel("header");
 			var uuidtemp = oHeaderModel.getData().uuid;
 			var data = {
 				variable: name,
 				mapping_object: "GLOBAL_VAR",
-				mapping_type: type,
+				mapping_type: typeGV,
 				template_uuid: uuidtemp,
 				source: sourceGV,
+				metadata: metadataGV,
+				required: false,
 				mapping: path
 			};
 			var oModel = that.getOwnerComponent().getModel();
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oModel.update(sPath, data, {
 							headers: {
@@ -1794,17 +1604,19 @@ sap.ui.define([
 							success: function (oData, response) {
 								that.refreshGlobalVar(uuidtemp);
 								that.byId("globalVariable").close();
-								sap.m.MessageToast.show("Global Variable updated!!");
+								var text = that.getResourceBundle().getText("gloVarUpd");
+								sap.m.MessageToast.show(text);
 							},
 							error: function (oError) {
-								sap.m.MessageToast.show("Error");
+								var text = that.getResourceBundle().getText("error");
+								sap.m.MessageToast.show(text);
 							}
 						});
 						dialog.close();
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -1817,43 +1629,40 @@ sap.ui.define([
 
 		},
 
+		/* Al añadir una nueva variable global */
 		addNewGV: function (oEvent) {
 			var oGlobalVarModel = this.getModel("globalVar");
 			var oGlobalVarData = oGlobalVarModel.getData();
+			var oGlobalVariModel = this.getModel("globalVari");
+			var oGlobalVariData = oGlobalVariModel.getData();
 			var aInputs = [
-					//	oView.byId("BusinessProcess"),
 					this.byId("Name_GV"),
 					this.byId("Value_GV")
-					//	oView.byId("SegButAct")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
-			// if (this.byId("ProcessType").getSelectedKey() === "I") {
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInputNewP(oInput) || bValidationError;
 			}, this);
-			// }
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("valError");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
 			var new_variable = aInputs[0].getValue();
 			var var_exist = oGlobalVarData.find(GV => GV.variable === new_variable);
 			if (var_exist) {
-				sap.m.MessageBox.alert("A global variable with that name already exists.");
+				var text = this.getResourceBundle().getText("gloVarExist");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
 			var letterNumber = /^[0-9a-zA-Z-_]+$/;
 			if (new_variable.match(letterNumber)) {
 
 			} else {
-				sap.m.MessageBox.alert("Only can use alphanumeric characters and _");
+				var text = this.getResourceBundle().getText("alpha");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
-
 			var that = this;
 			var name = this.byId("Name_GV").getValue();
 			var path = this.byId("Value_GV").getValue();
@@ -1861,27 +1670,42 @@ sap.ui.define([
 			var oHeaderModel = this.getModel("header");
 			var uuidtemp = oHeaderModel.getData().uuid;
 			var sourceGV = null;
+			var metadataGV = null;
 			if (type === "XPATH") {
 				sourceGV = this.byId("Source_GV").getValue();
+				if(sourceGV == ""){
+					sourceGV = null;
+				}
+				var typeGV = oGlobalVariData.type;
+				if (typeGV == 'LVA') {
+					metadataGV = oGlobalVariData.metadata;
+				}
+			} else {
+				typeGV = type;
 			}
 			var data = {
 				variable: name,
 				mapping_object: "GLOBAL_VAR",
-				mapping_type: type,
+				mapping_type: typeGV,
 				template_uuid: uuidtemp,
 				source: sourceGV,
+				metadata: metadataGV,
+				required: false,
 				mapping: path
 			};
 			var oModel = that.getOwnerComponent().getModel();
-			var text = "Are you sure to create a new global variable?";
+			var text = that.getResourceBundle().getText("sureNewGloVar");
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oModel.create("/Di_Template_Mappings", data, {
 							headers: {
@@ -1891,17 +1715,19 @@ sap.ui.define([
 							success: function (oData, response) {
 								that.refreshGlobalVar(uuidtemp);
 								that.byId("globalVariable").close();
-								sap.m.MessageToast.show("Global Variable created!!");
+								var text = that.getResourceBundle().getText("gloVarCrea");
+								sap.m.MessageToast.show(text);
 							},
 							error: function (oError) {
-								sap.m.MessageToast.show("Error");
+								var text = that.getResourceBundle().getText("error");
+								sap.m.MessageToast.show(text);
 							}
 						});
 						dialog.close();
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -1911,29 +1737,22 @@ sap.ui.define([
 				}
 			});
 			dialog.open();
-
 		},
 
+		/* Al crear un nuevo atributo de la template */
 		createNewAttr: function (oEvent) {
 			var aInputs = [
-					//	oView.byId("BusinessProcess"),
 					this.byId("NameAttribu"),
 					this.byId("DescAttribu"),
 					this.byId("PathAttribu")
-					//	oView.byId("SegButAct")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
-			// if (this.byId("ProcessType").getSelectedKey() === "I") {
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInputNewP(oInput) || bValidationError;
 			}, this);
-			// }
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("valError");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
 			var that = this;
@@ -1950,15 +1769,18 @@ sap.ui.define([
 				xpath: path
 			};
 			var oModel = that.getOwnerComponent().getModel();
-			var text = "Are you sure to create a new attribute?";
+			var text = that.getResourceBundle().getText("sureAttCrea");
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oModel.create("/Di_Template_Worker_Attr", data, {
 							headers: {
@@ -1968,17 +1790,19 @@ sap.ui.define([
 							success: function (oData, response) {
 								that.refreshAttribFilters(uuidtemp);
 								that.byId("newAttribute").close();
-								sap.m.MessageToast.show("Attribute created!!");
+								var text = that.getResourceBundle().getText("attCrea");
+								sap.m.MessageToast.show(text);
 							},
 							error: function (oError) {
-								sap.m.MessageToast.show("Error");
+								var text = that.getResourceBundle().getText("error");
+								sap.m.MessageToast.show(text);
 							}
 						});
 						dialog.close();
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -1988,14 +1812,15 @@ sap.ui.define([
 				}
 			});
 			dialog.open();
-
 		},
 
+		/* Al cerrar la visualización de los datos de un firmante */
 		closeDisplaySigner: function (oEvent) {
 			var dialogDisplaySigner = oEvent.getSource().getParent();
 			dialogDisplaySigner.close();
 		},
 
+		/* Al cancelar la gestión de un nuevo firmante */
 		cancelNewSigner: function (oEvent) {
 			var fields = [
 				this.byId("Reg_Reference"),
@@ -2015,6 +1840,7 @@ sap.ui.define([
 			dialogNewSigner.close();
 		},
 
+		/* Al cancelar de la edición de un firmante */
 		cancelEditSigner: function (oEvent) {
 			var fields = [
 				this.byId("Reg_Reference_Edit"),
@@ -2034,21 +1860,25 @@ sap.ui.define([
 			dialogEditSigner.close();
 		},
 
+		/* Al cancelar la gestión de un nuevo atributo */
 		cancelNewAttr: function (oEvent) {
 			var dialogNewAttr = oEvent.getSource().getParent();
 			dialogNewAttr.close();
 		},
 
+		/* Al cancelar la edición de un atributo */
 		cancelEditAttr: function (oEvent) {
 			var dialogEditAttr = oEvent.getSource().getParent();
 			dialogEditAttr.close();
 		},
 
+		/* Al cancelar el chequeo de mapeos */
 		cancelCheckMap: function (oEvent) {
 			var dialogcheckMap = oEvent.getSource().getParent();
 			dialogcheckMap.close();
 		},
 
+		/* Al refrescar las variables globales asociadas a la template */
 		refreshGlobalVar: function (temp_uuid) {
 			var oGlobalVarModel = this.getModel("globalVar");
 			var sPath = "/Di_Template";
@@ -2069,12 +1899,11 @@ sap.ui.define([
 					oGlobalVarModel.setData(g_variables);
 					oGlobalVarModel.refresh();
 				},
-				error: function (oError) {
-					//	oViewModel.setProperty("/busy", false);
-				}
+				error: function (oError) {}
 			});
 		},
 
+		/* Al refrescar los atributos asociados a una template */
 		refreshAttribFilters: function (temp_uuid) {
 			var oFilterModel = this.getModel("filters"),
 				oAttrModel = this.getModel("attributes");
@@ -2117,25 +1946,16 @@ sap.ui.define([
 							}
 						}
 					}
-					//	that.oldFilters = Array.from(filData);
-					//	var filData2 = Array.from(filData);
-					//	var oldValues = Object.assign({}, filData);
-					//	var oldVal = Object.values(oldValues);
-					//	that.oldFilters = [...oldVal];
-					//	that.oldFilters = jQuery.extend({}, oldVal);
-					//that.oldFilters = Object.assign({}, filData);
-					//that.oldFilters = [...filData];
 					oFilterModel.setData(filData);
 					oFilterModel.refresh();
 					oAttrModel.setData(atrData);
 					oAttrModel.refresh();
 				},
-				error: function (oError) {
-					//	oViewModel.setProperty("/busy", false);
-				}
+				error: function (oError) {}
 			});
 		},
 
+		/* Inicialización de los modelos asociados una template */
 		initModels: function (oEvent) {
 			this.getView().getModel("template").setData();
 			this.getView().getModel("template").refresh();
@@ -2151,6 +1971,7 @@ sap.ui.define([
 			this.getView().getModel("attributes").refresh();
 		},
 
+		/* Al añadir un nuevo filtro para un atributo */
 		onAddFilter: function (oEvent) {
 			var itemsModel = this.getModel("filters");
 			var dataFil = itemsModel.getData();
@@ -2164,50 +1985,47 @@ sap.ui.define([
 			itemsModel.refresh();
 		},
 
+		/* Comparación de dos arrays */
 		arraysEquals: function (array1, array2) {
-			// if the other array is a falsy value, return
 			if (!array2)
 				return false;
-
-			// compare lengths - can save a lot of time 
 			if (array1.length != array2.length)
 				return false;
-
 			for (var i = 0, l = array1.length; i < l; i++) {
-				// Check if we have nested arrays
 				if (array1[i] instanceof Array && array2[i] instanceof Array) {
-					// recurse into the nested arrays
 					if (!array1[i].equals(array2[i]))
 						return false;
 				} else if (array1[i].value !== array2[i].value) {
-					// Warning - two different object instances will never be equal: {x:20} != {x:20}
 					return false;
 				}
 			}
 			return true;
 		},
 
+		/* Al cerrar la gestión de los atributos, indicando si se guardan los cambios */
 		closeManageAttr: function (oEvent) {
 			var oFilterModel = this.getModel("filters");
 			var filtersData = oFilterModel.getData();
-			//	var arrayOld = Object.values(this.oldFilters);
 			var iguales = this.arraysEquals(this.oldFilters, filtersData);
 			var dialogManage = oEvent.getSource().getParent();
 			var oHeaderModel = this.getModel("header");
 			var uuidtemp = oHeaderModel.getData().uuid;
-			var text = "You will lose unsaved values, do you want to continue?";
+			var text = this.getResourceBundle().getText("loseValues");
 			var oViewModel = this.getModel("objectView");
 			var that = this;
 			var head = {};
 			if (!iguales) {
+				var tit = this.getResourceBundle().getText("confi");
+				var yes = this.getResourceBundle().getText("yes");
+				var no = this.getResourceBundle().getText("no");
 				var dialog = new sap.m.Dialog({
-					title: 'Confirmation',
+					title: tit,
 					type: 'Message',
 					content: new sap.m.Text({
 						text: text
 					}),
 					beginButton: new sap.m.Button({
-						text: 'Yes',
+						text: yes,
 						press: function () {
 							that.refreshAttribFilters(uuidtemp);
 							dialog.close();
@@ -2215,7 +2033,7 @@ sap.ui.define([
 						}
 					}),
 					endButton: new sap.m.Button({
-						text: 'No',
+						text: no,
 						press: function () {
 							dialog.close();
 						}
@@ -2229,14 +2047,15 @@ sap.ui.define([
 				that.refreshAttribFilters(uuidtemp);
 				dialogManage.close();
 			}
-
 		},
 
+		/* Al cancelar la creación de un nuevo filtro */
 		cancelNewFilter: function (oEvent) {
 			var dialogNewFilter = oEvent.getSource().getParent();
 			dialogNewFilter.close();
 		},
 
+		/* Al querer editar un atributo */
 		editAttr: function (oEvent) {
 			var sPath = oEvent.getSource().getParent().getParent().getBindingContext("attributes").getPath();
 			var itemsModel = this.getView().getModel("attributes");
@@ -2264,7 +2083,6 @@ sap.ui.define([
 					name: "shapein.TemplatesConfiguration.view.fragments.editAttribute",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					oDialog.open();
@@ -2277,29 +2095,22 @@ sap.ui.define([
 			}
 		},
 
+		/* Al guardar los cambios en la edición de un atributo */
 		saveEditAttr: function (oEvent) {
 			var aInputs = [
-					//	oView.byId("BusinessProcess"),
 					this.byId("NameAttribuEdit"),
 					this.byId("DescAttribuEdit"),
 					this.byId("PathAttribuEdit")
-					//	oView.byId("SegButAct")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
-			// if (this.byId("ProcessType").getSelectedKey() === "I") {
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInputNewP(oInput) || bValidationError;
 			}, this);
-			// }
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("valError");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
-
 			var that = this;
 			var editAttrModel = this.getModel("editAttr");
 			var editData = editAttrModel.getData();
@@ -2314,18 +2125,21 @@ sap.ui.define([
 				xpath: path
 			};
 			var oModel = that.getOwnerComponent().getModel();
-			var text = "Are you sure to edit this attribute?";
+			var text = that.getResourceBundle().getText("sureEditAtt");
 			var oHeaderModel = this.getModel("header");
 			var uuidtemp = oHeaderModel.getData().uuid;
 			var sPath = "/Di_Template_Worker_Attr(guid'" + uuid_attr + "')";
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oModel.update(sPath, dataEdit, {
 							headers: {
@@ -2335,17 +2149,19 @@ sap.ui.define([
 							success: function (oData, response) {
 								that.refreshAttribFilters(uuidtemp);
 								that.byId("editAttribute").close();
-								sap.m.MessageToast.show("Attribute updated!!");
+								var text1 = that.getResourceBundle().getText("attUpd");
+								sap.m.MessageToast.show(text1);
 							},
 							error: function (oError) {
-								sap.m.MessageToast.show("Error");
+								var text = that.getResourceBundle().getText("error");
+								sap.m.MessageToast.show(text);
 							}
 						});
 						dialog.close();
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -2357,12 +2173,11 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Al editar un filtro */
 		editFil: function (oEvent) {
 			oEvent.getSource().getParent().getParent().getCells()[0].setEnabled(true);
 			var sPath = oEvent.getSource().getParent().getParent().getBindingContext("filters").getPath();
 			var itemsModel = this.getModel("filters");
-			// var editFilModel = this.getModel("editFilter");
-			// var oModel = this.getView().getModel();
 			var sPath2 = sPath + "/uuid";
 			var uuid = itemsModel.getProperty(sPath2);
 			sPath2 = sPath + "/name";
@@ -2374,24 +2189,9 @@ sap.ui.define([
 				name: name,
 				value: value
 			};
-			// editAttrModel.setData(dataEdit);
-			// editAttrModel.refresh();
-			// if (!this.byId("editAttribute")) {
-			// 	Fragment.load({
-			// 		id: this.getView().getId(),
-			// 		name: "shapein.TemplatesConfiguration.view.fragments.editAttribute",
-			// 		controller: this
-			// 	}).then(function (oDialog) {
-			// 		// connect dialog to the root view of this component (models, lifecycle)
-			// 		this.getView().addDependent(oDialog);
-			// 		oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-			// 		oDialog.open();
-			// 	}.bind(this));
-			// } else {
-			// 	this.byId("editAttribute").open();
-			// }
 		},
 
+		/* Al borrar un determinado atributo */
 		deleteAttr: function (oEvent) {
 			var oHeaderModel = this.getModel("header");
 			var uuidtemp = oHeaderModel.getData().uuid;
@@ -2401,33 +2201,36 @@ sap.ui.define([
 			var sPath2 = sPath + "/uuid";
 			var uuid = itemsModel.getProperty(sPath2);
 			var sPath1 = "/Di_Template_Worker_Attr(guid'" + uuid + "')";
-			var text = "Are you sure to delete this attribute?";
+			var text = this.getResourceBundle().getText("sureAttDele");
 			var that = this;
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oModel.remove(sPath1, {
 							success: function (oData, response) {
-								//var but = oEvent.getSource();
 								that.refreshAttribFilters(uuidtemp);
-								sap.m.MessageToast.show("Attribute deleted succesfully.");
+								var text1 = that.getResourceBundle().getText("attDele");
+								sap.m.MessageToast.show(text1);
 							},
 							error: function (oError) {
-								sap.m.MessageToast.show("Error");
+								var text = that.getResourceBundle().getText("error");
+								sap.m.MessageToast.show(text);
 							}
 						});
 						dialog.close();
-
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -2439,6 +2242,7 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Al ejecutar el copiado de unos determinados objetos de una template a otra */
 		execCopyTemp: function (oEvent) {
 			var dialogCopyTemp = oEvent.getSource().getParent();
 			var oHeaderModel = this.getModel("header");
@@ -2454,20 +2258,20 @@ sap.ui.define([
 			var that = this;
 			var oViewModel = this.getModel("objectView");
 			var oModel = this.getOwnerComponent().getModel();
-			var text =
-				"Are you sure to copy these Objects in this Template?\n All existing objects from the template will be deleted and replaced by those from the other template.";
-			var that = this;
+			var text = that.getResourceBundle().getText("sureCopyTemp");
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				state: 'Warning',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
-						//var attr_uuid = String(attr_uuid);
 						oModel.callFunction(
 							"/copy_template_config", {
 								method: "GET",
@@ -2494,19 +2298,21 @@ sap.ui.define([
 									}
 									dialogCopyTemp.close();
 									oViewModel.setProperty("/busy", false);
-									sap.m.MessageToast.show("Objects copied successfully");
+									var text1 = that.getResourceBundle().getText("copySucc");
+									sap.m.MessageToast.show(text1);
 								},
 								error: function (oError) {
 									dialogCopyTemp.close();
 									oViewModel.setProperty("/busy", false);
-									sap.m.MessageToast.show("Error");
+									var text = that.getResourceBundle().getText("error");
+									sap.m.MessageToast.show(text);
 								}
 							});
 						dialog.close();
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -2519,6 +2325,7 @@ sap.ui.define([
 
 		},
 
+		/* Al querer borrar una planificación de reprocesamiento */
 		deletePlanningRep: function (oEvent) {
 			var oHeaderModel = this.getModel("header");
 			var uuidtemp = oHeaderModel.getData().uuid;
@@ -2526,18 +2333,20 @@ sap.ui.define([
 			var that = this;
 			var oViewModel = this.getModel("objectView");
 			var oModel = this.getOwnerComponent().getModel();
-			var text = "Are you sure to delete this Reprocessing Planning?";
+			var text = that.getResourceBundle().getText("sureDelRep");
 			var that = this;
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
-						//var attr_uuid = String(attr_uuid);
 						oModel.callFunction(
 							"/delete_planning_repro", {
 								method: "GET",
@@ -2554,7 +2363,6 @@ sap.ui.define([
 										ontime: false,
 										periodicity_values: "2-4-6",
 										time_frecuency: "1m",
-										//	time_measure: "m",
 										time_start: "00:00:00",
 										time_end: "23:59:00",
 										time_zone: "UTC"
@@ -2568,19 +2376,20 @@ sap.ui.define([
 									oPlanModelRep.setData(planning_rep);
 									oPlanModelRep.refresh();
 									oViewModel.setProperty("/busy", false);
-									sap.m.MessageToast.show("Reprocessing Planning deleted!");
+									var text = that.getResourceBundle().getText("repPlanDel");
+									sap.m.MessageToast.show(text);
 								},
 								error: function (oError) {
 									oViewModel.setProperty("/busy", false);
-									sap.m.MessageToast.show("Error");
+									var text = that.getResourceBundle().getText("error");
+									sap.m.MessageToast.show(text);
 								}
 							});
 						dialog.close();
-
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -2592,6 +2401,7 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Al querer copiar configuraciones de templates, abrimos el pop-up para su gestión */
 		onCopyConfig: function (oEvent) {
 			var oHeaderModel = this.getModel("header");
 			var uuidTemp = oHeaderModel.getData().uuid;
@@ -2601,7 +2411,6 @@ sap.ui.define([
 					name: "shapein.TemplatesConfiguration.view.fragments.copyTemplate",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					var items = this.byId("selTemplate").getItems();
@@ -2634,11 +2443,13 @@ sap.ui.define([
 			}
 		},
 
+		/* Al cancelar el copiado de objetos entre templates */
 		cancelCopyTemp: function (oEvent) {
 			var dialogCopyTemp = oEvent.getSource().getParent();
 			dialogCopyTemp.close();
 		},
 
+		/* Al borrar una variable global */
 		deleteGlobalVar: function (oEvent) {
 			var oHeaderModel = this.getModel("header");
 			var uuidtemp = oHeaderModel.getData().uuid;
@@ -2648,33 +2459,36 @@ sap.ui.define([
 			var sPath2 = sPath + "/uuid";
 			var uuid = itemsModel.getProperty(sPath2);
 			var sPath1 = "/Di_Template_Mappings(guid'" + uuid + "')";
-			var text = "Are you sure to delete this global variable?";
+			var text = this.getResourceBundle().getText("sureDelGloVar");
 			var that = this;
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oModel.remove(sPath1, {
 							success: function (oData, response) {
-								//var but = oEvent.getSource();
 								that.refreshGlobalVar(uuidtemp);
-								sap.m.MessageToast.show("Global Variable deleted succesfully.");
+								var text = that.getResourceBundle().getText("gloVarDel");
+								sap.m.MessageToast.show(text);
 							},
 							error: function (oError) {
-								sap.m.MessageToast.show("Error");
+								var text = that.getResourceBundle().getText("error");
+								sap.m.MessageToast.show(text);
 							}
 						});
 						dialog.close();
-
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -2686,6 +2500,7 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Al borrar un firmante de la configuración de la firma */
 		deleteSigner: function (oEvent) {
 			var oHeaderModel = this.getModel("header");
 			var uuidtemp = oHeaderModel.getData().uuid;
@@ -2694,37 +2509,33 @@ sap.ui.define([
 			var indice = parseInt(sPaths[sPaths.length - 1]);
 			var itemsModel = this.getView().getModel("signature");
 			var dataSign = itemsModel.getData();
-			var text = "Are you sure to delete this signer?";
+			var text = this.getResourceBundle().getText("sureDelSigner");
 			var that = this;
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
-						// oModel.remove(sPath1, {
-						// 	success: function (oData, response) {
-						// 		//var but = oEvent.getSource();
-						// 		that.refreshAttribFilters(uuidtemp);
-						// 		sap.m.MessageToast.show("Attribute deleted succesfully.");
-						// 	},
-						// 	error: function (oError) {
-						// 		sap.m.MessageToast.show("Error");
-						// 	}
-						// });
+						for (var i = indice + 1; i < dataSign.signers.length; i++) {
+							dataSign.signers[i].signing_order = dataSign.signers[i].signing_order - 1;
+						}
 						dataSign.signers.splice(indice, 1);
 						itemsModel.setData(dataSign);
 						itemsModel.refresh();
-						sap.m.MessageToast.show("Signer deleted succesfully.");
+						var text1 = that.getResourceBundle().getText("delSigner");
+						sap.m.MessageToast.show(text1);
 						dialog.close();
-
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -2736,15 +2547,14 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Al abrir una template que existe en People Doc pero no la tenemos configurada en persistencia */
 		configNewTemp: function (oEvent) {
-			// load asynchronous XML fragment
 			if (!this.byId("newTemp")) {
 				Fragment.load({
 					id: this.getView().getId(),
 					name: "shapein.TemplatesConfiguration.view.fragments.newTemplateConfig",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 					oDialog.open();
@@ -2754,19 +2564,23 @@ sap.ui.define([
 			}
 		},
 
+		/* Al salvar los valores asignados a los filtros de un atributo */
 		onSaveValues: function (oEvent) {
-			var text = "Are you sure you want to save these values?";
+			var text = this.getResourceBundle().getText("sureSaveVal");
 			var oViewModel = this.getModel("objectView");
 			var that = this;
 			var head = {};
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oViewModel.setProperty("/busy", true);
 						var attr_uuid = that.selectedAttr;
@@ -2775,7 +2589,7 @@ sap.ui.define([
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -2787,6 +2601,7 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Al guardar toda la configuración de la firma */
 		saveSettingsSign: function () {
 			var oSignTypesModel = this.getModel("signtypes");
 			var singTypesData = oSignTypesModel.getData();
@@ -2796,35 +2611,31 @@ sap.ui.define([
 			var typeSign = this.getView().byId("SignType").getSelectedKey();
 			var oView = this.getView(),
 				aInputs = [
-					//oView.byId("SignType"),
 					oView.byId("SignTitle"),
 					oView.byId("SignReason"),
 					oView.byId("SignLocation"),
 					oView.byId("ExpDate")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
 			if (oView.byId("SignType").getSelectedKey() === "") {
 				oView.byId("SignType").setValueState("Error");
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("valError");
+				sap.m.MessageBox.alert(text);
 				return;
 			} else {
 				oView.byId("SignType").setValueState("None");
 			}
-
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInputNewP(oInput) || bValidationError;
 			}, this);
-			// }
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("valError");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
 			if (signers.length < 1) {
-				sap.m.MessageBox.alert("You have not entered any signer.");
+				var text = this.getResourceBundle().getText("noEntSigner");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
 			var typeSignData = singTypesData.find(styp => styp.id === typeSign);
@@ -2832,17 +2643,23 @@ sap.ui.define([
 			for (var i = 0; i < signers.length; i++) {
 				if (signers[i].type == "organization") {
 					if (signerOrg == "X") {
-						var texto = "There can only be one signer of type 'organization'."
+						var texto = this.getResourceBundle().getText("onlySignerOrg");
 						sap.m.MessageBox.alert(texto);
 						return;
 					}
 					signerOrg = "X";
+					if (signers[i].signing_order > 1) {
+						var texto = this.getResourceBundle().getText("FirstSignerOrg");
+						sap.m.MessageBox.alert(texto);
+						return;
+					}
 				}
 				if (typeSignData) {
 					if (typeSignData.backend_code == "docusign_protect_and_sign") { //OPENTRUST
 						if (!signers[i].generate_pdf_sign_field) {
-							var texto = "Signer with 'Sign Field' " + signers[i].pdf_sign_field +
-								" does not have the coordinates informed. Please edit it."
+							var text1 = this.getResourceBundle().getText("signer1");
+							var text2 = this.getResourceBundle().getText("signer2");
+							var texto = text1 + " " + signers[i].pdf_sign_field + " " + text2;
 							sap.m.MessageBox.alert(texto);
 							return;
 						}
@@ -2850,11 +2667,7 @@ sap.ui.define([
 							delete signers[i].role_name;
 						}
 					} else if (typeSignData.backend_code == "docusign") { //DOCUSIGN
-						if (!signers[i].role_name) {
-							//	var texto = "Signer with 'Sign Field' " + signers[i].pdf_sign_field + " does not have the role informed. Please edit it."
-							//	sap.m.MessageBox.alert(texto);
-							//	return;
-						}
+						if (!signers[i].role_name) {}
 						if (signers[i].generate_pdf_sign_field) {
 							delete signers[i].generate_pdf_sign_field;
 						}
@@ -2863,26 +2676,28 @@ sap.ui.define([
 			}
 			if (typeSignData) {
 				if (typeSignData.delegation && signerOrg == "") {
-					var texto = "An 'organization' type signatory must be present in the signers."
+					var texto = this.getResourceBundle().getText("orgSigner");
 					sap.m.MessageBox.alert(texto);
 					return;
-
 				}
 			}
 			var oSignModel = this.getModel("signature");
 			var uuidconfsign = oSignModel.getData().uuid;
-			var text = "Are you sure you want to save these signature settings?";
+			var text = this.getResourceBundle().getText("sureSaveSign");
 			var oViewModel = this.getModel("objectView");
 			var that = this;
 			var head = {};
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oViewModel.setProperty("/busy", true);
 						if (uuidconfsign && uuidconfsign != "") {
@@ -2894,7 +2709,7 @@ sap.ui.define([
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -2906,11 +2721,11 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Borramos la configuración anterior de la fima */
 		deleteOldConfSignature: function (signconfuuid) {
 			var that = this;
 			var oViewModel = this.getModel("objectView");
 			var oModel = this.getOwnerComponent().getModel();
-			//var attr_uuid = String(attr_uuid);
 			oModel.callFunction(
 				"/delete_conf_signature", {
 					method: "GET",
@@ -2926,10 +2741,58 @@ sap.ui.define([
 				});
 		},
 
+		/* Subir firmantes en el orden */
+		moveUp: function (oEvent) {
+			var oTable = this.byId("tableSigners");
+			var oSignatureModel = this.getModel("signature");
+			var signData = oSignatureModel.getData();
+			var signers = signData.signers;
+			var selectedItem = oTable.getSelectedItem();
+			var orderPath = selectedItem.getBindingContext("signature").getPath() + "/signing_order";
+			var order = parseInt(this.getView().getModel("signature").getProperty(orderPath));
+			if (order > 1) {
+				signers[order - 2].signing_order = order;
+				signers[order - 1].signing_order = order - 1;
+				var temp = signers[order - 2];
+				signers[order - 2] = signers[order - 1];
+				signers[order - 1] = temp;
+				oTable.removeSelections();
+				var items = oTable.getItems();
+				var itemId = items[order - 2].getId();
+				oTable.setSelectedItemById(itemId);
+			}
+			oSignatureModel.setData(signData);
+		},
+
+		/* Bajar firmantes en el orden */
+		moveBottom: function (oEvent) {
+			var oTable = this.byId("tableSigners");
+			var oSignatureModel = this.getModel("signature");
+			var signData = oSignatureModel.getData();
+			var signers = signData.signers;
+			var selectedItem = oTable.getSelectedItem();
+			var orderPath = selectedItem.getBindingContext("signature").getPath() + "/signing_order";
+			var order = parseInt(this.getView().getModel("signature").getProperty(orderPath));
+			if (order < signers.length) {
+				signers[order - 1].signing_order = order + 1;
+				signers[order].signing_order = order;
+				var temp = signers[order - 1];
+				signers[order - 1] = signers[order];
+				signers[order] = temp;
+				oTable.removeSelections();
+				var items = oTable.getItems();
+				var itemId = items[order].getId();
+				oTable.setSelectedItemById(itemId);
+			}
+			oSignatureModel.setData(signData);
+		},
+
+		/* Creamos nueva configuración de la firma */
 		createNewConfSignature: function () {
 			var oSignatureModel = this.getModel("signature");
 			var signData = oSignatureModel.getData();
 			var signers = signData.signers;
+			var that = this;
 			var oViewModel = this.getModel("objectView");
 			var oView = this.getView(),
 				aInputs = [
@@ -2959,31 +2822,29 @@ sap.ui.define([
 				api_version: "v1",
 				json_cfg: datajson
 			};
-
 			oModel.create("/Di_Template_Sign_Cfg", newConfig, {
 				headers: {
 					"Content-Type": "application/json",
 					'Accept': 'application/json'
 				},
 				success: function (oData, response) {
-					//var but = oEvent.getSource();
 					var results = oData;
 					var signData = JSON.parse(results.json_cfg);
 					signData.uuid = results.uuid;
 					oSignatureModel.setData(signData);
 					oSignatureModel.refresh();
-					sap.m.MessageToast.show("Signature Configuration saved succesfully.");
-
+					var text = that.getResourceBundle().getText("signConfSave");
+					sap.m.MessageToast.show(text);
 				},
 				error: function (oError) {
-
-					//	dialogNewTemp.close();
-					sap.m.MessageToast.show("Error");
+					var text = that.getResourceBundle().getText("error");
+					sap.m.MessageToast.show(text);
 				}
 			});
 
 		},
 
+		/* Gestionamos los datos necesarios de firmantes, en este caso según seleccione las opciones de SMS */
 		selectSMS: function (oEvent) {
 			var selNot = this.byId("checkSMSnot").getSelected();
 			var selAut = this.byId("checkSMSau").getSelected();
@@ -2994,6 +2855,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Gestionamos la posibilidad de la edición del número de teléfono */
 		selectSMS_Edit: function (oEvent) {
 			var selNot = this.byId("checkSMSnot_Edit").getSelected();
 			var selAut = this.byId("checkSMSau_Edit").getSelected();
@@ -3004,6 +2866,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Borrar los valores de un atributo de la template */
 		deleteOldValuesCreateValues: function (attr_uuid) {
 			var that = this;
 			var oViewModel = this.getModel("objectView");
@@ -3024,6 +2887,7 @@ sap.ui.define([
 				});
 		},
 
+		/*Al borrar un valor asignado a un atributo de la template */
 		deleteFil: function (oEvent) {
 			var oHeaderModel = this.getModel("header");
 			var uuidtemp = oHeaderModel.getData().uuid;
@@ -3035,16 +2899,19 @@ sap.ui.define([
 			var sPath2 = sPath + "/uuid";
 			var uuid = itemsModel.getProperty(sPath2);
 			var sPath1 = "/Di_Template_Worker_Attr_Values(guid'" + uuid + "')";
-			var text = "Are you sure to delete this value?";
+			var text = this.getResourceBundle().getText("sureDelFil");
 			var that = this;
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						if (uuid == "") {
 							dataFil.splice(indice, 1);
@@ -3053,21 +2920,21 @@ sap.ui.define([
 						} else {
 							oModel.remove(sPath1, {
 								success: function (oData, response) {
-									//var but = oEvent.getSource();
 									that.refreshAttribFilters(uuidtemp);
-									sap.m.MessageToast.show("Value deleted succesfully.");
+									var text = that.getResourceBundle().getText("valDele");
+									sap.m.MessageToast.show(text);
 								},
 								error: function (oError) {
-									sap.m.MessageToast.show("Error");
+									var text = that.getResourceBundle().getText("error");
+									sap.m.MessageToast.show(text);
 								}
 							});
 						}
 						dialog.close();
-
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -3079,6 +2946,7 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Creamos un Batch para crear todos los valores asociados a un atributo */
 		createBatchAttrValues: function (attr_uuid) {
 			var oModel = this.getOwnerComponent().getModel();
 			var oDataModel = this.getModel("filters");
@@ -3104,36 +2972,42 @@ sap.ui.define([
 			});
 		},
 
+		/* Creación de los valores de forma exitosa */
 		successCreateBatchVal: function (oData, response) {
-			sap.m.MessageToast.show("Values updated succesfully.");
+			var text = this.getResourceBundle().getText("valUpdSuc");
+			sap.m.MessageToast.show(text);
 			var oViewModel = this.getModel("objectView");
 			var oHeaderModel = this.getModel("header");
 			var uuidtemp = oHeaderModel.getData().uuid;
 			this.refreshAttribFilters(uuidtemp);
 			oViewModel.setProperty("/busy", false);
-			//	this._onBindingChange();
 		},
 
+		/* Error en la creación de los valores */
 		errorCreateBatchVal: function (oError) {
 			var oViewModel = this.getModel("objectView");
 			oViewModel.setProperty("/busy", false);
-			sap.m.MessageToast.show("Error");
-
+			var text = this.getResourceBundle().getText("error");
+			sap.m.MessageToast.show(text);
 		},
 
+		/* Al guardar los mapeos de las variables */
 		onSaveMap: function (oEvent) {
-			var text = "Are you sure you want to save these mappings?";
+			var text = this.getResourceBundle().getText("sureSaveMapp");
 			var oViewModel = this.getModel("objectView");
 			var that = this;
 			var head = {};
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oViewModel.setProperty("/busy", true);
 						var template_uuid = that.byId("template_uuid").getText();
@@ -3142,7 +3016,7 @@ sap.ui.define([
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -3154,19 +3028,23 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Al guardar los mapeos de los metadatas */
 		onSaveMeta: function (oEvent) {
-			var text = "Are you sure you want to save these metadata mappings?";
+			var text = this.getResourceBundle().getText("sureSaveMeta");
 			var oViewModel = this.getModel("objectView");
 			var that = this;
 			var head = {};
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
 					text: text
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						oViewModel.setProperty("/busy", true);
 						var template_uuid = that.byId("template_uuid").getText();
@@ -3175,7 +3053,7 @@ sap.ui.define([
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -3187,6 +3065,7 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		/* Borramos los mapeos de variables existenes para crear los nuevos */
 		deleteOldMappingsCreateMappings: function (template_uuid, copy) {
 			var that = this;
 			var oViewModel = this.getModel("objectView");
@@ -3210,6 +3089,7 @@ sap.ui.define([
 				});
 		},
 
+		/* Borramos los mapeos de metadatas existenes para crear los nuevos */
 		deleteOldMappingsCreateMappingsMeta: function (template_uuid, copy) {
 			var that = this;
 			var oViewModel = this.getModel("objectView");
@@ -3228,18 +3108,17 @@ sap.ui.define([
 						if (copy == "") {
 							oViewModel.setProperty("/busy", false);
 						}
-
 					}
 				});
 		},
 
+		/* Creamos un Batch para grabar todos los mapeos de variables */
 		createBatchMappings: function (template_uuid, copy) {
 			var oModel = this.getOwnerComponent().getModel();
 			var oDataModel = this.getModel("template");
 			var mappings = oDataModel.getData().variables;
 			var sPath = "/Di_Template_Mappings";
 			oModel.setDeferredGroups(["createGroup"]);
-			//	var template_uuid = this.byId("template_uuid").getText();
 			var that = this;
 			for (var i = 0; i < mappings.length; i++) {
 				var oData = {};
@@ -3249,8 +3128,10 @@ sap.ui.define([
 					mappings[i].path = "";
 				}
 				oData.mapping = mappings[i].path;
-				oData.mapping_object = "TEMPL_MAPP"; //TODO chequear metadatos tb
-				oData.mapping_type = "XPATH";
+				oData.mapping_object = "TEMPL_MAPP";
+				//	oData.mapping_type = "XPATH";
+				oData.mapping_type = mappings[i].type;
+				oData.metadata = mappings[i].metadata;
 				oData.source = mappings[i].source;
 				oData.required = mappings[i].required;
 				oData.vartype = mappings[i].type_id;
@@ -3273,13 +3154,13 @@ sap.ui.define([
 			}
 		},
 
+		/* Creamos un Batch para grabar todos los mapeos de metadatas */
 		createBatchMappingsMeta: function (template_uuid, copy) {
 			var oModel = this.getOwnerComponent().getModel();
 			var oDataModel = this.getModel("template");
 			var mappings = oDataModel.getData().metadata;
 			var sPath = "/Di_Template_Mappings";
 			oModel.setDeferredGroups(["createGroup"]);
-			//	var template_uuid = this.byId("template_uuid").getText();
 			var that = this;
 			for (var i = 0; i < mappings.length; i++) {
 				var oData = {};
@@ -3289,8 +3170,10 @@ sap.ui.define([
 					mappings[i].path = "";
 				}
 				oData.mapping = mappings[i].path;
-				oData.mapping_object = "DOCID_META"; //TODO chequear metadatos tb
-				oData.mapping_type = "XPATH";
+				oData.mapping_object = "DOCID_META";
+				//	oData.mapping_type = "XPATH";
+				oData.mapping_type = mappings[i].type;
+				oData.metadata = mappings[i].metadata;
 				oData.required = mappings[i].required;
 				oData.source = mappings[i].source;
 				oData.vartype = mappings[i].type_id;
@@ -3313,56 +3196,50 @@ sap.ui.define([
 			}
 		},
 
-		successUpdateBatchMCopy: function (oData, response) {
-
-			//	this._onBindingChange();
-		},
+		successUpdateBatchMCopy: function (oData, response) {},
 
 		errorUpdateBatchCopy: function (oError) {
-
-			sap.m.MessageToast.show("Error");
-
+			var text = that.getResourceBundle().getText("error");
+			sap.m.MessageToast.show(text);
 		},
 
 		successUpdateBatchM: function (oData, response) {
-			sap.m.MessageToast.show("Mappings updated succesfully.");
+			var text = this.getResourceBundle().getText("updMappSuc");
+			sap.m.MessageToast.show(text);
 			var oViewModel = this.getModel("objectView");
 			oViewModel.setProperty("/busy", false);
-			//	this._onBindingChange();
 		},
 
 		errorUpdateBatch: function (oError) {
 			var oViewModel = this.getModel("objectView");
 			oViewModel.setProperty("/busy", false);
-			sap.m.MessageToast.show("Error");
+			var text = this.getResourceBundle().getText("error");
+			sap.m.MessageToast.show(text);
 
 		},
 
-		successUpdateBatchMCopyMeta: function (oData, response) {
-
-			//	this._onBindingChange();
-		},
+		successUpdateBatchMCopyMeta: function (oData, response) {},
 
 		errorUpdateBatchCopyMeta: function (oError) {
-
-			sap.m.MessageToast.show("Error");
-
+			var text = this.getResourceBundle().getText("error");
+			sap.m.MessageToast.show(text);
 		},
 
 		successUpdateBatchMMeta: function (oData, response) {
-			sap.m.MessageToast.show("Metadata Mappings updated succesfully.");
+			var text = this.getResourceBundle().getText("updMetaSuc");
+			sap.m.MessageToast.show(text);
 			var oViewModel = this.getModel("objectView");
 			oViewModel.setProperty("/busy", false);
-			//	this._onBindingChange();
 		},
 
 		errorUpdateBatchMeta: function (oError) {
 			var oViewModel = this.getModel("objectView");
 			oViewModel.setProperty("/busy", false);
-			sap.m.MessageToast.show("Error");
-
+			var text = that.getResourceBundle().getText("error");
+			sap.m.MessageToast.show(text);
 		},
 
+		/* Guardamos la creación de un nuevo firmante */
 		execNewSigner: function (oEvent) {
 			var oSignatureModel = this.getModel("signature");
 			var signData = oSignatureModel.getData();
@@ -3393,20 +3270,19 @@ sap.ui.define([
 			fields_req.forEach(function (oInput) {
 				bValidationError = this._validateInputNewP(oInput) || bValidationError;
 			}, this);
-			// }
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("valError");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
 			var typeSign = this.byId("SignType").getSelectedKey();
 			var typeSignData = singTypesData.find(styp => styp.id === typeSign);
 			if (typeSignData) {
 				if (typeSignData.backend_code == "docusign_protect_and_sign") { //OPENTRUST
-					//	if (typeSign == "sage-ind") {
 					var llx = this.byId("llx").getValue();
 					if (llx == "") {
-						sap.m.MessageBox.alert("You must select the coordinates of the sign field.");
+						var text = this.getResourceBundle().getText("selCoordenates");
+						sap.m.MessageBox.alert(text);
 						return;
 					}
 				}
@@ -3448,9 +3324,9 @@ sap.ui.define([
 			oSignatureModel.refresh();
 			var dialogNewSigner = oEvent.getSource().getParent();
 			dialogNewSigner.close();
-
 		},
 
+		/* Grabamos la edición de un firmante */
 		execEditSigner: function (oEvent) {
 			var indice = this.editIndex;
 			var oSignatureModel = this.getModel("signature");
@@ -3480,20 +3356,19 @@ sap.ui.define([
 			fields_req.forEach(function (oInput) {
 				bValidationError = this._validateInputNewP(oInput) || bValidationError;
 			}, this);
-			// }
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("valError");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
 			var typeSign = this.byId("SignType").getSelectedKey();
 			var typeSignData = singTypesData.find(styp => styp.id === typeSign);
 			if (typeSignData) {
 				if (typeSignData.backend_code == "docusign_protect_and_sign") { //OPENTRUST
-					//	if (typeSign == "sage-ind") {
 					var llx = this.byId("llx_Edit").getValue();
 					if (llx == "") {
-						sap.m.MessageBox.alert("You must select the coordinates of the sign field.");
+						var text = this.getResourceBundle().getText("selCoordenates");
+						sap.m.MessageBox.alert(text);
 						return;
 					}
 				}
@@ -3531,14 +3406,13 @@ sap.ui.define([
 			var send = this.byId("checkSMSsend_Edit").getSelected();
 			item.send_signed_document = send;
 			signData.signers[indice] = Object.assign({}, item);
-			//signData.signers[indice] = item;
 			oSignatureModel.setData(signData);
 			oSignatureModel.refresh();
 			var dialogNewSigner = oEvent.getSource().getParent();
 			dialogNewSigner.close();
-
 		},
 
+		/* Gestión sobre el cambio de la fecha en firmante */
 		changeExpDate: function (oEvent) {
 			var value = parseInt(oEvent.getParameter("value"));
 			if ((value > 365 || value < 1) && value != "") {
@@ -3548,6 +3422,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Grabar un nueva configuración de template */
 		execNewTemp: function (oEvent) {
 			var oFilterModel = this.getModel("filters"),
 				oAttrModel = this.getModel("attributes"),
@@ -3555,37 +3430,26 @@ sap.ui.define([
 				oPlanModelRep = this.getModel("planningRep"),
 				oGlobalVarModel = this.getModel("globalVar"),
 				oSignatureModel = this.getModel("signature");
-			// VALIDACIONES TODO
 			var oView = this.getView(),
 				aInputs = [
-					//oView.byId("BusinessProcess"),
 					oView.byId("DocTitle"),
-					//	oView.byId("SegButAct")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
-			// if (this.byId("ProcessType").getSelectedKey() === "I") {
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInputNewP(oInput) || bValidationError;
 			}, this);
-			// }
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("valError");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
 			var bp = oView.byId("BusinessProcess").getSelectedKey();
 			if (bp == "") {
-				sap.m.MessageBox.alert("Business Process Type is required.");
+				var text = this.getResourceBundle().getText("busProcReq");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
-			//var segB = oView.byId("SegButAct").getSelectedKey();
 			var active = false;
-			//	if (segB == 'A') {
-			//		active = true;
-			//	}
 			var segSig = oView.byId("SegButSig").getSelectedKey();
 			var signature = false;
 			if (segSig == 'A') {
@@ -3594,21 +3458,25 @@ sap.ui.define([
 			var title = oView.byId("DocTitle").getValue();
 			var doctype = oView.byId("Doc_Types").getSelectedKey();
 			if (doctype == "") {
-				sap.m.MessageBox.alert("Document Type is required.");
+				var text = this.getResourceBundle().getText("docTypeReq");
+				sap.m.MessageBox.alert(text);
 				return;
 			}
-			var text = "Are you sure you want to save this Template Configuration?";
+			var texto = this.getResourceBundle().getText("sureSaveTemp");
 			var that = this;
 			var head = {};
 			var dialogNewTemp = oEvent.getSource().getParent();
+			var tit = this.getResourceBundle().getText("confi");
+			var yes = this.getResourceBundle().getText("yes");
+			var no = this.getResourceBundle().getText("no");
 			var dialog = new sap.m.Dialog({
-				title: 'Confirmation',
+				title: tit,
 				type: 'Message',
 				content: new sap.m.Text({
-					text: text
+					text: texto
 				}),
 				beginButton: new sap.m.Button({
-					text: 'Yes',
+					text: yes,
 					press: function () {
 						var data = {
 							template_id: that.template_id,
@@ -3632,7 +3500,6 @@ sap.ui.define([
 								'Accept': 'application/json'
 							},
 							success: function (oData, response) {
-								//var but = oEvent.getSource();
 								var results = oData;
 								dialogNewTemp.setBusy(false);
 								dialogNewTemp.close();
@@ -3670,7 +3537,6 @@ sap.ui.define([
 								var oHeaderModel = that.getModel("header");
 								oHeaderModel.setData(head);
 								oHeaderModel.refresh();
-								//results.mappings = [];
 								var atrData = [];
 								var filData = [];
 								var signData = {};
@@ -3686,7 +3552,6 @@ sap.ui.define([
 									ontime: false,
 									periodicity_values: "2-4-6",
 									time_frecuency: "1m",
-									//	time_measure: "m",
 									time_start: "00:00:00",
 									time_end: "23:59:00",
 									time_zone: "UTC"
@@ -3711,21 +3576,20 @@ sap.ui.define([
 								oPlanModelRep.refresh();
 								that.call_Template_details(results, temp);
 								that.createPagesBatch(head.uuid);
-								//that.createDataBatch(oData.uuido, oData.processing_type);
-								sap.m.MessageToast.show("Template Configuration created succesfully.");
-
+								var text = that.getResourceBundle().getText("tempConfCrea");
+								sap.m.MessageToast.show(text);
 							},
 							error: function (oError) {
 								dialogNewTemp.setBusy(false);
-								//	dialogNewTemp.close();
-								sap.m.MessageToast.show("Error");
+								var text = that.getResourceBundle().getText("error");
+								sap.m.MessageToast.show(text);
 							}
 						});
 						dialog.close();
 					}
 				}),
 				endButton: new sap.m.Button({
-					text: 'No',
+					text: no,
 					press: function () {
 						dialog.close();
 					}
@@ -3735,9 +3599,9 @@ sap.ui.define([
 				}
 			});
 			dialog.open();
-
 		},
 
+		/* Cancelación de un proceso de configuración una nueva template */
 		cancelNewTemp: function (oEvent) {
 			var oHistory = History.getInstance();
 			var sPreviousHash = oHistory.getPreviousHash();
@@ -3754,19 +3618,16 @@ sap.ui.define([
 		onEdit: function () {
 			this.showCustomActions(true);
 			this.byId("segButton").setEnabled(true);
-			//	this.byId("BPdisplay").setVisible(false);
 			this.byId("titleDisplay").setVisible(false);
 			this.byId("titleChange").setVisible(true);
 			this.byId("DTdisplay").setVisible(false);
-			//this.byId("labelBP").setVisible(true);
 			this.byId("labelDT").setVisible(true);
-			//	this.byId("BusinessProcessH").setVisible(true);
 			this.byId("DocTypesH").setVisible(true);
 			this.oSemanticPage.setHeaderExpanded(true);
 			this.oEditAction.setVisible(false);
-			//this.oDeleteAction.setVisible(false);
 		},
 
+		/* Al salvar el business process type */
 		onSaveBP: function () {
 			var oHeaderModel = this.getModel("header");
 			var dataHeader = oHeaderModel.getData();
@@ -3785,28 +3646,23 @@ sap.ui.define([
 					'Accept': 'application/json'
 				},
 				success: function (oData, response) {
-					//var but = oEvent.getSource();
-					// planDialog.setBusy(false);
-					// planDialog.close();
-					//dataHeader.active = oData.active;
 					var BPData = that.getOwnerComponent().getModel("BProcess").getData();
 					var bp_name = BPData.find(bp => bp.bpt_id === oData.bpt_id);
 					dataHeader.business_process_text = bp_name.name;
 					oHeaderModel.setData(dataHeader);
 					oHeaderModel.refresh();
-					sap.m.MessageBox.alert("Business Process successfully saved!");
-
+					var text = that.getResourceBundle().getText("busProcSaveSuc");
+					sap.m.MessageToast.show(text);
 				},
 				error: function (oError) {
-					// planDialog.setBusy(false);
-					// planDialog.close();
-					sap.m.MessageToast.show("Error");
-
+					var text = that.getResourceBundle().getText("error");
+					sap.m.MessageToast.show(text);
 				}
 			});
 
 		},
 
+		/* Guardar la configuración de la template */
 		onSaveConfTemplate: function () {
 			var oHeaderModel = this.getModel("header");
 			var templateModel = this.getModel("template");
@@ -3841,23 +3697,25 @@ sap.ui.define([
 				}
 			}
 			if (doc_type_id !== that.oldDocType && delMeta) {
-				var text = "If you change the document type, the associated metadata mappings will be deleted. Do you want to continue?";
-				//var oViewModel = this.getModel("objectView");
+				var text = that.getResourceBundle().getText("contChangDoc");
+				var tit = this.getResourceBundle().getText("confi");
+				var yes = this.getResourceBundle().getText("yes");
+				var no = this.getResourceBundle().getText("no");
 				var dialog = new sap.m.Dialog({
-					title: 'Confirmation',
+					title: tit,
 					type: 'Message',
 					content: new sap.m.Text({
 						text: text
 					}),
 					beginButton: new sap.m.Button({
-						text: 'Yes',
+						text: yes,
 						press: function () {
 							that.saveConfTempConf(data, enabled, uuid, signature, "X");
 							dialog.close();
 						}
 					}),
 					endButton: new sap.m.Button({
-						text: 'No',
+						text: no,
 						press: function () {
 							dialog.close();
 						}
@@ -3876,6 +3734,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Chequeos a la hora de guardar la configuración de una template */
 		saveConfTempConf: function (data, enabled, uuid, signature, changeDocType) {
 			var oModel = this.getOwnerComponent().getModel();
 			var that = this;
@@ -3888,24 +3747,30 @@ sap.ui.define([
 							sign: signature
 						},
 						success: function (oData, response) {
-							var result = oData.value;
+							if (oData.value) {
+								var result = oData.value;
+							} else {
+								var result = oData;
+							}
 							if (result == "") {
 								that.saveConfigTemplate(data, changeDocType);
 							} else {
-								var text = "This template cannot be activated. \n\ " + result;
+								var text1 = that.getResourceBundle().getText("tempNotAct");
+								var text = text1 + " \n\ " + result;
 								sap.m.MessageBox.error(text);
 							}
 						},
 						error: function (oError) {
-							sap.m.MessageToast.show("Error");
+							var text = that.getResourceBundle().getText("error");
+							sap.m.MessageToast.show(text);
 						}
 					});
-
 			} else {
 				this.saveConfigTemplate(data, changeDocType);
 			}
 		},
 
+		/* Gestión al seleccionar la icon Tab Bar */
 		onSelectIconTabHeader: function (oEvent) {
 			var tabSel = oEvent.getParameter("key");
 			if (tabSel == "GlobalVariables") {
@@ -3917,6 +3782,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Al guardar la configuración de la firma de la template */
 		saveConfigTemplate: function (data, changeDocType) {
 			var oHeaderModel = this.getModel("header"),
 				oSignatureModel = this.getModel("signature");
@@ -3929,18 +3795,20 @@ sap.ui.define([
 			var oSignModel = this.getModel("signature");
 			var uuidconfsign = oSignModel.getData().uuid;
 			if (!data.signature && uuidconfsign && uuidconfsign != "") {
-				var text = "Saving the template settings will clear the signature settings. Do you want to continue?";
-				//var oViewModel = this.getModel("objectView");
+				var text = this.getResourceBundle().getText("clearSignSett");
 				var that = this;
 				var head = {};
+				var tit = this.getResourceBundle().getText("confi");
+				var yes = this.getResourceBundle().getText("yes");
+				var no = this.getResourceBundle().getText("no");
 				var dialog = new sap.m.Dialog({
-					title: 'Confirmation',
+					title: tit,
 					type: 'Message',
 					content: new sap.m.Text({
 						text: text
 					}),
 					beginButton: new sap.m.Button({
-						text: 'Yes',
+						text: yes,
 						press: function () {
 							oModel.update(sPath1, data, {
 								headers: {
@@ -3948,9 +3816,6 @@ sap.ui.define([
 									'Accept': 'application/json'
 								},
 								success: function (oData, response) {
-									//var but = oEvent.getSource();
-									// planDialog.setBusy(false);
-									// planDialog.close();
 									dataHeader.active = oData.active;
 									dataHeader.signature = oData.signature;
 									var DTData = that.getOwnerComponent().getModel("doctypes").getData();
@@ -3966,25 +3831,23 @@ sap.ui.define([
 									oSignatureModel.setData(signData);
 									oSignatureModel.refresh();
 									dialog.close();
-									sap.m.MessageBox.alert("Configuration successfully saved!");
+									var text = that.getResourceBundle().getText("confSucSave");
+									sap.m.MessageBox.alert(text);
 									if (changeDocType == "X") {
 										that.byId("tablemeta").setBusy(true);
 										that.refreshObjectsTemplate(uuid, "");
 									}
-
 								},
 								error: function (oError) {
-									// planDialog.setBusy(false);
-									// planDialog.close();
 									dialog.close();
-									sap.m.MessageToast.show("Error");
-
+									var text = that.getResourceBundle().getText("error");
+									sap.m.MessageToast.show(text);
 								}
 							});
 						}
 					}),
 					endButton: new sap.m.Button({
-						text: 'No',
+						text: no,
 						press: function () {
 							dialog.close();
 						}
@@ -4001,9 +3864,6 @@ sap.ui.define([
 						'Accept': 'application/json'
 					},
 					success: function (oData, response) {
-						//var but = oEvent.getSource();
-						// planDialog.setBusy(false);
-						// planDialog.close();
 						dataHeader.active = oData.active;
 						dataHeader.signature = oData.signature;
 						var DTData = that.getOwnerComponent().getModel("doctypes").getData();
@@ -4013,23 +3873,22 @@ sap.ui.define([
 						that.oldDocType = oData.doc_type_id;
 						oHeaderModel.setData(dataHeader);
 						oHeaderModel.refresh();
-						sap.m.MessageBox.alert("Configuration successfully saved!");
+						var text = that.getResourceBundle().getText("confSucSave");
+						sap.m.MessageBox.alert(text);
 						if (changeDocType == "X") {
 							that.byId("tablemeta").setBusy(true);
 							that.refreshObjectsTemplate(uuid, "");
 						}
-
 					},
 					error: function (oError) {
-						// planDialog.setBusy(false);
-						// planDialog.close();
-						sap.m.MessageToast.show("Error");
-
+						var text = that.getResourceBundle().getText("error");
+						sap.m.MessageToast.show(text);
 					}
 				});
 			}
 		},
 
+		/* Al guardar la planificación de una template */
 		onUpdatePlanTemplate: function (plan_uuid, proc_type, reproc) {
 			var oHeaderModel = this.getModel("header");
 			var dataHeader = oHeaderModel.getData();
@@ -4068,24 +3927,19 @@ sap.ui.define([
 					}
 				},
 				error: function (oError) {
-					// planDialog.setBusy(false);
-					// planDialog.close();
-					sap.m.MessageToast.show("Error");
-
+					var text = that.getResourceBundle().getText("error");
+					sap.m.MessageToast.show(text);
 				}
 			});
-
 		},
 
+		/* */
 		onCancel: function () {
 			this.showCustomActions(false);
 			this.byId("segButton").setSelectedKey(this.oldKey);
-			//	this.byId("BusinessProcessH").setSelectedKey(this.oldBP);
 			this.byId("titleChange").setValue(this.oldTitle);
 			this.byId("DocTypesH").setSelectedKey(this.oldDType);
 			this.byId("segButton").setEnabled(false);
-			//	this.byId("BPdisplay").setVisible(true);
-			//	this.byId("labelBP").setVisible(false);
 			this.byId("BusinessProcessH").setVisible(false);
 			this.byId("titleDisplay").setVisible(true);
 			this.byId("titleChange").setVisible(false);
@@ -4100,6 +3954,7 @@ sap.ui.define([
 			// this.byId("cancelAction").setVisible(bShow);
 		},
 
+		/* Al buscar mapeos de variables*/
 		onSearch: function (oEvent) {
 			var sFilterPattern = oEvent.getParameter("query");
 			var searchFieldId = oEvent.getSource().getId();
@@ -4128,12 +3983,12 @@ sap.ui.define([
 			}
 		},
 
+		/* Al buscar mapeos de metadatas */
 		onSearchMeta: function (oEvent) {
 			var sFilterPattern = oEvent.getParameter("query");
 			var searchFieldId = oEvent.getSource().getId();
 			this.byId("searchField2").setValue(sFilterPattern);
 			var list = this.getView().byId("tablemeta");
-
 			sFilterPattern = sFilterPattern.toLowerCase();
 			var list = this.getView().byId("tablemeta");
 			var items = list.getBinding("items");
@@ -4148,6 +4003,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Al buscar variables globales */
 		onSearchGlobalVar: function (oEvent) {
 			var sFilterPattern = oEvent.getParameter("query");
 			var searchFieldId = oEvent.getSource().getId();
@@ -4158,6 +4014,7 @@ sap.ui.define([
 			items.filter([oFilter1]);
 		},
 
+		/* Al filtrar en los mapeos de variables por lo mapeado o no mapeado */
 		noMapped: function (oEvent) {
 			var checkBox = oEvent.getSource().getId();
 			var select = oEvent.getParameter("selected");
@@ -4202,6 +4059,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Al filtrar en los mapeos de metadatas por lo mapeado o no mapeado */
 		noMappedMeta: function (oEvent) {
 			var checkBox = oEvent.getSource().getId();
 			var select = oEvent.getParameter("selected");
@@ -4233,6 +4091,7 @@ sap.ui.define([
 			}
 		},
 
+		/*Aplicamos el patrón de búsqueda */
 		applySearchPattern: function (oItem, sFilterPattern) {
 			if (sFilterPattern == "") {
 				return true;
@@ -4243,31 +4102,28 @@ sap.ui.define([
 			return false;
 		},
 
+		/* Al cambiar el template a visualizar */
 		_onBindingChange: function () {
 			var oView = this.getView(),
 				oViewModel = this.getModel("objectView"),
 				oElementBinding = oView.getElementBinding();
-
-			// No data for the binding
 			if (!oElementBinding.getBoundContext()) {
 				this.getRouter().getTargets().display("objectNotFound");
 				return;
 			}
-
 			var oResourceBundle = this.getResourceBundle(),
 				oObject = oView.getBindingContext().getObject(),
 				sObjectId = oObject.code,
 				sObjectName = oObject.text;
-
 			oViewModel.setProperty("/busy", false);
-			// Add the object page to the flp routing history
 			this.addHistoryEntry({
 				title: this.getResourceBundle().getText("objectTitle") + " - " + sObjectName,
 				icon: "sap-icon://enter-more",
 				intent: "#Worker-TemplateConfig&/Countries/" + sObjectId
 			});
-
 		},
+
+		/* Al cambiar el periodo en la planificación */
 		changePeriodType: function (oEvent) {
 			var selItem = oEvent.getParameter("selectedItem");
 			var itemsCheck = this.getView().byId("days").getItems();
@@ -4284,6 +4140,8 @@ sap.ui.define([
 				});
 			}
 		},
+
+		/* Al cambiar el periodo en la planificación de reprocesamiento */
 		changePeriodTypeRep: function (oEvent) {
 			var selItem = oEvent.getParameter("selectedItem");
 			var itemsCheck = this.getView().byId("daysRep").getItems();
@@ -4301,15 +4159,14 @@ sap.ui.define([
 			}
 		},
 
+		/* Gestionamos cambios en la planificación */
 		selExecute: function (oEvent) {
 			var index = oEvent.getParameter("selectedIndex");
 			var oPlanModel = this.getModel("planning")
 			var pland = oPlanModel.getProperty("/plan_d");
 			if (index == 0) {
-				//	NewPlanModel.setProperty("/execute", true);
 				pland.execute = true;
 			} else {
-				//NewPlanModel.setProperty("/execute", false);
 				pland.execute = false
 			}
 		},
@@ -4325,7 +4182,6 @@ sap.ui.define([
 			var oPlanModel = this.getModel("planning")
 			var pland = oPlanModel.getProperty("/plan_d");
 			pland.begda = value;
-			//NewPlanModel.setProperty("/begda", value);
 		},
 
 		changeEndda: function (oEvent) {
@@ -4341,6 +4197,63 @@ sap.ui.define([
 			pland.endda = value;
 		},
 
+		timeChange: function (oEvent) {
+			var value = oEvent.getParameter("value");
+			var oInput = oEvent.getSource();
+			var sValueState = "None";
+			if (value == "") {
+				sValueState = "Error";
+			}
+			oInput.setValueState(sValueState);
+		},
+
+		selectCheck: function (oEvent) {
+			var source = oEvent.getSource();
+			var text = source.getText();
+			var oPlanModel = this.getModel("planning")
+			var pland = oPlanModel.getProperty("/plan_d");
+			var periodValues = pland.periodicity_values;
+			var arrayDays = periodValues.split("-");
+			var sel = oEvent.getParameter("selected");
+			if (sel) {
+				arrayDays.push(source.getName());
+			} else {
+				var i = arrayDays.indexOf(source.getName());
+				if (i !== -1) {
+					arrayDays.splice(i, 1);
+				}
+			}
+			arrayDays.sort();
+			var strValues = arrayDays.join("-");
+			pland.periodicity_values = strValues;
+			var itemsCheck = this.byId("days").getItems();
+			var selected = false;
+			itemsCheck.forEach(function (item) {
+				if (item.getSelected()) {
+					selected = true;
+				}
+			});
+			if (selected) {
+				itemsCheck.forEach(function (item) {
+					item.setValueState("None");
+				});
+			}
+		},
+
+		handleSelectionFinish: function (oEvent) {
+			var items = oEvent.getParameter("selectedItems");
+			var itemsSel = [];
+			for (var i = 0; i < items.length; i++) {
+				itemsSel.push(items[i].getKey());
+			}
+			itemsSel.sort();
+			var strValues = itemsSel.join("-");
+			var oPlanModel = this.getModel("planning")
+			var pland = oPlanModel.getProperty("/plan_d");
+			pland.periodicity_valuesM = strValues;
+		},
+
+		/* Gestionamos cambios en la planificación de reprocesamiento */
 		changeBegdaRep: function (oEvent) {
 			var value = oEvent.getParameter("value");
 			var oInput = oEvent.getSource();
@@ -4352,7 +4265,6 @@ sap.ui.define([
 			var oPlanModel = this.getModel("planningRep")
 			var pland = oPlanModel.getProperty("/plan_d");
 			pland.begda = value;
-			//NewPlanModel.setProperty("/begda", value);
 		},
 
 		changeEnddaRep: function (oEvent) {
@@ -4377,77 +4289,12 @@ sap.ui.define([
 			}
 		},
 
-		onChangeView: function (oEvent) {
-			var vis1 = this.byId("ScrollCont").getVisible();
-			var vis2 = this.byId("DynamicSideContent").getVisible();
-			if (vis1) {
-				this.byId("ScrollCont").setVisible(false);
-			} else {
-				this.byId("ScrollCont").setVisible(true);
-			}
-			if (vis2) {
-				this.byId("DynamicSideContent").setVisible(false);
-			} else {
-				this.byId("DynamicSideContent").setVisible(true);
-			}
-		},
-
-		timeChange: function (oEvent) {
-			var value = oEvent.getParameter("value");
-			var oInput = oEvent.getSource();
-			var sValueState = "None";
-			if (value == "") {
-				sValueState = "Error";
-			}
-			oInput.setValueState(sValueState);
-		},
-
-		selectCheck: function (oEvent) {
-			var source = oEvent.getSource();
-			var text = source.getText();
-			var oPlanModel = this.getModel("planning")
-			var pland = oPlanModel.getProperty("/plan_d");
-			var periodValues = pland.periodicity_values;
-
-			//	var NewPlanModel = this.getModel("newPlan");
-			//	var periodValues = NewPlanModel.getProperty("/periodicity_values");
-			var arrayDays = periodValues.split("-");
-			var sel = oEvent.getParameter("selected");
-			if (sel) {
-				arrayDays.push(source.getName());
-			} else {
-				var i = arrayDays.indexOf(source.getName());
-				if (i !== -1) {
-					arrayDays.splice(i, 1);
-				}
-			}
-			arrayDays.sort();
-			var strValues = arrayDays.join("-");
-			//	NewPlanModel.setProperty("/periodicity_values", strValues);
-			pland.periodicity_values = strValues;
-			var itemsCheck = this.byId("days").getItems();
-			var selected = false;
-			itemsCheck.forEach(function (item) {
-				if (item.getSelected()) {
-					selected = true;
-				}
-			});
-			if (selected) {
-				itemsCheck.forEach(function (item) {
-					item.setValueState("None");
-				});
-			}
-		},
-
 		selectCheckRep: function (oEvent) {
 			var source = oEvent.getSource();
 			var text = source.getText();
 			var oPlanModel = this.getModel("planningRep")
 			var pland = oPlanModel.getProperty("/plan_d");
 			var periodValues = pland.periodicity_values;
-
-			//	var NewPlanModel = this.getModel("newPlan");
-			//	var periodValues = NewPlanModel.getProperty("/periodicity_values");
 			var arrayDays = periodValues.split("-");
 			var sel = oEvent.getParameter("selected");
 			if (sel) {
@@ -4460,7 +4307,6 @@ sap.ui.define([
 			}
 			arrayDays.sort();
 			var strValues = arrayDays.join("-");
-			//	NewPlanModel.setProperty("/periodicity_values", strValues);
 			pland.periodicity_values = strValues;
 			var itemsCheck = this.byId("daysRep").getItems();
 			var selected = false;
@@ -4476,21 +4322,6 @@ sap.ui.define([
 			}
 		},
 
-		handleSelectionFinish: function (oEvent) {
-			var items = oEvent.getParameter("selectedItems");
-			var itemsSel = [];
-			for (var i = 0; i < items.length; i++) {
-				itemsSel.push(items[i].getKey());
-			}
-			itemsSel.sort();
-			var strValues = itemsSel.join("-");
-			//var NewPlanModel = this.getModel("newPlan");
-			//NewPlanModel.setProperty("/periodicity_valuesM", strValues);
-
-			var oPlanModel = this.getModel("planning")
-			var pland = oPlanModel.getProperty("/plan_d");
-			pland.periodicity_valuesM = strValues;
-		},
 		handleSelectionFinishRep: function (oEvent) {
 			var items = oEvent.getParameter("selectedItems");
 			var itemsSel = [];
@@ -4499,22 +4330,36 @@ sap.ui.define([
 			}
 			itemsSel.sort();
 			var strValues = itemsSel.join("-");
-			//var NewPlanModel = this.getModel("newPlan");
-			//NewPlanModel.setProperty("/periodicity_valuesM", strValues);
-
 			var oPlanModel = this.getModel("planningRep")
 			var pland = oPlanModel.getProperty("/plan_d");
 			pland.periodicity_valuesM = strValues;
 		},
 
+		/* Al seleccionar el cambio de Vista en la pestaña de los mapeos de variables */
+		onChangeView: function (oEvent) {
+			var vis1 = this.byId("ScrollCont").getVisible();
+			var vis2 = this.byId("DynamicSideContent").getVisible();
+			if (vis1) {
+				this.byId("ScrollCont").setVisible(false);
+			} else {
+				this.byId("ScrollCont").setVisible(true);
+			}
+			if (vis2) {
+				this.byId("DynamicSideContent").setVisible(false);
+			} else {
+				this.byId("DynamicSideContent").setVisible(true);
+			}
+		},
+
+		/* Convertimos a Time Zone local */
 		convertTZ: function (date, tzString) {
 			return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {
 				timeZone: tzString
 			}));
 		},
 
+		/* Guardamos la planificación de la template */
 		savePlanning: function (oEvent) {
-			// VALIDACIONES TODO
 			var oPlanModel = this.getModel("planning");
 			var oViewModel = this.getModel("objectView");
 			var oView = this.getView(),
@@ -4523,28 +4368,25 @@ sap.ui.define([
 					oView.byId("DTP1"),
 					oView.byId("DTP2"),
 					oView.byId("DTP3"),
-					//	oView.byId("DTP4"),
 					oView.byId("begda"),
 					oView.byId("endda"),
 					oView.byId("TP1"),
 					oView.byId("TP2")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInputNewP(oInput) || bValidationError;
 			}, this);
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("valError");
+				sap.m.MessageBox.alert(text);
 			} else {
 				if (this.byId("periodType").getSelectedItem().getKey() == "M") {
 					var selKeys = this.byId("MC1").getSelectedKeys();
 					if (selKeys.length == 0) {
 						this.byId("MC1").setValueState("Error");
-						sap.m.MessageBox.alert("A validation error has occurred.");
+						var text = this.getResourceBundle().getText("valError");
+						sap.m.MessageBox.alert(text);
 						return;
 					} else {
 						this.byId("MC1").setValueState("None");
@@ -4561,10 +4403,10 @@ sap.ui.define([
 						itemsCheck.forEach(function (item) {
 							item.setValueState("Error");
 						});
-						sap.m.MessageBox.alert("A validation error has occurred.");
+						var text = this.getResourceBundle().getText("valError");
+						sap.m.MessageBox.alert(text);
 						return;
 					}
-
 				}
 				var timezone = oView.byId("TimeZone").getSelectedKey();
 				var date = new Date();
@@ -4572,7 +4414,8 @@ sap.ui.define([
 				var date1 = aInputs[1].getDateValue();
 				if (date1 >= dateConvert) {
 					aInputs[1].setValueState("Error");
-					sap.m.MessageBox.alert("The selected date must be less than the current date in the selected timezone.");
+					var text = this.getResourceBundle().getText("dateLess");
+					sap.m.MessageBox.alert(text);
 					return;
 				} else {
 					aInputs[1].setValueState("None");
@@ -4580,7 +4423,8 @@ sap.ui.define([
 				var date2 = aInputs[2].getDateValue();
 				if (date2 >= dateConvert) {
 					aInputs[2].setValueState("Error");
-					sap.m.MessageBox.alert("The selected date must be less than the current date in the selected timezone.");
+					var text = this.getResourceBundle().getText("dateLess");
+					sap.m.MessageBox.alert(text);
 					return;
 				} else {
 					aInputs[2].setValueState("None");
@@ -4588,24 +4432,27 @@ sap.ui.define([
 				var date3 = aInputs[3].getDateValue();
 				if (date3 >= dateConvert) {
 					aInputs[3].setValueState("Error");
-					sap.m.MessageBox.alert("The selected date must be less than the current date in the selected timezone.");
+					var text = this.getResourceBundle().getText("dateLess");
+					sap.m.MessageBox.alert(text);
 					return;
 				} else {
 					aInputs[3].setValueState("None");
 				}
-
 				var comments = aInputs[0].getValue();
-				var text = "Are you sure you want to save the Job Planning?";
+				var text = this.getResourceBundle().getText("saveJobPlan");
 				var that = this;
 				var dialogNewPlan = oEvent.getSource().getParent();
+				var tit = this.getResourceBundle().getText("confi");
+				var yes = this.getResourceBundle().getText("yes");
+				var no = this.getResourceBundle().getText("no");
 				var dialog = new sap.m.Dialog({
-					title: 'Confirmation',
+					title: tit,
 					type: 'Message',
 					content: new sap.m.Text({
 						text: text
 					}),
 					beginButton: new sap.m.Button({
-						text: 'Yes',
+						text: yes,
 						press: function () {
 							var selKey = that.byId("SegBut").getSelectedKey();
 							var enable = false;
@@ -4628,15 +4475,12 @@ sap.ui.define([
 										'Accept': 'application/json'
 									},
 									success: function (oData, response) {
-										//var but = oEvent.getSource();
-										//	oViewModel.setProperty("/busy", false);
 										that.onUpdatePlanTemplate(oData.uuid, oData.processing_type, "");
-										//	sap.m.MessageToast.show("Planning created succesfully.");
-
 									},
 									error: function (oError) {
 										oViewModel.setProperty("/busy", false);
-										sap.m.MessageToast.show("Error");
+										var text = that.getResourceBundle().getText("error");
+										sap.m.MessageToast.show(text);
 									}
 								});
 							} else {
@@ -4648,24 +4492,20 @@ sap.ui.define([
 										'Accept': 'application/json'
 									},
 									success: function (oData, response) {
-										//var but = oEvent.getSource();
-										//	oViewModel.setProperty("/busy", false);
 										that.updateDataBatch(oData.uuid, oData.processing_type, "");
-										//	sap.m.MessageToast.show("Planning created succesfully.");
-
 									},
 									error: function (oError) {
 										oViewModel.setProperty("/busy", false);
-										sap.m.MessageToast.show("Error");
+										var text = that.getResourceBundle().getText("error");
+										sap.m.MessageToast.show(text);
 									}
 								});
-
 							}
 							dialog.close();
 						}
 					}),
 					endButton: new sap.m.Button({
-						text: 'No',
+						text: no,
 						press: function () {
 							dialog.close();
 						}
@@ -4674,43 +4514,36 @@ sap.ui.define([
 						dialog.destroy();
 					}
 				});
-
 				dialog.open();
 			}
-
 		},
 
+		/* Guardamos la planificación de reprocesamiento de la template */
 		savePlanningRep: function (oEvent) {
-			// VALIDACIONES TODO
 			var oPlanModel = this.getModel("planningRep");
 			var oViewModel = this.getModel("objectView");
 			var oView = this.getView(),
 				aInputs = [
 					oView.byId("CommentsRep"),
-					// oView.byId("DTP1Rep"),
-					// oView.byId("DTP2Rep"),
-					// oView.byId("DTP3Rep"),
 					oView.byId("begdaRep"),
 					oView.byId("enddaRep"),
 					oView.byId("TP1Rep"),
 					oView.byId("TP2Rep")
 				],
 				bValidationError = false;
-
-			// Check that inputs are not empty.
-			// Validation does not happen during data binding as this is only triggered by user actions.
 			aInputs.forEach(function (oInput) {
 				bValidationError = this._validateInputNewP(oInput) || bValidationError;
 			}, this);
-
 			if (bValidationError) {
-				sap.m.MessageBox.alert("A validation error has occurred.");
+				var text = this.getResourceBundle().getText("valError");
+				sap.m.MessageBox.alert(text);
 			} else {
 				if (this.byId("periodTypeRep").getSelectedItem().getKey() == "M") {
 					var selKeys = this.byId("MC1Rep").getSelectedKeys();
 					if (selKeys.length == 0) {
 						this.byId("MC1Rep").setValueState("Error");
-						sap.m.MessageBox.alert("A validation error has occurred.");
+						var text = this.getResourceBundle().getText("valError");
+						sap.m.MessageBox.alert(text);
 						return;
 					} else {
 						this.byId("MC1Rep").setValueState("None");
@@ -4727,24 +4560,26 @@ sap.ui.define([
 						itemsCheck.forEach(function (item) {
 							item.setValueState("Error");
 						});
-						sap.m.MessageBox.alert("A validation error has occurred.");
+						var text = this.getResourceBundle().getText("valError");
+						sap.m.MessageBox.alert(text);
 						return;
 					}
-
 				}
-
 				var comments = aInputs[0].getValue();
-				var text = "Are you sure you want to save the Job Reprocessing Planning?";
+				var text = this.getResourceBundle().getText("saveJobRepPlan");
 				var that = this;
 				var dialogNewPlan = oEvent.getSource().getParent();
+				var tit = this.getResourceBundle().getText("confi");
+				var yes = this.getResourceBundle().getText("yes");
+				var no = this.getResourceBundle().getText("no");
 				var dialog = new sap.m.Dialog({
-					title: 'Confirmation',
+					title: tit,
 					type: 'Message',
 					content: new sap.m.Text({
 						text: text
 					}),
 					beginButton: new sap.m.Button({
-						text: 'Yes',
+						text: yes,
 						press: function () {
 							var selKey = that.byId("SegButRep").getSelectedKey();
 							var enable = false;
@@ -4767,15 +4602,12 @@ sap.ui.define([
 										'Accept': 'application/json'
 									},
 									success: function (oData, response) {
-										//var but = oEvent.getSource();
-										//	oViewModel.setProperty("/busy", false);
 										that.onUpdatePlanTemplate(oData.uuid, oData.processing_type, "X");
-										//	sap.m.MessageToast.show("Planning created succesfully.");
-
 									},
 									error: function (oError) {
 										oViewModel.setProperty("/busy", false);
-										sap.m.MessageToast.show("Error");
+										var text = that.getResourceBundle().getText("error");
+										sap.m.MessageToast.show(text);
 									}
 								});
 							} else {
@@ -4787,24 +4619,20 @@ sap.ui.define([
 										'Accept': 'application/json'
 									},
 									success: function (oData, response) {
-										//var but = oEvent.getSource();
-										//	oViewModel.setProperty("/busy", false);
 										that.updateDataBatch(oData.uuid, oData.processing_type, "X");
-										//	sap.m.MessageToast.show("Planning created succesfully.");
-
 									},
 									error: function (oError) {
 										oViewModel.setProperty("/busy", false);
-										sap.m.MessageToast.show("Error");
+										var text = that.getResourceBundle().getText("error");
+										sap.m.MessageToast.show(text);
 									}
 								});
-
 							}
 							dialog.close();
 						}
 					}),
 					endButton: new sap.m.Button({
-						text: 'No',
+						text: no,
 						press: function () {
 							dialog.close();
 						}
@@ -4813,12 +4641,12 @@ sap.ui.define([
 						dialog.destroy();
 					}
 				});
-
 				dialog.open();
 			}
 
 		},
 
+		/* Creamos los datos para el modelo de planificación */
 		createDataPlanning: function (planUuid, reproc) {
 			if (reproc == "X") {
 				var oPlanModel = this.getModel("planningRep")
@@ -4827,7 +4655,6 @@ sap.ui.define([
 			}
 			var pland = oPlanModel.getProperty("/plan_d");
 			var uuid = planUuid;
-			//var NewPlanModel = that.getModel("newPlan");
 			var begda = pland.begda;
 			var endda = pland.endda;
 			var timezone = pland.time_zone;
@@ -4849,7 +4676,6 @@ sap.ui.define([
 				seconds = "0" + String(seconds);
 			}
 			var timeS = hours + ":" + minutes + ":" + seconds;
-			//	var timeE = NewPlanModel.getProperty("/time_end");
 			if (reproc == "X") {
 				var tp2 = this.byId("TP2Rep").getDateValue();
 			} else {
@@ -4868,7 +4694,6 @@ sap.ui.define([
 				seconds = "0" + String(seconds);
 			}
 			var timeE = hours + ":" + minutes + ":" + seconds;
-			//	var execute = pland.execute;
 			var execute = true;
 			var periodType = pland.periodicity_type;
 			if (periodType == "W") {
@@ -4903,6 +4728,7 @@ sap.ui.define([
 			return data;
 		},
 
+		/* Creamos el batch para cargar todos los datos asociados a la entidad aData de la planificación */
 		createDataBatch: function (planUuid, processing_type, reproc) {
 			var planning_uuid = planUuid;
 			var sPath = "/Integration_Pck_Planning_Adata";
@@ -4910,7 +4736,6 @@ sap.ui.define([
 			oModel.setDeferredGroups(["createGroup"]);
 			var that = this;
 			var oData = {};
-			//			if (processing_type == "I") {
 			oData.planning_uuid = planning_uuid;
 			oData.level1 = "WS_GET_WORKERS";
 			oData.level2 = "TIME_ZONE";
@@ -4920,12 +4745,10 @@ sap.ui.define([
 				oModel.create(sPath, oData, {
 					groupId: "createGroup"
 				});
-
 				var oData2 = {};
 				oData2.planning_uuid = planning_uuid;
 				oData2.level1 = "WS_GET_WORKERS";
 				oData2.level2 = "NEXT_UPDATED_FROM";
-				//oData2.value = this.byId("DTP4").getValue();
 				oData2.value = "";
 				oData2.value2 = null;
 				oModel.create(sPath, oData2, {
@@ -4935,9 +4758,7 @@ sap.ui.define([
 				oData3.planning_uuid = planning_uuid;
 				oData3.level1 = "WS_GET_WORKERS";
 				oData3.level2 = "INITIAL_DATE_FROM";
-
 				oData3.value = this.byId("DTP1").getValue();
-
 				oData3.value2 = null;
 				oModel.create(sPath, oData3, {
 					groupId: "createGroup"
@@ -4946,9 +4767,7 @@ sap.ui.define([
 				oData4.planning_uuid = planning_uuid;
 				oData4.level1 = "WS_GET_WORKERS";
 				oData4.level2 = "RETRO_CHG_EFFECTIVE_FROM";
-
 				oData4.value = this.byId("DTP2").getValue();
-
 				oData4.value2 = null;
 				oModel.create(sPath, oData4, {
 					groupId: "createGroup"
@@ -4957,7 +4776,6 @@ sap.ui.define([
 				oData5.planning_uuid = planning_uuid;
 				oData5.level1 = "WS_GET_WORKERS";
 				oData5.level2 = "FUTURE_CHG_UPDATED_FROM";
-
 				oData5.value = this.byId("DTP3").getValue();
 				oData5.value2 = null;
 				oModel.create(sPath, oData5, {
@@ -4976,6 +4794,7 @@ sap.ui.define([
 			});
 		},
 
+		/* Creamos el batch para cargar todas las páginas de la template */
 		createPagesBatch: function (uuidTemp) {
 			var sPath = "/Di_Template_Page_Content";
 			var oModel = this.getOwnerComponent().getModel();
@@ -5005,6 +4824,7 @@ sap.ui.define([
 			var a = 0;
 		},
 
+		/* Creamos el batch para actualizar todos los datos asociados a la entidad aData de la planificación */
 		updateDataBatch: function (planUuid, processing_type, reproc) {
 			var planning_uuid = planUuid;
 			var that = this;
@@ -5026,13 +4846,6 @@ sap.ui.define([
 				oModel.update(sPath1, oData, {
 					groupId: "updateGroup"
 				});
-				// var oData2 = {};
-				// var sPath2 = sPath + "(" + adata.next_upd_from_uuid + ")";
-				// oData2.uuid = adata.next_upd_from_uuid;
-				// oData2.value = adata.next_upd_from;
-				// oModel.update(sPath2, oData2, {
-				// 	groupId: "updateGroup"
-				// });
 				var oData3 = {};
 				oData3.uuid = adata.initial_date_from_uuid;
 				var sPath3 = sPath + "(" + oData3.uuid + ")";
@@ -5069,22 +4882,24 @@ sap.ui.define([
 		},
 
 		successUpdateBatchP: function (oData, response) {
-			sap.m.MessageToast.show("Planning updated succesfully.");
+			var text = this.getResourceBundle().getText("planUpdSuc");
+			sap.m.MessageToast.show(text);
 			var oViewModel = this.getModel("objectView");
 			oViewModel.setProperty("/busy", false);
-			//	this._onBindingChange();
 		},
 
 		errorUpdateBatch: function (oError) {
 			var oViewModel = this.getModel("objectView");
 			oViewModel.setProperty("/busy", false);
-			sap.m.MessageToast.show("Error");
+			var text = this.getResourceBundle().getText("error");
+			sap.m.MessageToast.show(text);
 
 		},
 
 		successCreateBatch: function (oData, response) {
 			//TODO
-			sap.m.MessageToast.show("Planning created succesfully.");
+			var text = this.getResourceBundle().getText("planCreaSuc");
+			sap.m.MessageToast.show(text);
 			var oViewModel = this.getModel("objectView");
 			oViewModel.setProperty("/busy", false);
 		},
@@ -5093,7 +4908,8 @@ sap.ui.define([
 			//TODO
 			var oViewModel = this.getModel("objectView");
 			oViewModel.setProperty("/busy", false);
-			sap.m.MessageToast.show("Error");
+			var text = this.getResourceBundle().getText("error");
+			sap.m.MessageToast.show(text);
 		},
 
 		_validateInputNewP: function (oInput) {
@@ -5109,6 +4925,7 @@ sap.ui.define([
 			return bValidationError;
 		},
 
+		/* Al cambiar el tipo de Firma para la visualización */
 		changeSignType_Dis: function (oEvent) {
 			var item_selected = oEvent.getParameter("selectedItem");
 			var singType = item_selected.getKey();
@@ -5208,6 +5025,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Al cambiar el tipo de Firma para la creación */
 		changeSignType: function (oEvent) {
 			var item_selected = oEvent.getParameter("selectedItem");
 			var singType = item_selected.getKey();
@@ -5307,6 +5125,7 @@ sap.ui.define([
 			}
 		},
 
+		/* Al cambiar el tipo de Firma para la edición */
 		changeSignType_Edit: function (oEvent) {
 			var item_selected = oEvent.getParameter("selectedItem");
 			var singType = item_selected.getKey();
@@ -5406,6 +5225,7 @@ sap.ui.define([
 			}
 		},
 
+		/*Al buscar atributos en el listado */
 		onSearchAttr: function (oEvent) {
 			var sFilterPattern = oEvent.getParameter("query");
 			sFilterPattern = sFilterPattern.toLowerCase();
@@ -5413,9 +5233,9 @@ sap.ui.define([
 			var items = list.getBinding("items");
 			var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, sFilterPattern);
 			items.filter([oFilter1]);
-			//items2.filter([oFilter1]);
 		},
 
+		/* Tener el cuenta la fuente de datos para mostrar el xsd */
 		pathAtributte: function (oObject) {
 			this.buttonIdSel = oObject.getSource().getId();
 			this.pathButtonSel = "";
@@ -5427,19 +5247,45 @@ sap.ui.define([
 			}
 		},
 
+		/* Limpiar un mapeo */
+		clearMap: function (oObject) {
+			var path = oObject.getSource().getParent().getBindingContext("template").getPath();
+			var oModel = this.getModel("template");
+			var path2 = path + "/map";
+			oModel.setProperty(path2, "");
+			path2 = path + "/metadata";
+			oModel.setProperty(path2, "");
+			path2 = path + "/path";
+			oModel.setProperty(path2, "");
+			path2 = path + "/type";
+			oModel.setProperty(path2, "");
+			path2 = path + "/source";
+			oModel.setProperty(path2, "");
+			path2 = path + "/map";
+			oModel.setProperty(path2, "");
+			oModel.refresh();
+		},
+
+		/* Al seleccionar una fuente para el xsd */
 		selectSource: function (oObject) {
 			this.buttonIdSel = oObject.getSource().getId();
 			if (this.buttonIdSel.match("ButPathAttri") || this.buttonIdSel.match("ButPathEditAttri")) {
 				this.pathButtonSel = "";
 			} else if (this.buttonIdSel.match("pathGlobVar")) {
 				this.pathButtonSel = "";
-				if (this.sourceGVEdit != "") {
+				if (this.typeGVEdit != "" || this.sourceGVEdit != "") {
+					var type = this.typeGVEdit;
 					var source = this.sourceGVEdit;
+					var value = this.byId("Value_GV").getValue();
 				}
 			} else {
 				this.pathButtonSel = oObject.getSource().getParent().getBindingContext("template").getPath();
 				var sourcePath = oObject.getSource().getParent().getBindingContext("template").getPath() + "/source";
 				var source = this.getView().getModel("template").getProperty(sourcePath);
+				var typePath = oObject.getSource().getParent().getBindingContext("template").getPath() + "/type";
+				var type = this.getView().getModel("template").getProperty(typePath);
+				var valPath = oObject.getSource().getParent().getBindingContext("template").getPath() + "/path";
+				var value = this.getView().getModel("template").getProperty(valPath);
 			}
 			if (!this.byId("selSource")) {
 				Fragment.load({
@@ -5449,44 +5295,388 @@ sap.ui.define([
 				}).then(function (oDialog) {
 					this.getView().addDependent(oDialog);
 					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
-					if (source) {
-						this.byId("sourXsdPath").setSelectedKey(source);
+					if (type == "CTE") {
+						this.byId("constSource").setSelected(true);
+						this.byId("valueCte").setVisible(true);
+						this.byId("sourXsdPath").setEnabled(false);
+						this.byId("valueCte").setValue(value);
+					} else {
+						this.byId("constSource").setSelected(false);
+						this.byId("valueCte").setVisible(false);
+						this.byId("valueCte").setValue("");
+						this.byId("sourXsdPath").setEnabled(true);
+						if (source) {
+							this.byId("sourXsdPath").setSelectedKey(source);
+						}
 					}
 					oDialog.open();
 				}.bind(this));
 			} else {
-				this.byId("selSource").open();
-				if (source) {
-					this.byId("sourXsdPath").setSelectedKey(source);
+				if (type == "CTE") {
+					this.byId("constSource").setSelected(true);
+					this.byId("valueCte").setVisible(true);
+					this.byId("sourXsdPath").setEnabled(false);
+					this.byId("valueCte").setValue(value);
+				} else {
+					this.byId("constSource").setSelected(false);
+					this.byId("valueCte").setVisible(false);
+					this.byId("valueCte").setValue("");
+					this.byId("sourXsdPath").setEnabled(true);
+					if (source) {
+						this.byId("sourXsdPath").setSelectedKey(source);
+					}
 				}
+				this.byId("selSource").open();
 			}
 		},
 
+		/* Al seleccionar una fuente para el xsd */
 		selecSource: function (oEvent) {
 			var pathXsd = this.byId("sourXsdPath").getSelectedItem().getBindingContext().getPath() + "/xsd_id";
 			var pathCode = this.byId("sourXsdPath").getSelectedItem().getBindingContext().getPath() + "/code";
+			var pathType = this.byId("sourXsdPath").getSelectedItem().getBindingContext().getPath() + "/type";
 			var oModel = this.getOwnerComponent().getModel();
 			var xsd_id = oModel.getProperty(pathXsd);
 			var code = oModel.getProperty(pathCode);
-			var dialogSelSource = oEvent.getSource().getParent();
-			if (code == this.code_id_filled) {
-				dialogSelSource.close();
-				this.openGetPath();
-			} else {
-				this.code_id_filled = code;
-				dialogSelSource.setBusy(true);
-				this.fill_Parser(xsd_id);
+			var type = oModel.getProperty(pathType);
+			if (this.byId("constSource").getSelected()) {
+				type = "CTE";
 			}
-
+			var dialogSelSource = oEvent.getSource().getParent();
+			if (type == 'XSD') {
+				if (code == this.code_id_filled) {
+					dialogSelSource.close();
+					this.openGetPath();
+				} else {
+					this.code_id_filled = code;
+					dialogSelSource.setBusy(true);
+					this.fill_Parser(xsd_id);
+				}
+			} else if (type == 'LVA') {
+				dialogSelSource.setBusy(true);
+				this.fill_List_Values(code);
+			} else {
+				//constantes
+				this.fill_cte();
+			}
 		},
 
+		fill_cte: function () {
+			var buttonId = this.buttonIdSel;
+			var path = this.pathButtonSel;
+			var vThat = this;
+			var valu = this.byId("valueCte").getValue();
+			if (buttonId.match("pathGlobVar")) {
+				var oGlobalVariModel = this.getModel("globalVari");
+				var oGlobalVariData = oGlobalVariModel.getData();
+				oGlobalVariData.type = "CTE";
+				oGlobalVariData.metadata = null;
+				oGlobalVariData.source = null;
+				oGlobalVariData.required = false;
+				oGlobalVariModel.setData(oGlobalVariData);
+				this.byId("Value_GV").setValue(valu);
+				this.byId("Source_GV").setValue("");
+				oGlobalVariModel.refresh();
+				this.byId("selSource").close();
+			} else if (buttonId.match("pathMeta")) {
+				var data = this.getModel("template").getData();
+				var property = path + "/code";
+				this.selectedVarMeta = this.getView().getModel("template").getProperty(property);
+				var metadata = data.metadata.find(metada => metada.slug === this.selectedVarMeta);
+				metadata.path = valu;
+				metadata.source = null;
+				metadata.type = "CTE";
+				metadata.metadata = null;
+				this.getModel("template").setData(data);
+				this.getModel("template").refresh();
+				this.byId("selSource").close();
+			} else {
+				var data = this.getModel("template").getData();
+				var property = path + "/slug";
+				this.selectedVar = this.getView().getModel("template").getProperty(property);
+				var variable = data.variables.find(variable => variable.slug === this.selectedVar);
+				variable.path = valu;
+				variable.source = null;
+				variable.type = "CTE";
+				variable.metadata = null;
+				this.getModel("template").setData(data);
+				this.getModel("template").refresh();
+				this.byId("selSource").close();
+			}
+		},
+
+		/* Cerrar el popup de seleccionar valor del listado para mapeo*/
+		closeSelectLVs: function () {
+			this.byId("selectLVs").close();
+		},
+
+		/* Recuperar los Custom Fields de persistencia */
+		fill_List_Values: function (lvaid) {
+			var aFilter = [];
+			var listFil = new sap.ui.model.Filter("lvaid", sap.ui.model.FilterOperator.EQ, lvaid);
+			var oModel = this.getOwnerComponent().getModel();
+			var LVModel = this.getOwnerComponent().getModel("LValues");
+			var that = this;
+			var sPath = "/Di_List_Values";
+			aFilter.push(listFil);
+			oModel.read(sPath, {
+				filters: aFilter,
+				success: function (oData, oResponse) {
+					var results = oData.results;
+					delete oData.__metadata;
+					LVModel.setData(results);
+					LVModel.refresh();
+					var dialogSelSource = that.byId("selSource");
+					if (dialogSelSource) {
+						that.byId("selSource").setBusy(false);
+						that.byId("selSource").close();
+					}
+					that.openSelectList();
+				},
+				error: function (oError) {}
+			});
+		},
+
+		/* Recuperar los Custom Fields de persistencia */
+		openSelectList: function () {
+			var buttonId = this.buttonIdSel;
+			var path = this.pathButtonSel;
+			var mapping_var = "";
+			var metadata_var = "";
+			var edit = "";
+			var globalVar = "";
+			var vThat = this;
+			if (buttonId.match("ButPathAttri")) {} else if (buttonId.match("ButPathEditAttri")) {
+				edit = "X";
+			} else if (buttonId.match("pathGlobVar")) {
+				globalVar = "X";
+			} else if (buttonId.match("pathMeta")) {
+				metadata_var = "X";
+			} else {
+				mapping_var = "X";
+			}
+			if (!this.byId("selectLVs")) {
+				Fragment.load({
+					id: this.getView().getId(),
+					name: "shapein.TemplatesConfiguration.view.fragments.selectLVs",
+					controller: this
+				}).then(function (oDialog) {
+					this.getView().addDependent(oDialog);
+					oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+					vThat.byId("tableSelLVs").removeSelections();
+					var items = vThat.byId("tableSelLVs").getItems();
+					if (mapping_var == "X") {
+						vThat.byId("BtnSelList1").setVisible(true);
+						vThat.byId("BtnSelList2").setVisible(false);
+						vThat.byId("BtnSelList3").setVisible(false);
+						vThat.byId("BtnSelList4").setVisible(false);
+						vThat.byId("BtnSelList5").setVisible(false);
+						var property = path + "/path";
+						var valList = vThat.getView().getModel("template").getProperty(property);
+					} else if (metadata_var == "X") {
+						vThat.byId("BtnSelList1").setVisible(false);
+						vThat.byId("BtnSelList2").setVisible(false);
+						vThat.byId("BtnSelList3").setVisible(false);
+						vThat.byId("BtnSelList4").setVisible(false);
+						vThat.byId("BtnSelList5").setVisible(true);
+						var property = path + "/path";
+						var valList = vThat.getView().getModel("template").getProperty(property);
+					} else if (globalVar == "X") {
+						vThat.byId("BtnSelList1").setVisible(false);
+						vThat.byId("BtnSelList2").setVisible(false);
+						vThat.byId("BtnSelList3").setVisible(false);
+						vThat.byId("BtnSelList4").setVisible(true);
+						vThat.byId("BtnSelList5").setVisible(false);
+						var valList = vThat.byId("Value_GV").getValue();
+					} else {
+						if (edit != "X") {
+							vThat.byId("BtnSelList2").setVisible(true);
+							vThat.byId("BtnSelList1").setVisible(false);
+							vThat.byId("BtnSelList3").setVisible(false);
+							vThat.byId("BtnSelList4").setVisible(false);
+							vThat.byId("BtnSelList").setVisible(false);
+						} else {
+							vThat.byId("BtnSelList3").setVisible(true);
+							vThat.byId("BtnSelList1").setVisible(false);
+							vThat.byId("BtnSelList2").setVisible(false);
+							vThat.byId("BtnSelList4").setVisible(false);
+							vThat.byId("BtnSelList5").setVisible(false);
+						}
+					}
+					for (var i = 0; i < items.length; i++) {
+						var pathIt = items[i].getBindingContext("LValues").getPath() + "/text";
+						var valueIt = vThat.getModel("LValues").getProperty(pathIt);
+						if (valueIt == valList) {
+							vThat.byId("tableSelLVs").setSelectedItem(items[i]);
+							break;
+						}
+					}
+					oDialog.open();
+				}.bind(this));
+			} else {
+				vThat.byId("tableSelLVs").removeSelections();
+				var items = vThat.byId("tableSelLVs").getItems();
+				if (mapping_var == "X") {
+					vThat.byId("BtnSelList1").setVisible(true);
+					vThat.byId("BtnSelList2").setVisible(false);
+					vThat.byId("BtnSelList3").setVisible(false);
+					vThat.byId("BtnSelList4").setVisible(false);
+					vThat.byId("BtnSelList5").setVisible(false);
+					var property = path + "/path";
+					var valList = vThat.getView().getModel("template").getProperty(property);
+				} else if (metadata_var == "X") {
+					vThat.byId("BtnSelList1").setVisible(false);
+					vThat.byId("BtnSelList2").setVisible(false);
+					vThat.byId("BtnSelList3").setVisible(false);
+					vThat.byId("BtnSelList4").setVisible(false);
+					vThat.byId("BtnSelList5").setVisible(true);
+					var property = path + "/path";
+					var valList = vThat.getView().getModel("template").getProperty(property);
+				} else if (globalVar == "X") {
+					vThat.byId("BtnSelList1").setVisible(false);
+					vThat.byId("BtnSelList2").setVisible(false);
+					vThat.byId("BtnSelList3").setVisible(false);
+					vThat.byId("BtnSelList4").setVisible(true);
+					vThat.byId("BtnSelList5").setVisible(false);
+					var valList = vThat.byId("Value_GV").getValue();
+				} else {
+					if (edit != "X") {
+						vThat.byId("BtnSelList2").setVisible(true);
+						vThat.byId("BtnSelList1").setVisible(false);
+						vThat.byId("BtnSelList3").setVisible(false);
+						vThat.byId("BtnSelList4").setVisible(false);
+						vThat.byId("BtnSelList").setVisible(false);
+					} else {
+						vThat.byId("BtnSelList3").setVisible(true);
+						vThat.byId("BtnSelList1").setVisible(false);
+						vThat.byId("BtnSelList2").setVisible(false);
+						vThat.byId("BtnSelList4").setVisible(false);
+						vThat.byId("BtnSelList5").setVisible(false);
+					}
+				}
+				for (var i = 0; i < items.length; i++) {
+					var pathIt = items[i].getBindingContext("LValues").getPath() + "/text";
+					var valueIt = vThat.getModel("LValues").getProperty(pathIt);
+					if (valueIt == valList) {
+						vThat.byId("tableSelLVs").setSelectedItem(items[i]);
+						break;
+					}
+				}
+				this.byId("selectLVs").open();
+			}
+		},
+
+		/*Al seleccionar mapear a valor constante */
+		selectConst: function (oEvent) {
+			var selected = oEvent.getParameter("selected");
+			if (selected) {
+				this.byId("valueCte").setVisible(true);
+				this.byId("sourXsdPath").setEnabled(false);
+			} else {
+				this.byId("valueCte").setVisible(false);
+				this.byId("sourXsdPath").setEnabled(true);
+			}
+		},
+
+		/*Al seleccionar un valor del listado de valores */
+		selectLVs: function (oEvent) {
+			var oTable = this.getView().byId("tableSelLVs");
+			var selItem = oTable.getSelectedItem();
+			var buttonId = oEvent.getSource().getId();
+			var obj = "";
+			var path = this.pathButtonSel;
+			if (buttonId.match("BtnSelList1")) {
+				obj = "MAP";
+			} else if (buttonId.match("BtnSelList5")) {
+				obj = "META";
+			} else if (buttonId.match("BtnSelList4")) {
+				obj = "GV";
+			} else if (buttonId.match("BtnSelList2")) {
+				obj = "Attr";
+			} else if (buttonId.match("BtnSelList3")) {
+				obj = "AttrEdit";
+			}
+			if (selItem) {
+				var pathCode = selItem.getBindingContext("LValues").getPath() + "/lvaid";
+				var code_sel = this.getView().getModel("LValues").getProperty(pathCode);
+				var pathValue = selItem.getBindingContext("LValues").getPath() + "/value";
+				var value_sel = this.getView().getModel("LValues").getProperty(pathValue);
+				var pathText = selItem.getBindingContext("LValues").getPath() + "/text";
+				var text_sel = this.getView().getModel("LValues").getProperty(pathText);
+				if (obj == "MAP") {
+					var data = this.getModel("template").getData();
+					var property = path + "/slug";
+					this.selectedVar = this.getView().getModel("template").getProperty(property);
+					var variable = data.variables.find(variable => variable.slug === this.selectedVar);
+					variable.path = text_sel;
+					variable.source = code_sel;
+					variable.type = "LVA";
+					var meta = {
+						lvaid: code_sel,
+						value: value_sel
+					};
+					variable.metadata = JSON.stringify(meta);
+					this.getModel("template").setData(data);
+					this.getModel("template").refresh();
+					this.byId("selectLVs").close();
+				} else if (obj == "META") {
+					var data = this.getModel("template").getData();
+					var property = path + "/code";
+					this.selectedVarMeta = this.getView().getModel("template").getProperty(property);
+					var metadata = data.metadata.find(metada => metada.code === this.selectedVarMeta);
+					metadata.path = text_sel;
+					metadata.source = code_sel;
+					metadata.type = "LVA";
+					var meta = {
+						lvaid: code_sel,
+						value: value_sel
+					};
+					metadata.metadata = JSON.stringify(meta);
+					this.getModel("template").setData(data);
+					this.getModel("template").refresh();
+					this.byId("selectLVs").close();
+				} else if (obj == "GV") {
+					var oGlobalVariModel = this.getModel("globalVari");
+					var oGlobalVariData = oGlobalVariModel.getData();
+					oGlobalVariData.type = "LVA";
+					var meta = {
+						lvaid: code_sel,
+						value: value_sel
+					};
+					oGlobalVariData.metadata = JSON.stringify(meta);
+					oGlobalVariData.source = code_sel;
+					oGlobalVariModel.setData(oGlobalVariData);
+					this.byId("Value_GV").setValue(text_sel);
+					this.byId("Source_GV").setValue(code_sel);
+					oGlobalVariModel.refresh();
+					this.byId("selectLVs").close();
+				} else if (obj == "Attr") {
+
+					// var oInput = this.getView().byId("pathTextArea");
+					// var oNewPath = oInput.getValue();
+					// this.byId("PathAttribu").setValue(oNewPath);
+					// this.byId("treeTable").close();
+
+				} else if (obj == "AttrEdit") {
+					// var oInput = this.getView().byId("pathTextArea");
+					// var oNewPath = oInput.getValue();
+					// this.byId("PathAttribuEdit").setValue(oNewPath);
+					// this.byId("treeTable").close();
+
+				}
+			} else {
+				// no item seleccionado
+			}
+		},
+
+		/* Cancelar la selección de la fuente del xsd */
 		cancelSelSource: function (oEvent) {
 			var dialogSelSource = oEvent.getSource().getParent();
 			dialogSelSource.close();
 		},
 
+		/* Recuperamos los datos del xsd pertinente */
 		fill_Parser: function (xsd_id) {
-			//var selParser = oObject.getSource().getParent().getParent().getCells()[2].getSelectedKey();
 			var oModel = this.getOwnerComponent().getModel();
 			var BPMode = this.getOwnerComponent().getModel("jerarquia");
 			var XSDModel = this.getOwnerComponent().getModel("xsd");
@@ -5523,25 +5713,24 @@ sap.ui.define([
 						that.byId("selSource").setBusy(false);
 						that.byId("selSource").close();
 					}
-					sap.m.MessageToast.show("Error Load XSD");
-					//	oViewModel.setProperty("/busy", false);
+					var text = that.getResourceBundle().getText("errorLoad");
+					sap.m.MessageToast.show(text);
 				}
 			});
 		},
 
+		/* Formatear el xsd para que se pueda visualizar bien en el componente */
 		pasaratree: function (array, parent, tree) {
-
 			tree = typeof tree !== 'undefined' ? tree : [];
 			parent = typeof parent !== 'undefined' ? parent : {
 				node_id: 0
 			};
 			var nodes = array.filter(function (child) {
-				if (child.parent_id === parent.node_id) { //&& child.node_type !== "attribute"
+				if (child.parent_id === parent.node_id) {
 					return true;
 				} else {
 					return false;
 				}
-				//	return child.parent_id === parent.node_id;
 			});
 			var that = this;
 			if (nodes.length > 0) {
@@ -5557,6 +5746,7 @@ sap.ui.define([
 			return tree;
 		},
 
+		/* Abrimos el pop-up para la visualización del xsd y gestionar los mapeos */
 		openGetPath: function () {
 			var buttonId = this.buttonIdSel;
 			var path = this.pathButtonSel;
@@ -5568,7 +5758,6 @@ sap.ui.define([
 			var oModel = this.getOwnerComponent().getModel();
 			var path2 = "/Di_Template_Mapping_Sources('" + this.code_id_filled + "')/text";
 			var title1 = oModel.getProperty(path2);
-			//var title1 = this.code_id_filled;
 			var globalVar = "";
 			if (buttonId.match("ButPathAttri")) {
 				var pat = this.byId("PathAttribu").getValue();
@@ -5591,16 +5780,12 @@ sap.ui.define([
 				this.selectedVar = this.getView().getModel("template").getProperty(property);
 				var pat = this.getView().getModel("template").getProperty(property2);
 			}
-
-			// create dialog lazily
 			if (!this.byId("treeTable")) {
-				// load asynchronous XML fragment
 				Fragment.load({
 					id: oView.getId(),
 					name: "shapein.TemplatesConfiguration.view.fragments.treeTable",
 					controller: this
 				}).then(function (oDialog) {
-					// connect dialog to the root view of this component (models, lifecycle)
 					oView.addDependent(oDialog);
 					oDialog.addStyleClass(vThat.getOwnerComponent().getContentDensityClass());
 					if (mapping_var == "X") {
@@ -5698,82 +5883,49 @@ sap.ui.define([
 				oInput.setValue(pat);
 			}
 		},
+
+		/* Operaciones para la gestión del componente para los mapeos desde el xsd */
 		onCloseTableTree: function (oObject) {
 			var oInput = this.byId("pathTextArea");
 			var oClear = "";
 			oInput.setValue(oClear);
 			this.byId("treeTable").close();
 		},
-		// filterNode: function (oEvent) {
-		// 	var sQuery = oEvent.getParameter("query");
-		// 	var BPMode = this.getOwnerComponent().getModel("jerarquia");
-		// 	var XSDModel = this.getOwnerComponent().getModel("xsd");
-		// 	//const input = XSDModel.getData();
-		// 	const array = [...XSDModel.getData()];
-
-		// 	// var oFilterDescription = new sap.ui.model.Filter("_name",
-		// 	// 	sap.ui.model.FilterOperator.StartsWith, sQuery);
-
-		// 	// var oView = this.getView();
-		// 	// var oTreeTable = oView.byId("TreeTableBasic1");
-		// 	// var aTreeTableRows = oTreeTable.getBinding("rows");
-		// 	// oTreeTable.expandToLevel(4);
-		// 	// aTreeTableRows.filter([oFilterDescription]);
-		// 	var res = array.filter(function f(o) {
-		// 		if (o.fieldname.includes(sQuery)) return true
-		// 		if (o.nodes) {
-		// 			return (o.nodes = o.nodes.filter(f)).length
-		// 		}
-		// 	});
-		// 	BPMode.setData({
-		// 		nodeRoot: {
-		// 			nodes: res
-		// 		}
-		// 	});
-
-		// },
 
 		applySearch1: function () {
 			var oIndexArray = this.getView().getModel("SearchIndex").getData();
-
 			var oView = this.getView();
 			var oTreeTable = oView.byId("TreeTableBasic1");
-
 			oIndex++;
 			if (oIndex < oIndexArray.length) {
 				var auxIndex = oIndexArray[oIndex];
-
 				oTreeTable.setSelectedIndex(auxIndex);
 				oTreeTable.setFirstVisibleRow(auxIndex);
-				//oIndex++;
-				sap.m.MessageToast.show("Search :" + (oIndex + 1) + "/" + oIndexArray.length);
-
+				var text = this.getResourceBundle().getText("searchDot");
+				sap.m.MessageToast.show(text + (oIndex + 1) + "/" + oIndexArray.length);
 			} else {
-				//sap.m.MessageToast.show("No more coincidence for the requested search.");
 				oIndex--;
-				sap.m.MessageToast.show("No further matches for this search string.");
+				var text = this.getResourceBundle().getText("noMatches");
+				sap.m.MessageToast.show(text);
 			}
 		},
 
 		applySearch2: function () {
 			var oIndexArray = this.getView().getModel("SearchIndex").getData();
-
 			var oView = this.getView();
 			var oTreeTable = oView.byId("TreeTableBasic1");
-
 			oIndex--;
 			if (oIndex > -1) {
 				var auxIndex = oIndexArray[oIndex];
-
 				oTreeTable.setSelectedIndex(auxIndex);
 				oTreeTable.setFirstVisibleRow(auxIndex);
-				//oIndex--;
-				sap.m.MessageToast.show("Search :" + (oIndex + 1) + "/" + oIndexArray.length);
+				var text = this.getResourceBundle().getText("searchDot");
+				sap.m.MessageToast.show(text + (oIndex + 1) + "/" + oIndexArray.length);
 
 			} else {
-				//sap.m.MessageToast.show("No more coincidence for the requested search.");
 				oIndex++;
-				sap.m.MessageToast.show("No further matches for this search string.");
+				var text = this.getResourceBundle().getText("noMatches");
+				sap.m.MessageToast.show(text);
 			}
 		},
 
@@ -5785,47 +5937,36 @@ sap.ui.define([
 		filterNode1: function (oEvent) {
 			var sQuery = oEvent.getParameter("query");
 			oQuery = sQuery;
-
 			var oView = this.getView();
 			var oTreeTable = oView.byId("TreeTableBasic1");
-			//var oTreeModel = this.getView().getModel("ModelTreeTable").getData();
-			//var oRawModel = this.getView().getModel("RawModel").getProperty("/value/");
 			var oRawData = this.getModel("RawModel").getData();
 			oTreeTable.expandToLevel(15);
 			var oIndexArray = [];
-
 			for (var i = 0; i < oRawData.length; i++) {
 				var oContext = oTreeTable.getContextByIndex(i);
 				if (oContext) {
-					//if (this.matchRuleShort(oContext.getObject().fieldname.toLowerCase(), sQuery.toLowerCase())) {
-					//	oIndexArray.push(i);
-					//}
 					if (oContext.getObject().fieldname.toLowerCase().includes(sQuery.toLowerCase())) {
 						oIndexArray.push(i);
 					}
 				}
 			}
-
 			if (oIndexArray.length !== 0) {
 				var oSearchIndex = new JSONModel();
 				oSearchIndex.setData(oIndexArray);
 				this.getView().setModel(oSearchIndex, "SearchIndex");
-
 				oTreeTable.setSelectedIndex(oIndexArray[0]);
 				oTreeTable.setFirstVisibleRow(oIndexArray[0]);
 				oIndex = 0;
-
-				sap.m.MessageToast.show("Search :" + (oIndex + 1) + "/" + oIndexArray.length);
-
+				var text = this.getResourceBundle().getText("searchDot");
+				sap.m.MessageToast.show(text + (oIndex + 1) + "/" + oIndexArray.length);
 			} else {
 				if (sQuery !== "") {
 					var oIndex2Clear = [];
 					var oModel2Clear = new JSONModel();
 					oModel2Clear.setData(oIndex2Clear);
 					this.getView().setModel(oModel2Clear, "SearchIndex");
-
-					//sap.m.MessageToast.show('No coincidence for this criteria.');
-					sap.m.MessageToast.show('No match for this search string.');
+					var text = this.getResourceBundle().getText("noMatch");
+					sap.m.MessageToast.show(text);
 				}
 			}
 		},
@@ -5833,37 +5974,25 @@ sap.ui.define([
 		filterNode: function (oEvent) {
 			var sQuery = oEvent.getParameter("query");
 			oQuery = sQuery;
-
-			// var oFilterDescription = new sap.ui.model.Filter("fieldname",
-			// 	sap.ui.model.FilterOperator.Contains, sQuery);
-
 			var oView = this.getView();
 			var oTreeTable = oView.byId("TreeTableBasic1");
-			//var aTreeTableRows = oTreeTable.getBinding("rows");
-			//aTreeTableRows.filter([oFilterDescription]);
-
 			var oTest = this.getView().getModel("jerarquia").getData();
-
 			oTreeTable.expandToLevel(15);
 			var oIndexArray = [];
-			//var oArray = this.getView().getModel("RawModel").getProperty("/value/");
 			var oArray = this.getModel("RawModel").getData();
 			for (var i = 0; i < oArray.length; i++) {
 				if (oArray[i].fieldname.includes(sQuery) && sQuery != "") {
 					oIndexArray.push(oArray[i].node_id);
 				}
 			}
-
 			if (oIndexArray.length != 0) {
 				var oSearchIndex = new JSONModel();
 				oSearchIndex.setData(oIndexArray);
 				this.getView().setModel(oSearchIndex, "SearchIndex");
-
 				var auxIndex = oIndexArray[0] - 2;
 				if (auxIndex < 0) {
 					auxIndex = 0;
 				}
-
 				while (auxIndex != -1) {
 					var oContext = oTreeTable.getContextByIndex(auxIndex);
 					if (oContext.getObject().fieldname.includes(sQuery)) {
@@ -5875,10 +6004,10 @@ sap.ui.define([
 						auxIndex = auxIndex - 1;
 					}
 				}
-
 			} else {
 				if (sQuery != "") {
-					sap.m.MessageToast.show('No coincidence for this criteria.');
+					var text = this.getResourceBundle().getText("noCoinc");
+					sap.m.MessageToast.show(text);
 				}
 			}
 		},
@@ -5890,6 +6019,8 @@ sap.ui.define([
 			var variable = data.variables.find(variable => variable.slug === this.selectedVar);
 			variable.path = oNewPath;
 			variable.source = this.code_id_filled;
+			variable.type = 'XPATH';
+			variable.metadata = '';
 			this.getModel("template").setData(data);
 			this.getModel("template").refresh();
 			this.byId("treeTable").close();
@@ -5902,6 +6033,8 @@ sap.ui.define([
 			var variable = data.metadata.find(metadata => metadata.code === this.selectedVarMeta);
 			variable.path = oNewPath;
 			variable.source = this.code_id_filled;
+			variable.type = 'XPATH';
+			variable.metadata = '';
 			this.getModel("template").setData(data);
 			this.getModel("template").refresh();
 			this.byId("treeTable").close();
@@ -5922,11 +6055,18 @@ sap.ui.define([
 		},
 
 		onMap4: function (oEvent) {
+			var oGlobalVariModel = this.getModel("globalVari");
+			var oGlobalVariData = oGlobalVariModel.getData();
+			oGlobalVariData.type = "XPATH";
+			oGlobalVariData.metadata = "";
+			oGlobalVariData.source = this.code_id_filled;
 			var oInput = this.getView().byId("pathTextArea");
 			var oNewPath = oInput.getValue();
 			this.byId("Value_GV").setValue(oNewPath);
 			this.byId("Source_GV").setValue(this.code_id_filled);
 			this.byId("treeTable").close();
+			oGlobalVariModel.setData(oGlobalVariData);
+			oGlobalVariModel.refresh();
 		},
 
 		onCollapseAll: function () {
@@ -5957,11 +6097,13 @@ sap.ui.define([
 			var oTreeTable = oView.byId("TreeTableBasic1");
 			oTreeTable.expandToLevel(15);
 		},
+
 		getPath: function (oEvent) {
 			var oTreeTable = this.byId("TreeTableBasic1");
 			var oIndex = oTreeTable.getSelectedIndex();
 			if (oIndex === -1) {
-				sap.m.MessageToast.show('Please, select a node to get the path.');
+				var text = this.getResourceBundle().getText("selecNode");
+				sap.m.MessageToast.show(text);
 			} else {
 				var oPath = oTreeTable.getContextByIndex(oIndex).getPath();
 				var oSplit = oPath.split("/");
@@ -5974,25 +6116,15 @@ sap.ui.define([
 						oText = this.getView().getModel("jerarquia").getProperty(oRoot + "fieldname");
 						oNewPath = oNewPath + oText + "/";
 					} else {
-						//oNewPath = oNewPath + oSplit[i] + "/";
 						oRoot = oRoot + oSplit[i] + "/";
 					}
 				}
 				oNewPath = oNewPath.slice(0, -1);
-
-				//	var oInput = this.getView().byId("pathInput");
 				var oInput = this.getView().byId("pathTextArea");
 				var oOldPath = oInput.getValue();
 				oNewPath = oOldPath + oNewPath;
 				oInput.setValue(oNewPath);
-				// var data = this.getModel("template").getData();
-				// var variable = data.variables.find(variable => variable.slug === this.selectedVar);
-				// variable.path = oNewPath;
-				// this.getModel("template").setData(data);
-				// this.getModel("template").refresh();
 			}
 		},
-
 	});
-
 });

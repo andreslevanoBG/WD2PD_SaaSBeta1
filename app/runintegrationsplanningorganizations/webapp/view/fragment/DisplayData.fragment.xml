@@ -17,13 +17,9 @@
 				<Label text="Reference ID"/>
 				<Text text="{adata>/ref_id}"/>
 				<Label text="Supervisory Organization - PD Parent"/>
-				<!--<Text text="{path: 'adata>/supervisories', formatter: '.formatter.supervisories' }"/>-->
 				<Table items="{adata>/orgsTopLevel}" mode="SingleSelectMaster" noDataText="No Organization Mapping"
 					id="tableOrgs3">
 					<headerToolbar>
-						<!--<Toolbar>-->
-						<!--	<Title text="Supervisory - PD Parent"/>-->
-						<!--</Toolbar>-->
 					</headerToolbar>
 					<items>
 						<ColumnListItem type="Inactive">
@@ -49,33 +45,4 @@
 			</f:content>
 		</f:SimpleForm>
 	</VBox>
-	<!--<Table id="AdataList" width="auto" items="{ path: 'adata>/'}">-->
-	<!--	<headerToolbar>-->
-	<!--		<OverflowToolbar width="auto" height="auto" design="Transparent" visible="true" enabled="true">-->
-	<!--			<content>-->
-	<!--				<Title id="lineItemsTitle2" text="Integration Planning Adata" titleStyle="H3" level="H3"/>-->
-	<!--			</content>-->
-	<!--		</OverflowToolbar>-->
-	<!--	</headerToolbar>-->
-	<!--	<columns>-->
-	<!--		<Column hAlign="Center">-->
-	<!--			<Text text="Level 1"/>-->
-	<!--		</Column>-->
-	<!--		<Column  hAlign="Center">-->
-	<!--			<Text text="Level 2"/>-->
-	<!--		</Column>-->
-	<!--		<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center">-->
-	<!--			<Text text="Value"/>-->
-	<!--		</Column>-->
-	<!--	</columns>-->
-	<!--	<items>-->
-	<!--		<ColumnListItem>-->
-	<!--			<cells>-->
-	<!--				<Text text="{adata>level1}"/>-->
-	<!--				<Text text="{adata>level2}"/>-->
-	<!--				<Text text="{adata>value}"/>-->
-	<!--			</cells>-->
-	<!--		</ColumnListItem>-->
-	<!--	</items>-->
-	<!--</Table>-->
 </core:FragmentDefinition>

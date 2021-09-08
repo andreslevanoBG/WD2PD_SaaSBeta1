@@ -8,17 +8,17 @@
 			<IconTabBar id="iconTab" expandable="false" expanded="true" applyContentPadding="false" backgroundDesign="Solid" upperCase="false" visible="true"
 				selectedKey="Ok" select="searchFilters">
 				<items>
-					<IconTabFilter icon="sap-icon://drop-down-list" text="Sync. Workers" design="Vertical" showAll="false"
+					<IconTabFilter icon="sap-icon://drop-down-list" text="{i18n>syncWork}" design="Vertical" showAll="false"
 						textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content></content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
-					<IconTabFilter id="tabfSuc" key="Suc" icon="sap-icon://accept" iconColor="Positive" text="Success" count="" design="Vertical"
+					<IconTabFilter id="tabfSuc" key="Suc" icon="sap-icon://accept" iconColor="Positive" text="{i18n>Success}" count="" design="Vertical"
 						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content></content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
-					<IconTabFilter id="tabfErr" key="Err" icon="sap-icon://decline" iconColor="Negative" text="Error" count="" design="Vertical" showAll="false"
+					<IconTabFilter id="tabfErr" key="Err" icon="sap-icon://decline" iconColor="Negative" text="{i18n>Error}" count="" design="Vertical" showAll="false"
 						textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content></content>
 					</IconTabFilter>
@@ -32,7 +32,7 @@
 						<infoToolbar>
 							<Toolbar width="100%" height="auto" design="Auto" visible="false" enabled="true">
 								<content>
-									<Label text="Label" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Label text="{i18n>Label}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 								</content>
 							</Toolbar>
 						</infoToolbar>
@@ -46,14 +46,10 @@
 											<OverflowToolbarLayoutData minWidth="150px" maxWidth="240px" shrinkable="true" priority="NeverOverflow"/>
 										</layoutData>
 									</SearchField>
-									<OverflowToolbarButton id="sortButton" text="Sort" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true" visible="true"
+									<OverflowToolbarButton id="sortButton" text="{i18n>Sort}" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true" visible="true"
 										iconDensityAware="false" press=".onOpenViewSettings"/>
-									<OverflowToolbarButton id="filterButton" text="Filter" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto" enabled="true" visible="true"
+									<OverflowToolbarButton id="filterButton" text="{i18n>Filter}" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto" enabled="true" visible="true"
 										iconDensityAware="false" press=".onOpenViewSettings"/>
-									<!--<OverflowToolbarButton text="Group" type="Transparent" icon="sap-icon://group-2" iconFirst="true" width="auto" enabled="true" visible="true"-->
-									<!--	iconDensityAware="false"/>-->
-									<!--<OverflowToolbarButton text="Settings" type="Transparent" icon="sap-icon://action-settings" iconFirst="true" width="auto" enabled="true"-->
-									<!--	visible="true" iconDensityAware="false"/>-->
 								</content>
 							</OverflowToolbar>
 						</headerToolbar>
@@ -61,38 +57,31 @@
 							<Column width="80px" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
 								mergeDuplicates="false">
 								<header>
-									<Text text="Status" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>Status}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
 							<Column width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Phone" demandPopin="true" popinDisplay="Inline" mergeDuplicates="false">
 								<header>
-									<Text text="Worker" width="auto" maxLines="1" wrapping="false" textAlign="Center" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>Worker}" width="auto" maxLines="1" wrapping="false" textAlign="Center" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
-							<!--<Column width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"-->
-							<!--	mergeDuplicates="false">-->
-							<!--	<header>-->
-							<!--		<Text text="Name" width="auto" maxLines="1" wrapping="false" textAlign="Center" textDirection="Inherit" visible="true"/>-->
-							<!--	</header>-->
-							<!--	<footer/>-->
-							<!--</Column>-->
 							<Column width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
 								<header>
-									<Text text="Org. ID" width="auto" maxLines="1" wrapping="false" textAlign="Center" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>orgID}" width="auto" maxLines="1" wrapping="false" textAlign="Center" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
 							<Column width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Desktop" demandPopin="false" popinDisplay="Inline" mergeDuplicates="false">
 								<header>
-									<Text text="Email" width="auto" maxLines="1" wrapping="false" textAlign="Center" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>Mail}" width="auto" maxLines="1" wrapping="false" textAlign="Center" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
 							<Column width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
 								<header>
-									<Text text="Timestamp" width="auto" maxLines="1" wrapping="false" textAlign="Center" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>Timestamp}" width="auto" maxLines="1" wrapping="false" textAlign="Center" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
@@ -103,7 +92,6 @@
 									<core:Icon src="sap-icon://employee" size="40px" color="{ path: 'last_integ_item', formatter: '.formatter.getColor' }" height="30.625px"
 										width="44.78750228881836px" hoverColor="" backgroundColor="white" visible="true" class="sapUiTinyMarginTop"/>
 									<ObjectIdentifier title="{ path: 'employee_number'}" text="{ parts:[{path:'firstname'},{path:'lastname'}], formatter: '.formatter.buildName' }" titleActive="true" visible="true"/>
-									<!--<Text text="{ parts:[{path:'firstname'},{path:'lastname'}], formatter: '.formatter.buildName' }" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>-->
 									<Text text="{organization_id}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 									<Text text="{email}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 									<Text text="{ path: 'last_timestamp', formatter: '.formatter.timestamp' }" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>

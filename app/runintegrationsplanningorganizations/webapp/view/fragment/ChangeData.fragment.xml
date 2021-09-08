@@ -23,11 +23,6 @@
 						<core:Item key="Organization_Reference_ID" text="Organization Reference ID"/>
 					</Select>
 				<Label labelFor="multiInput11" text="Supervisory Organizations"/>
-				<!--<MultiInput id="multiInput11" tokens="{adata>/supervisories}" width="auto" showValueHelp="false">-->
-				<!--	<tokens>-->
-				<!--		<Token key="{adata>Uuid}" text="{adata>Name}"/>-->
-				<!--	</tokens>-->
-				<!--</MultiInput>-->
 				<Table items="{adata>/orgsTopLevel}" mode="SingleSelectMaster" noDataText="No Organization Mapping"
 					id="tableOrgs4">
 						<headerToolbar>

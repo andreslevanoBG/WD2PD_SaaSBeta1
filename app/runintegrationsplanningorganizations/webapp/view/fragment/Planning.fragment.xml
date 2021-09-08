@@ -1,8 +1,4 @@
 <core:FragmentDefinition xmlns="sap.uxap" xmlns:m="sap.m" xmlns:mc="sap.suite.ui.microchart" xmlns:core="sap.ui.core">
-	<!--<ObjectPageSection id="Planning01"  title="Section">-->
-	<!--, filters : [ { path : 'editForm>Tline', operator : 'EQ', value1 : 'OBJ'}, { path : 'editForm>Tline', operator : 'EQ', value1 : 'IND'} ] -->
-	<!--<ObjectPageSubSection title="Sub" class="customPageSubSection">-->
-	<!--	<blocks>-->
 	<m:Dialog id="PlanningD" title="New Planning D" contentHeight="260px" contentWidth="800px">
 		<m:HBox alignItems="Start" class="sapUiTinyMargin">
 			<m:VBox class="sapUiSmallMargin" width="150px">
@@ -94,7 +90,6 @@
 					<core:Item key="{timezones>Key}" text="{timezones>Name}"/>
 				</m:Select>
 			</m:VBox>
-			<!--<m:Label text="{F03lb}" visible="{path: 'F03vi', formatter:'.formatter.toBoolean'}"/>-->
 		</m:HBox>
 		<m:buttons>
 			<m:Button id="saveBut" text="Save" type="Accept" press="execPlan"/>
@@ -102,7 +97,4 @@
 			<m:Button text="Cancel" type="Reject" press="cancelPlan"/>
 		</m:buttons>
 	</m:Dialog>
-	<!--		</blocks>-->
-	<!--	</ObjectPageSubSection>-->
-	<!--</ObjectPageSection>-->
 </core:FragmentDefinition>

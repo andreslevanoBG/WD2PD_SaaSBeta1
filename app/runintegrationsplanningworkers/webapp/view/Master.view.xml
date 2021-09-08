@@ -5,7 +5,6 @@
 			<Title id="masterPageTitle" text="{masterView>/title}" level="H2"/>
 		</semantic:titleHeading>
 		<semantic:content>
-			<!-- For client side filtering add this to the items attribute: parameters: {operationMode: 'Client'}}" -->
 			<List id="list" width="auto" class="sapFDynamicPageAlignContent"
 				items="{ path: '/Integration_Pck_Planning',  filters: { path: 'pck_code', operator: 'EQ', value1: 'SYN_WORKER' }, sorter: { path: 'uuid', descending: false }, groupHeaderFactory: '.createGroupHeader' }"
 				busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}"
@@ -23,7 +22,7 @@
 					</OverflowToolbar>
 				</headerToolbar>
 				<items>
-					<ObjectListItem type="Navigation" press=".onSelectionChange" title="{uuid}" intro="Integration Job: {comments}">
+					<ObjectListItem type="Navigation" press=".onSelectionChange" title="{uuid}" intro="{i18n>integJob} {comments}">
 						<attributes>
 							<ObjectAttribute text="{path:'processing_type', formatter: '.formatter.processType' }" active="false"
 								visible="true"/>
@@ -39,9 +38,8 @@
 			</List>
 		</semantic:content>
 		<semantic:footerCustomActions>
-			<Button text="Run On Demand" type="Accept" icon="sap-icon://process" press="newOnDemand" />
-			<Button text="Plan New Integration" type="Emphasized" icon="sap-icon://add" press="createPlan" />
-			<!--<Button text="Cancel" />-->
+			<Button text="{i18n>runOn}" type="Accept" icon="sap-icon://process" press="newOnDemand" />
+			<Button text="{i18n>newPlan}" type="Emphasized" icon="sap-icon://add" press="createPlan" />
 		</semantic:footerCustomActions>
 	</semantic:SemanticPage>
 </mvc:View>
