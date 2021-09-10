@@ -99,6 +99,13 @@
             "scope-references": [
                 "$XSAPPNAME.ExtendCDSdelete"
             ]
+        },
+        {
+            "name": "ModelUpgrade",
+            "description": "SaaS Model Upgrade",
+            "scope-references": [
+                "$XSAPPNAME.mtdeployment"
+            ]
         }
     ],
     "role-collections": [

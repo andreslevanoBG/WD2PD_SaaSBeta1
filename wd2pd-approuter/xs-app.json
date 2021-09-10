@@ -26,6 +26,12 @@
             "csrfProtection": false
         },
         {
+            "source": "^/extend/(.*)",
+            "target": "$1",
+            "authenticationType": "none",
+            "destination": "srv"
+        },
+        {
             "source": "^(.*)$",
             "target": "$1",
             "service": "html5-apps-repo-rt",

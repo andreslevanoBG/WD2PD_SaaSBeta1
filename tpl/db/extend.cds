@@ -1,8 +1,6 @@
 /* uncomment and modify as needed
-using shapein.integrations from '_base/db/schema.cds';
+using shapein.integrations from '../../db/schema';
 
-extend entity Integrations with {
-    Z_custom1 : String(100);
-    Z_custom2 : Integer;
-};
-*/
+extend entity integrations.Countries with {
+    Z_custom1 : String(60);
+};*/

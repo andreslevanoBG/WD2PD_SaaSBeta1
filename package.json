@@ -78,7 +78,9 @@
             ],
             "extension-allowlist": [
                 {
-                    "for": []
+                    "for": [
+                        "*"
+                    ]
                 },
                 {
                     "for": [
