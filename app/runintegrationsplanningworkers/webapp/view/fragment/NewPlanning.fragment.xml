@@ -35,13 +35,13 @@
 						<Label labelFor="DTP4" text="{i18n>fromNext}" visible="false"/>
 						<DateTimePicker id="DTP4" required="true" valueFormat="yyyy-MM-ddTHH:mm:ss" visible="false" displayFormat="yyyy-MM-dd HH:mm:ss"/>
 					</VBox>
-					<core:Title text="{i18n>superOrg}"/>
+					<core:Title text="{i18n>superv}"/>
 					<Label labelFor="RefId" text="{i18n>refId}"/>
 					<Select id="RefId">
 						<core:Item key="WID" text="{i18n>workId}"/>
 						<core:Item key="Organization_Reference_ID" text="{i18n>orgRefId}"/>
 					</Select>
-					<Label labelFor="multiInput11" text="{i18n>superOrg}"/>
+					<Label labelFor="multiInput11" text="{i18n>superv}"/>
 					<MultiInput id="multiInput11" width="auto" showValueHelp="false"/>
 				</f:content>
 			</f:SimpleForm>

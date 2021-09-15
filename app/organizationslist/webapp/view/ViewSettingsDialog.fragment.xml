@@ -20,14 +20,14 @@
 					</l:VerticalLayout>
 				</customControl>
 			</ViewSettingsCustomItem>
-					<ViewSettingsCustomItem id="idCustomFilterItem2" text="{i18n>lastName}" key="lastname">
+					<ViewSettingsCustomItem id="idCustomFilterItem2" text="{i18n>name}" key="name">
 				<customControl>
 					<l:VerticalLayout class="sapUiContentPadding" width="100%">
 						<Label text="{i18n>From}"/>
-						<Input id="input1" type="Text" placeholder="{i18n>PlaName}" class="sapUiSmallMarginBottom"
+						<Input id="input1" type="Text" placeholder="{i18n>OrgName}" class="sapUiSmallMarginBottom"
 						change="changeLast"/>
 						<Label text="{i18n>To}"/>
-						<Input id="input2" type="Text" placeholder="{i18n>PlaName}" class="sapUiSmallMarginBottom"
+						<Input id="input2" type="Text" placeholder="{i18n>OrgName}" class="sapUiSmallMarginBottom"
 						change="changeLast"/>
 					</l:VerticalLayout>
 				</customControl>

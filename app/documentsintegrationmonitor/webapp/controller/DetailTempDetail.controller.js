@@ -77,7 +77,6 @@ sap.ui.define([
                     template: oMessageTemplate
                 },
                 activeTitlePress: function () {
-                    //MessageToast.show('Active title is pressed');
                 }
             });
             this.getView().addDependent(oMessagePopover);
@@ -144,7 +143,7 @@ sap.ui.define([
             localModel.oData.template_uuid = oTemplate;
             this.setModel(localModel, "parameters");
 
-            //this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
+            this.getModel("appView").setProperty("/layout", "ThreeColumnsEndExpanded");
             this.getModel().metadataLoaded().then(function () {
                 /*
                 var sObjectPath = this.getModel().createKey("Di_Employee", {
@@ -219,42 +218,17 @@ sap.ui.define([
                     that.reprocesses = [];
                     oViewModel.setProperty("/busy", false);
 
-
-                    /*
                     oData.docs = null;
                     oData.docs = [];
 
                     results.forEach(function (entry) {
-                        oData.docs.push(entry);
-
-                        if (entry.last_temp_employee && entry.status == "E") {
-                            that.reprocesses.push(entry.uuid);
-                            entry.action = 'X'
-                        } else {
-                            entry.action = ''
-                        }
-
                         if (entry.status == "S") {
                             scount++;
                         } else {
                             ecount++;
                         }
-                    });
+                    })
 
-                    oData.docs = results;
-                    itemsModel.setData(oData);
-                    oViewModel.setProperty("/busy", false);
-                    //that.getView().byId("detailPage").setBusy(false);
-                    if (that.reprocesses.length > 0) {
-                        that.getView().byId("reproc").setVisible(true);
-                    } else {
-                        that.getView().byId("reproc").setVisible(false);
-                        //that.getView().byId("reproc").setVisible(true);
-                    }
-                    that.getView().byId("tabfSuc").setCount(scount);
-                    that.getView().byId("tabfErr").setCount(ecount);
-
-                    */
                     var auxParam = oModelParam.getData();
                     auxParam.template_id = oData.results[0].generation_proc.template_id;
                     auxParam.doc_type_id = oData.results[0].generation_proc.doc_type_id;
@@ -273,6 +247,7 @@ sap.ui.define([
                     }
                     that.getView().byId("tabfSuc").setCount(scount);
                     that.getView().byId("tabfErr").setCount(ecount);
+                    that.getView().byId("tabfAll").setCount(scount + ecount);
 
                 },
                 error: function (oError) {
@@ -281,15 +256,6 @@ sap.ui.define([
             });
 
             this.getOwnerComponent().oListSelector.selectAListItem(sPath);
-
-            /*
-            oViewModel.setProperty("/saveAsTileTitle", oResourceBundle.getText("shareSaveTileAppTitle", [sObjectName]));
-            oViewModel.setProperty("/shareOnJamTitle", sObjectName);
-            oViewModel.setProperty("/shareSendEmailSubject",
-                oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
-            oViewModel.setProperty("/shareSendEmailMessage",
-                oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, location.href]));
-            */
         },
 
         _onMetadataLoaded: function () {
@@ -337,12 +303,12 @@ sap.ui.define([
 		 * Toggle between full and non full screen mode.
 		 */
         toggleFullScreen: function () {
-            var bFullScreen = this.getModel("appView").getProperty("/actionButtonsInfo/midColumn/fullScreen");
-            this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreen", !bFullScreen);
+            var bFullScreen = this.getModel("appView").getProperty("/actionButtonsInfo/endColumn/fullScreen");
+            this.getModel("appView").setProperty("/actionButtonsInfo/endColumn/fullScreen", !bFullScreen);
             if (!bFullScreen) {
                 // store current layout and go full screen
                 this.getModel("appView").setProperty("/previousLayout", this.getModel("appView").getProperty("/layout"));
-                this.getModel("appView").setProperty("/layout", "MidColumnFullScreen");
+                this.getModel("appView").setProperty("/layout", "EndColumnFullScreen");
             } else {
                 // reset to previous layout
                 this.getModel("appView").setProperty("/layout", this.getModel("appView").getProperty("/previousLayout"));
@@ -370,8 +336,6 @@ sap.ui.define([
             var text2 = this.b64DecodeUnicode(itemsModel.getProperty(sPath3));
             var text3 = text2.replace("{", "(");
             var text4 = text3.replace("}", ")");
-            //text = text + "&#xA;" + text2;
-            //text = " invidunt (2 line breaks follow)&#xA;&#xA;ut labore et dolore ma";
 
             var dialog = new sap.m.Dialog({
                 contentWidth: "500px",
@@ -413,12 +377,7 @@ sap.ui.define([
         },
 
         onActionRepro: function (oEvent) {
-            //	var sPath = oEvent.getSource().getParent().getBindingContext("itemsTemp").getPath();
-            //	var itemsModel = this.getView().getModel("itemsTemp");
-            //	sPath = sPath + "/worker/employee_number";
-            //	var worker = itemsModel.getProperty(sPath);
-            var text = "Are you sure you want to reprocess Employee in this Integration Process?";
-            //	text = text + worker + "?";
+            var text = this.getView().getModel("i18n").getResourceBundle().getText("viewMessage9");
             var that = this;
             var dialog = new sap.m.Dialog({
                 title: 'Confirmation',
@@ -472,10 +431,9 @@ sap.ui.define([
                             var a = data;
                             var b = textStatus;
                             var c = jqXHR;
-                            //			oViewModel.setProperty("/busy", false);
                             if (textStatus == "success") {
                                 that.getView().byId("reproc").setVisible(false);
-                                var texto = "All Workers reprocessed.";
+                                var texto = this.getView().getModel("i18n").getResourceBundle().getText("viewMessage12");
                                 sap.m.MessageToast.show(texto);
                             }
                         })
@@ -483,7 +441,6 @@ sap.ui.define([
                                 var d = jqXHR;
                                 var e = textStatus;
                                 var f = errorThrown;
-                                //			oViewModel.setProperty("/busy", false);
                             });
                         dialog.close();
                     }
@@ -514,7 +471,7 @@ sap.ui.define([
 
             var results = itemsModel.getProperty("/docs");
 
-            var text = "Are you sure you want to reprocess Employee in this Integration Process?";
+            var text = this.getView().getModel("i18n").getResourceBundle().getText("viewMessage9");
             var that = this;
             var dialog = new sap.m.Dialog({
                 title: 'Confirmation',
@@ -582,7 +539,7 @@ sap.ui.define([
                             //			oViewModel.setProperty("/busy", false);
                             if (textStatus == "success") {
                                 that.getView().byId("reproc").setVisible(false);
-                                var texto = "All Employees reprocessed.";
+                                var texto = this.getView().getModel("i18n").getResourceBundle().getText("viewMessage13");
                                 sap.m.MessageToast.show(texto);
 
                                 var oItems = that.getView().byId("lineItemsListTemp").getItems();
@@ -597,7 +554,7 @@ sap.ui.define([
                                 var f = errorThrown;
                                 //			oViewModel.setProperty("/busy", false);
 
-                                sap.m.MessageToast.show("An error occurred during the update task.");
+                                sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage11"));
                             });
                         dialog.close();
                     }
@@ -636,7 +593,7 @@ sap.ui.define([
 
             var that = this;
 
-            var text = "Are you sure you want to reprocess Employee ";
+            var text = this.getView().getModel("i18n").getResourceBundle().getText("viewMessage10");
             text = text + employee_number + "?";
             var dialog = new sap.m.Dialog({
                 title: 'Confirmation',
@@ -707,8 +664,7 @@ sap.ui.define([
                                 var e = textStatus;
                                 var f = errorThrown;
 
-                                //texto error
-                                sap.m.MessageToast.show("An error occurred during the update task.");
+                                sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage11"));
                             });
                         dialog.close();
                     }
@@ -793,6 +749,7 @@ sap.ui.define([
                         new Filter("employee_number", FilterOperator.LE, workerto)
                     ], true));
                 }
+                /*
                 var vLayout2 = this.byId("viewSettingsDialogDetailDetTemp").getFilterItems()[1].getCustomControl();
                 var lastfrom = vLayout2.getContent()[1].getValue();
                 var lastto = vLayout2.getContent()[3].getValue();
@@ -812,6 +769,7 @@ sap.ui.define([
                         //	new Filter("lastname", FilterOperator.LE, lastto)
                     ], true));
                 }
+                */
                 var sortItems = this.byId("viewSettingsDialogDetailDetTemp").getSortItems();
                 var sortItem;
                 sortItems.forEach(function (oItem) {
@@ -822,6 +780,20 @@ sap.ui.define([
                 var sortDesc = this.byId("viewSettingsDialogDetailDetTemp").getSortDescending();
             }
 
+            var aFilters2 = [];
+            aFilterItems.forEach(function (oItem) {
+                if (oItem.getKey() == "status") {
+                    oItem.getItems().forEach(function (oItem2){
+                        if(oItem2.getSelected() == true){
+                            aFilters2.push(new Filter(oItem.getKey(), FilterOperator.EQ, oItem2.getKey()));
+                        }
+                    })
+                }
+            });
+            if (aFilters2.length > 0) {
+                aFilters.push(new Filter(aFilters2, false));
+            }
+            
             var keySel = this.getView().byId("iconTab").getSelectedKey();
             if (keySel == "Suc") {
                 aFilters.push(new Filter("status", FilterOperator.EQ, "S"));

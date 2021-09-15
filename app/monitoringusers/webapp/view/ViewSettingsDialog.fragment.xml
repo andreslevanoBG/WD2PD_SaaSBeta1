@@ -28,7 +28,7 @@
 					<ViewSettingsItem text="{i18n>Running}" key="R"/>
 				</items>
 			</ViewSettingsFilterItem>
-			<ViewSettingsCustomItem id="idCustomFilterItem2" text="{i18n>numUser}" key="numberOfItems">
+			<ViewSettingsCustomItem id="idCustomFilterItem2" text="{i18n>NumUser}" key="numberOfItems">
 				<customControl>
 					<RangeSlider showAdvancedTooltip="true" range="0,0" min="0" max="200" width="100%" showHandleTooltip="false" inputsAsTooltips="true"
 						class="sapUiLargeMarginBottom" change="changeSlider"/>

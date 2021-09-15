@@ -1,19 +1,14 @@
 <mvc:View xmlns="sap.m" xmlns:semantic="sap.f.semantic" xmlns:mvc="sap.ui.core.mvc" 
 controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
-
 	<semantic:SemanticPage id="masterPage" preserveHeaderStateOnScroll="true" toggleHeaderOnTitleClick="false">
 		<semantic:titleHeading>
 			<Title id="masterPageTitle" text="{masterView>/title}" level="H2"/>
 		</semantic:titleHeading>
 		<semantic:content>
-
-
 			<IconTabBar id="iconTab" expandable="false" expanded="true" applyContentPadding="false" backgroundDesign="Solid" upperCase="false" visible="true" selectedKey="Ok" select="checkTab">
 				<items>
-					<IconTabFilter icon="" iconColor="Default" text="per Process" design="Vertical" showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false" key="proc">
+					<IconTabFilter icon="" iconColor="Default" text="{i18n>viewIconTabFilterPerProcess}" design="Vertical" showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false" key="proc">
 						<content>
-                        
-                            <!-- For client side filtering add this to the items attribute: parameters: {operationMode: 'Client'}}" -->
                             <List id="list" width="auto" class="sapFDynamicPageAlignContent" 
                             items="{ path: '/Di_Generation_Processes', parameters: {expand: 'message,template'}, 
                             sorter: { path: 'timestamp_start', descending: true }, groupHeaderFactory: '.createGroupHeader' }" 
@@ -38,7 +33,7 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
                                     </Toolbar>
                                 </infoToolbar>
                                 <items>
-                                    <ObjectListItem type="Navigation" press=".onSelectionChange" number="{ path: 'numberOfItems'}" numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }" intro="Process ID: Document Integration" title="{uuid}" numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" icon="sap-icon://process">
+                                    <ObjectListItem type="Navigation" press=".onSelectionChange" number="{ path: 'numberOfItems'}" numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }" intro="{i18n>objectHeaderTitle}" title="{uuid}" numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" icon="sap-icon://process">
                                         <attributes>
                                             <ObjectAttribute text="{ path:'template/template_id', formatter: '.formatter.tempid' }" active="false" visible="true"/>
                                             <ObjectAttribute text="{ path:'template/doc_title', formatter: '.formatter.temptitle' }" active="false" visible="true"/>
@@ -57,15 +52,8 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
                         </content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
-					<IconTabFilter id="tabfSuc" key="empl" icon="" iconColor="Positive" text="per Employee" count="" design="Vertical" showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+					<IconTabFilter id="tabfSuc" key="empl" icon="" iconColor="Positive" text="{i18n>viewIconTabFilterPerEmployee}" count="" design="Vertical" showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content>
-
-                            <!-- <List id="list_emp" width="auto" class="sapFDynamicPageAlignContent" 
-                            items="{ path: '/Di_Generation_Processes', parameters: {expand: 'message,template'}, 
-                            sorter: { path: 'timestamp_start', descending: true }, groupHeaderFactory: '.createGroupHeader' }" 
-                            growingThreshold="10" busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" 
-                            mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" growing="true" 
-                            growingScrollToLoad="true" updateFinished=".onUpdateFinished" selectionChange=".onSelectionChange"> -->      
                             <List id="list_emp" width="auto" class="sapFDynamicPageAlignContent" 
                             items="{ path: '/Di_Employee', parameters: {expand: 'emp_template,worker'}, 
                             sorter: { path: 'employee_number', descending: false }, groupHeaderFactory: '.createGroupHeader' }" 
@@ -90,21 +78,10 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
                                     </Toolbar>
                                 </infoToolbar>
                                 <items>
-                                    <!--number="{ path: 'worker/numberOfItems'}" 
-                                    numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }" 
-                                    -->
                                     <ObjectListItem type="Navigation" press=".onSelectionChangeEmpl" 
-                                    intro="Process ID: Document Integration" title="{employee_number}" 
+                                    intro="{i18n>objectHeaderTitle}" title="{employee_number}" 
                                     numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" icon="sap-icon://employee">
                                         <attributes>
-                                        <!--
-                                            <ObjectAttribute text="{ path:'template/template_id', formatter: '.formatter.tempid' }" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ path:'template/doc_title', formatter: '.formatter.temptitle' }" active="false" visible="true"/>
-                                            
-                                            <ObjectAttribute text="{ parts:[{path:'timestamp_start'},{path:'status'}], formatter: '.formatter.Startdate' }" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ parts:[{path:'timestamp_end'},{path:'status'}], formatter: '.formatter.Enddate' }" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ path:'numberOfSeconds', formatter: '.formatter.duration' }" active="false" visible="true"/>
-                                        -->
                                             <ObjectAttribute text="{ path:'uuid', formatter: '.formatter.worker_id'}" active="false" visible="true"/>
                                             <ObjectAttribute text="{ path:'worker/firstname', formatter: '.formatter.worker_firstname'}" active="false" visible="true"/>
                                             <ObjectAttribute text="{ path:'worker/lastname', formatter: '.formatter.worker_lastname'}" active="false" visible="true"/>
@@ -115,22 +92,11 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
                                     </ObjectListItem>
                                 </items>
                             </List>
-
 				        </content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
-					<IconTabFilter id="tabfErr" key="temp" icon="" iconColor="Critical" text="per Template" count="" design="Vertical" showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+					<IconTabFilter id="tabfErr" key="temp" icon="" iconColor="Critical" text="{i18n>viewIconTabFilterPerTemplate}" count="" design="Vertical" showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content>
-
-                            <!-- <List id="list_tem" width="auto" class="sapFDynamicPageAlignContent" 
-                            items="{ path: '/Di_Generation_Processes', parameters: {expand: 'message,template'},
-                            sorter: { path: 'timestamp_start', descending: true }, groupHeaderFactory: '.createGroupHeader' }" 
-                            growingThreshold="10" 
-                            growing="true" 
-                            growingScrollToLoad="true" 
-                            busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" 
-                            mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" 
-                            updateFinished=".onUpdateFinished" selectionChange=".onSelectionChange">-->
                             <List id="list_tem" width="auto" class="sapFDynamicPageAlignContent" 
                             items="{ path: '/Di_Template',
                             sorter: [
@@ -138,7 +104,6 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
                             { path: 'template_version', descending: true }],
                             groupHeaderFactory: '.createGroupHeader' 
                             }" 
-
                             busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" 
                             mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
                             updateFinished=".onUpdateFinished" selectionChange=".onSelectionChangeTemp">
@@ -161,7 +126,7 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
                                 </infoToolbar>
                                 <items>
                                     <ObjectListItem type="Navigation" press=".onSelectionChangeTemp" number="{ path: 'numberOfItems'}" 
-                                    numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }" intro="Process ID: Document Integration" 
+                                    numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }" intro="{i18n>objectHeaderTitle}" 
                                     title="{template_id}" numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" icon="sap-icon://documents">
                                         <attributes>
                                             <ObjectAttribute text="{ path:'uuid', formatter: '.formatter.tempUUID' }" active="false" visible="true"/>
@@ -169,11 +134,6 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
                                             <ObjectAttribute text="{ path:'doc_type_id', formatter: '.formatter.temptype' }" active="false" visible="true"/>
                                             <ObjectAttribute text="{ path:'language', formatter: '.formatter.templanguage' }" active="false" visible="true"/>
                                             <ObjectAttribute text="{ path:'template_version', formatter: '.formatter.tempversion' }" active="false" visible="true"/>
-                                            <!--
-                                            <ObjectAttribute text="{ parts:[{path:'timestamp_start'},{path:'status'}], formatter: '.formatter.Startdate' }" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ parts:[{path:'timestamp_end'},{path:'status'}], formatter: '.formatter.Enddate' }" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ path:'numberOfSeconds', formatter: '.formatter.duration' }" active="false" visible="true"/>
-                                            -->
                                         </attributes>
                                         <firstStatus>
                                             <ObjectStatus text="{ path: 'status', formatter: '.formatter.ItemStatus2' }" state="{ path: 'status', formatter: '.formatter.IntegStatus' }"/>
@@ -181,7 +141,6 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
                                     </ObjectListItem>
                                 </items>
                             </List>
-
 				        </content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
@@ -189,8 +148,6 @@ controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
 				<content>
 				</content>
 			</IconTabBar>  
-
-
 		</semantic:content>
 	</semantic:SemanticPage>
 </mvc:View>

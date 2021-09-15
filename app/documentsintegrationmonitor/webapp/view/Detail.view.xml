@@ -12,7 +12,6 @@
 			<Title text="{ path:'template/doc_title', formatter: '.formatter.headtitle' }" level="H2"/>
 		</semantic:titleHeading>
 		<semantic:headerContent>
-			<!--<ObjectAttribute title="{i18n>priceTitle}"/>-->
 			<ObjectHeader intro="Process ID: Document Integration" title="{uuid}" icon="sap-icon://process" number="{ path: 'numberOfItems' }"
 				numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }"
 				numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" titleActive="false" backgroundDesign="Translucent"
@@ -39,28 +38,24 @@
 			<IconTabBar id="iconTab" expandable="false" expanded="true" applyContentPadding="false" backgroundDesign="Solid" upperCase="false"
 				visible="true" selectedKey="Ok" select="searchFilters">
 				<items>
-					<IconTabFilter icon="sap-icon://drop-down-list" iconColor="Default" text="All Items" count="{numberOfItems}" design="Vertical"
+					<IconTabFilter icon="sap-icon://drop-down-list" iconColor="Default" text="{i18n>viewIconTabFilterAllItems}" count="{numberOfItems}" design="Vertical"
 						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content></content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
-					<IconTabFilter id="tabfSuc" key="Suc" icon="sap-icon://accept" iconColor="Positive" text="Success" count="" design="Vertical"
+					<IconTabFilter id="tabfSuc" key="Suc" icon="sap-icon://accept" iconColor="Positive" text="{i18n>viewIconTabFilterSuccess}" count="" design="Vertical"
 						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content></content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
-					<IconTabFilter id="tabfErr" key="Err" icon="sap-icon://decline" iconColor="Negative" text="Error" count="" design="Vertical" showAll="false"
+					<IconTabFilter id="tabfErr" key="Err" icon="sap-icon://decline" iconColor="Negative" text="{i18n>viewIconTabFilterError}" count="" design="Vertical" showAll="false"
 						textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content></content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
 				</items>
 				<content>
-					<!--<Table id="lineItemsList" width="auto" noDataText="No data" mode="SingleSelectMaster" showSeparators="All" growing="true"
-						growingThreshold="20" growingScrollToLoad="true" items="{path: 'items>/integ_items', sorter: { path: 'items>pernr', descending: true }}"
-						class="sapUiResponsiveMargin">
-						<infoToolbar/>-->
-                    <Table id="lineItemsList" width="auto" noDataText="No data" mode="SingleSelectMaster" showSeparators="All" growing="true"
+                    <Table id="lineItemsList" width="auto" noDataText="{i18n>viewTextNoData}" mode="SingleSelectMaster" showSeparators="All" growing="true"
 						growingThreshold="20" growingScrollToLoad="true" items="{ path: 'items>/docs'}" class="sapUiResponsiveMargin">
 						<infoToolbar/>
 						<headerToolbar>
@@ -68,12 +63,12 @@
 								<content>
 									<Title text="" titleStyle="Auto" width="auto" textAlign="Begin" visible="true" wrapping="false"/>
 									<ToolbarSpacer width=""/>
-									<Button id="reproc" text="Reprocessing" type="Reject" icon="sap-icon://process" iconFirst="true" width="auto" visible="true"
+									<Button id="reproc" text="{i18n>viewTextReprocessing}" type="Reject" icon="sap-icon://process" iconFirst="true" width="auto" visible="true"
 									press="onActionRepro2" iconDensityAware="false"/>
 									<SearchField id="search" search="searchFilters" placeholder="Search" showSearchButton="true" visible="true" width="auto"/>
-									<OverflowToolbarButton id="sortButton1" text="Sort" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true"
+									<OverflowToolbarButton id="sortButton1" text="{i18n>viewTextSort}" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true"
 										visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
-									<OverflowToolbarButton id="filterButton1" text="Filter" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto"
+									<OverflowToolbarButton id="filterButton1" text="{i18n>viewTextFilter}" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto"
 										enabled="true" visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
 								</content>
 							</OverflowToolbar>
@@ -81,36 +76,27 @@
 						<columns>
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Phone" demandPopin="true" popinDisplay="Inline" mergeDuplicates="false">
 								<header>
-									<Text text="UUID" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>viewLabelColumnUUID}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Phone" demandPopin="true" popinDisplay="Inline" mergeDuplicates="false">
 								<header>
-									<Text text="Created At" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
-								</header>
-								<footer/>
-							</Column>
-                            <!--
-							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
-								mergeDuplicates="false">
-								<header>
-									<Text text="Created By" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
-								</header>
-								<footer/>
-							</Column>
-                            -->
-							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
-								mergeDuplicates="false">
-								<header>
-									<Text text="Last Name" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>viewLabelColumnCreatedAt}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
 								mergeDuplicates="false">
 								<header>
-									<Text text="First Name" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>viewLabelColumnLastName}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
+								mergeDuplicates="false">
+								<header>
+									<Text text="{viewLabelColumnFirstName}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
@@ -118,21 +104,21 @@
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
 								mergeDuplicates="false">
 								<header>
-									<Text text="Employee" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>viewLabelColumnEmployee}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
 								mergeDuplicates="false">
 								<header>
-									<Text text="Detail" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>viewLabelColumnDetail}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
 								mergeDuplicates="false">
 								<header>
-									<Text text="Action" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>viewLabelColumnAction}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 								</header>
 								<footer/>
 							</Column>
@@ -142,11 +128,8 @@
 								<cells>
                                     <Text text="{items>uuid}"/> 
                                     <Text text="{ parts:[{path:'items>createdAt'},{path:'status'}], formatter: '.formatter.Startdate' }"/>
-                                    <!-- <Text text="{items>createdBy}"/> -->
-
                                     <Text text="{items>worker/lastname}"/> 
                                     <Text text="{items>worker/firstname}"/> 
-
                                     <Text text="{ path: 'items>employee_number' }"/> 
 									<Button text="" type="Default" icon="sap-icon://message-error" iconFirst="true" width="60px"
 										enabled="{ path: 'items>status', formatter: '.formatter.ItemButEnabled' }" visible="true" iconDensityAware="false"
@@ -162,12 +145,6 @@
 			</IconTabBar>            
 		</semantic:content>
 		<!--Semantic ShareMenu Buttons-->
-		<semantic:sendEmailAction>
-			<semantic:SendEmailAction
-				id="shareEmail"
-				press=".onSendEmailPress"/>
-		</semantic:sendEmailAction>
-
 		<semantic:closeAction>
 			<semantic:CloseAction
 					id="closeColumn"

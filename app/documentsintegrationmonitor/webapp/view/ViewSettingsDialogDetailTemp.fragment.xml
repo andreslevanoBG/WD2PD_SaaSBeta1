@@ -2,31 +2,31 @@
 	<ViewSettingsDialog id="viewSettingsDialogDetailTemp" confirm=".searchFilters" cancel="handleCancel" sortDescending="true"
 		resetFilters=".handleResetFilters">
 		<sortItems>
-			<ViewSettingsItem text="Employee Number" key="employee/worker/employee_number" selected="true"/>
-			<ViewSettingsItem text="Last Name" key="employee/worker/lastname" selected="false"/>
-            <ViewSettingsItem text="First Name" key="employee/worker/firstname" selected="false"/>
+			<ViewSettingsItem text="{i18n>viewFragmentEmployeeNumber}" key="employee/worker/employee_number" selected="true"/>
+			<ViewSettingsItem text="{i18n>viewFragmentLastName}" key="employee/worker/lastname" selected="false"/>
+            <ViewSettingsItem text="{i18n>viewFragmentFirstName}" key="employee/worker/firstname" selected="false"/>
 		</sortItems>
 		<filterItems>
-			<ViewSettingsCustomItem id="idCustomFilterItemDetTemp" text="Employees" key="employee/worker/employee_number">
+			<ViewSettingsCustomItem id="idCustomFilterItemDetTemp" text="{i18n>viewFragmentEmployees}" key="employee/worker/employee_number">
 				<customControl>
 					<l:VerticalLayout class="sapUiContentPadding" width="100%">
-						<Label text="FROM"/>
-						<Input id="inputNumber1DetTemp" type="Number" placeholder="Enter a employee number" class="sapUiSmallMarginBottom"
+						<Label text="{i18n>viewFragmentLabel2}"/>
+						<Input id="inputNumber1DetTemp" type="Number" placeholder="{i18n>viewFragmentPlaceholder4}" class="sapUiSmallMarginBottom"
 						change="changeWorkers"/>
-						<Label text="TO"/>
-						<Input id="inputNumber2DetTemp" type="Number" placeholder="Enter a employee number" class="sapUiSmallMarginBottom"
+						<Label text="{i18n>viewFragmentLabel3}"/>
+						<Input id="inputNumber2DetTemp" type="Number" placeholder="{i18n>viewFragmentPlaceholder4}" class="sapUiSmallMarginBottom"
 						change="changeWorkers"/>
 					</l:VerticalLayout>
 				</customControl>
 			</ViewSettingsCustomItem>
-			<ViewSettingsCustomItem id="idCustomFilterItem2DetTemp" text="Last Name" key="employee/worker/lastname">
+			<ViewSettingsCustomItem id="idCustomFilterItem2DetTemp" text="{i18n>viewFragmentLastName}" key="employee/worker/lastname">
 				<customControl>
 					<l:VerticalLayout class="sapUiContentPadding" width="100%">
-						<Label text="FROM"/>
-						<Input id="input1DetTemp" type="Text" placeholder="Enter a Last Name" class="sapUiSmallMarginBottom"
+						<Label text="{i18n>viewFragmentLabel2}"/>
+						<Input id="input1DetTemp" type="Text" placeholder="{i18n>viewFragmentPlaceholder5}" class="sapUiSmallMarginBottom"
 						change="changeLast"/>
-						<Label text="TO"/>
-						<Input id="input2DetTemp" type="Text" placeholder="Enter a Last Name" class="sapUiSmallMarginBottom"
+						<Label text="{i18n>viewFragmentLabel3}"/>
+						<Input id="input2DetTemp" type="Text" placeholder="{i18n>viewFragmentPlaceholder5}" class="sapUiSmallMarginBottom"
 						change="changeLast"/>
 					</l:VerticalLayout>
 				</customControl>

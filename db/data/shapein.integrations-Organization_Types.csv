@@ -1,0 +1,3 @@
+code,description,metadata
+BUSINESS_SITE_HIERARCHY,Location Hierarchy,{\"workers_sce\":{\"get_workers\":{\"response_group\":{\"nodes_exclude_false\":[\"Exclude_Location_Hierarchies\"]}}}}
+SUPERVISORY,Supervisory,{\"workers_sce\":{\"get_workers\":{\"response_group\":{\"nodes_exclude_false\":[\"Exclude_Supervisory_Organizations\"]}}}}

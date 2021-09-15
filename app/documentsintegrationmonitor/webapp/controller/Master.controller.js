@@ -329,8 +329,6 @@ sap.ui.define([
                 var fehasta = fechahasta.substring(0, 4) + "-" + fechahasta.substring(5, 7) + "-" + fechahasta.substring(8, 10) + "T" +
                     fechahasta.substring(11, 13) + ":" + fechahasta.substring(14, 16) + ":" + fechahasta.substring(17, 19) + "Z";
             }
-            //aFilters.push(new Filter("createdAt", FilterOperator.LE, fehasta));
-            //aFilters.push(new Filter("createdAt", FilterOperator.GE, fedesde));
             if (fehasta && !fedesde) {
                 aFilters.push(new Filter([
                     new Filter("timestamp_start", FilterOperator.LE, fehasta)
@@ -364,11 +362,7 @@ sap.ui.define([
             aFilterItems.forEach(function (oItem) {
                 if (oItem.getKey() !== "timestamp_start" && oItem.getKey() !== "numberOfItems") {
                     aFilters2.push(new Filter(oItem.getParent().getKey(), FilterOperator.EQ, oItem.getKey()));
-                    // aFilters.push(new Filter([
-                    // 	new Filter(oItem.getParent().getKey(), FilterOperator.EQ, oItem.getKey())
-                    // ], false));
                 }
-                //	aCaptions.push(oItem.getText());
             });
             if (aFilters2.length > 0) {
                 aFilters.push(new Filter(aFilters2, false));

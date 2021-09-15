@@ -135,6 +135,7 @@ service IntegrationService {
         type      : String;
         type_text : String;
         subtype   : String;
+        metadata     : String;
     }
 
     function set_user_future_changes(uuid : String(32), date : Date) returns String;

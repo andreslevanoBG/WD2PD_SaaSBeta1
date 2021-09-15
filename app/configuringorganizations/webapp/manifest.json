@@ -31,7 +31,7 @@
 		},
 		"dataSources": {
 			"mainService": {
-				"uri": "/v2/integration/",
+				"uri": "/ShapeinIntegration/v2/Integration/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
@@ -145,7 +145,7 @@
 	},
 	"sap.platform.cf": {
 		"oAuthScopes": [
-			"$XSAPPNAME.Organizations"
+			"$XSAPPNAME.organizations"
 		]
 	},
 	"sap.platform.hcp": {

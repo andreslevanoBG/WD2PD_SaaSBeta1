@@ -1,0 +1,5 @@
+code,text,type
+E,Error,
+W,Warning,
+S,Success,
+R,Running,

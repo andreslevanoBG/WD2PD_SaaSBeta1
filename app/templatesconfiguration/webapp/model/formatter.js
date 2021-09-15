@@ -111,6 +111,22 @@ sap.ui.define([], function () {
 				return true;
 			}
 		},
+		
+		modeSigners: function (sValue, sValue2) {
+			if (sValue || sValue2) {
+				return "None";
+			} else {
+				return "SingleSelectLeft";
+			}
+		},
+		
+		enableActiveClear: function (sValue, sValue2, sValue3) {
+			if (sValue || sValue2 || sValue3 == "") {
+				return false;
+			} else {
+				return true;
+			}
+		},
 
 		enabledActive2: function (sValue) {
 			if (sValue) {

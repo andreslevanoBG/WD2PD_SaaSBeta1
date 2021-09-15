@@ -87,6 +87,8 @@ sap.ui.define([
 			var oModel21 = new JSONModel();
 			oModel21.setSizeLimit(4000);
 			this.setModel(oModel21, "BProcessWD");
+			var oModel22 = new JSONModel();
+			this.setModel(oModel22, "LValues");
 			var oRawModel = new JSONModel();
 			this.setModel(oRawModel, "RawModel");
 
@@ -127,6 +129,7 @@ sap.ui.define([
 			return this._sContentDensityClass;
 		},
 
+		/* Obtenemos los datos del cliente para la comunicación con CPI */
 		getSubscriptionSettings: function () {
 			var that = this;
 			var oModel = this.getModel();
@@ -149,7 +152,6 @@ sap.ui.define([
 				}
 			});
 		}
-
 	});
 
 });

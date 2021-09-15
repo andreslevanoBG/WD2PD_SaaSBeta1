@@ -127,24 +127,21 @@ sap.ui.define([
 				this.toLastPreviousValue = lastto;
 				if (lastfrom !== "" && lastto == "") {
 					aFilters.push(new Filter([
-						new Filter("lastname", FilterOperator.GE, lastfrom),
-						new Filter("firstname", FilterOperator.GE, lastfrom)
+						new Filter("name", FilterOperator.GE, lastfrom)
 					], false));
 				} else if (lastfrom == "" && lastto !== "") {
 					aFilters.push(new Filter([
-						new Filter("lastname", FilterOperator.LE, lastto),
-						new Filter("firstname", FilterOperator.LE, lastto)
+						new Filter("name", FilterOperator.LE, lastto)
 					], false));
 				} else if (lastfrom !== "" && lastto !== "") {
 					aFilters.push(new Filter([
-						new Filter("lastname", FilterOperator.BT, lastfrom, lastto),
-						new Filter("firstname", FilterOperator.BT, lastfrom, lastto)
+						new Filter("name", FilterOperator.BT, lastfrom, lastto)
 						//	new Filter("lastname", FilterOperator.LE, lastto)
 					], false));
 				}
 				var aFilters2 = [];
 				aFilterItems.forEach(function (oItem) {
-					if (oItem.getKey() !== "last_timestamp" && oItem.getKey() !== "lastname") {
+					if (oItem.getKey() !== "last_timestamp" && oItem.getKey() !== "name") {
 						aFilters2.push(new Filter(oItem.getParent().getKey(), FilterOperator.EQ, oItem.getKey()));
 					}
 				});

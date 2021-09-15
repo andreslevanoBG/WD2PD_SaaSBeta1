@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
-	<Dialog id="ondemand" state="Information" icon="sap-icon://action" title="New Execution On Demand" contentHeight="450px"
+	<Dialog id="ondemand" state="Information" icon="sap-icon://action" title="{i18n>newExecDem}" contentHeight="450px"
 		contentWidth="600px">
 		<VBox class="sapUiSmallMargin">
 			<Label text="Algorithm Top Down"/>
@@ -19,7 +19,7 @@
 					<Label labelFor="DTP14" text="To"/>
 					<DateTimePicker id="DTP14" required="true" change="changeDatesDemand" value="{path:'newExec>/toEffec', formatter: '.formatter.Demanddate' }"/>
 					<core:Title text="Organizations"/>
-					<Label labelFor="multiInput1" text="Orgs.List"/>
+					<Label labelFor="multiInput1" text="Organizations Allowed"/>
 					<MultiInput id="multiInput1" width="auto" showValueHelp="false"/>
 					<Label labelFor="tableOrgs" text="Mappings Top Level"/>
 					<Table items="{newExec>/orgsTopLevel}" mode="SingleSelectMaster" noDataText="No Organization Mapping" id="tableOrgs">

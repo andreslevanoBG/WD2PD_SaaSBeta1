@@ -624,7 +624,8 @@ module.exports = cds.service.impl(srv => {
                         {
                             original_external_id: msg.data.original_external_id,
                             name: msg.data.name, corporate_name: msg.data.corporate_name,
-                            last_item_id: msg.data.last_item_id, last_status: msg.data.last_status
+                            last_item_id: msg.data.last_item_id, last_status: msg.data.last_status,
+                            last_timestamp: msg.data.last_timestamp
                         })
                         .where({ external_id: msg.data.external_id })
                 )
@@ -650,7 +651,8 @@ module.exports = cds.service.impl(srv => {
                         {
                             external_id: msg.data.external_id, original_external_id: msg.data.original_external_id,
                             name: msg.data.name, corporate_name: msg.data.corporate_name,
-                            last_item_id: msg.data.last_item_id, last_status: msg.data.last_status
+                            last_item_id: msg.data.last_item_id, last_status: msg.data.last_status,
+                            last_timestamp: msg.data.last_timestamp
                         })
                 )
             }

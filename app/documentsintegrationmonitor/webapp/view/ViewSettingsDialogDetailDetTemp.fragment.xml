@@ -2,37 +2,30 @@
 	<ViewSettingsDialog id="viewSettingsDialogDetailDetTemp" confirm=".onConfirmViewSettingsDialogTemp" cancel="handleCancel" sortDescending="true"
 		resetFilters=".handleResetFilters">
 		<sortItems>
-			<ViewSettingsItem text="Employee" key="uuid" selected="true"/>
-			<!-- <ViewSettingsItem text="First Name" key="firstname" selected="false"/> -->
-			<ViewSettingsItem text="Last Name" key="worker/lastname" selected="false"/>
+			<ViewSettingsItem text="{i18n>masterSort5}" key="uuid" selected="true"/>
+			<ViewSettingsItem text="{i18n>masterSort6}" key="worker/lastname" selected="false"/>
 		</sortItems>
 		<filterItems>
-			<ViewSettingsCustomItem id="idCustomFilterItemTemp" text="Run Dates" key="timestamp_start">
+			<ViewSettingsCustomItem id="idCustomFilterItemTemp" text="{i18n>viewFragmentLabel1}" key="timestamp_start">
 				<customControl>
 					<l:VerticalLayout class="sapUiContentPadding" width="100%">
-						<Label text="FROM"/>
+						<Label text="{i18n>viewFragmentLabel2}"/>
 						<DateTimePicker id="DTP1Temp" value="" valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="long" change="changeDates"
 							class="sapUiSmallMarginBottom"/>
-						<Label text="TO"/>
+						<Label text="{i18n>viewFragmentLabel3}"/>
 						<DateTimePicker id="DTP2Temp" value="" valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="long" change="changeDates"
 							class="sapUiSmallMarginBottom"/>
 					</l:VerticalLayout>
 				</customControl>
 			</ViewSettingsCustomItem>
-			<ViewSettingsFilterItem text="Status" key="status">
+			<ViewSettingsFilterItem text="{i18n>viewFragmentLabel4}" key="status">
 				<items>
-					<ViewSettingsItem text="Success" key="S"/>
-					<ViewSettingsItem text="Error" key="E"/>
-					<ViewSettingsItem text="Warning" key="W"/>
-					<ViewSettingsItem text="Running" key="R"/>
+					<ViewSettingsItem text="{i18n>viewFragmentLabel5}" key="S"/>
+					<ViewSettingsItem text="{i18n>viewFragmentLabel6}" key="E"/>
+					<ViewSettingsItem text="{i18n>viewFragmentLabel7}" key="W"/>
+					<ViewSettingsItem text="{i18n>viewFragmentLabel8}" key="R"/>
 				</items>
 			</ViewSettingsFilterItem>
-			<!--<ViewSettingsCustomItem id="idCustomFilterItem2" text="Number of Documents" key="numberOfItems">
-				<customControl>
-					<RangeSlider showAdvancedTooltip="true" range="0,0" min="0" max="200" width="100%" showHandleTooltip="false" inputsAsTooltips="true"
-						class="sapUiLargeMarginBottom" change="changeSlider"/>
-				</customControl>
-			</ViewSettingsCustomItem> -->
 		</filterItems>
 	</ViewSettingsDialog>
 </core:FragmentDefinition>
