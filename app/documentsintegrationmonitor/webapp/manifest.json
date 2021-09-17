@@ -12,7 +12,7 @@
         "resources": "resources.json",
         "dataSources": {
             "mainService": {
-                "uri": "/ShapeinIntegration/v2/integration/",
+                "uri": "/v2/integration/",
                 "type": "OData",
                 "settings": {
                     "odataVersion": "2.0",
@@ -233,7 +233,7 @@
     },
     "sap.platform.cf": {
         "oAuthScopes": [
-            "$XSAPPNAME.workers"
+            "$XSAPPNAME.Workers"
         ]
     }
 }

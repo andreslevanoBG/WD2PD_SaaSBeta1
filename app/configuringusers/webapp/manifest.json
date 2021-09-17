@@ -31,11 +31,11 @@
 		},
 		"dataSources": {
 			"mainService": {
-				"uri": "/ShapeinIntegration/v2/Integration/",
+				"uri": "/v2/integration/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
-					"localUri": "localService/Integration/metadata.xml"
+					"localUri": "localService/integration/metadata.xml"
 				}
 			},
 			"json_model_data_source": {
@@ -145,7 +145,7 @@
 	},
 	"sap.platform.cf": {
 		"oAuthScopes": [
-			"$XSAPPNAME.users"
+			"$XSAPPNAME.Users"
 		]
 	},
 	"sap.platform.hcp": {
