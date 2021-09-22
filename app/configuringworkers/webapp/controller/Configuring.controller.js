@@ -3,30 +3,55 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment",
+	"sap/ui/model/Sorter",
 	"./Utils",
-	"./json2xml"
-], function (BaseController, MessageBox, History, JSONModel, Fragment, Utils, Jquery) {
+	"./json2xml",
+	"../model/formatter",
+], function (BaseController, MessageBox, History, JSONModel, Fragment, Sorter, Utils, Jquery, formatter) {
 	"use strict";
+
+	var oIndex = 1;
 
 	return BaseController.extend("shapein.ConfiguringWorkers.controller.Configuring", {
 
+		formatter: formatter,
+
 		onInit: function () {
+
+			this.selectedVar = "";
+			this.context = "";
+			this.code = "";
+			this.mapping_type = "";
+			this.metadata = "";
+			this.value = "";
+
+			var oModel5 = new JSONModel();
+			this.getView().setModel(oModel5, "jerarquia");
+			var oModel6 = new JSONModel();
+			this.getView().setModel(oModel6, "xsd");
+			var oRawModel = new JSONModel();
+			this.getView().setModel(oRawModel, "RawModel");
+			var oModel2 = new JSONModel();
+			this.getView().setModel(oModel2, "template");
+			var oModel22 = new JSONModel();
+			this.getView().setModel(oModel22, "LValues");
+
 			var vThat = this;
 			var vWindow = window;
 
 			var modelBase64 = this.getOwnerComponent().getModel();
 			this.getView().setModel(modelBase64, "Base64");
-            var that = this;
-            
-            var oGlobalBusyDialog = new sap.m.BusyDialog();
-            oGlobalBusyDialog.open();
-            
+			var that = this;
+
+			var oGlobalBusyDialog = new sap.m.BusyDialog();
+			oGlobalBusyDialog.open();
+
 			modelBase64.attachBatchRequestCompleted(function (oEvent) {
 				var requests = oEvent.getParameter('requests');
-				for(var i = 0; i < requests.length; i++){
-					if(requests[i].url == "Subscription_Settings"){
-                        that.readBase64(modelBase64);	
-                        oGlobalBusyDialog.close();
+				for (var i = 0; i < requests.length; i++) {
+					if (requests[i].url == "Subscription_Settings") {
+						that.readBase64(modelBase64);
+						oGlobalBusyDialog.close();
 					}
 				}
 			});
@@ -452,7 +477,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 			} else {
 				return true;
 			}
-        },
+		},
 		addRow_startingdate: function (oArg) {
 			var dataModel = this.getView().getModel("ModelJSON");
 
@@ -487,7 +512,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					}
 				}
 			} else {
-                sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
+				sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("viewMessage1"));
 
 			}
 		},
@@ -931,7 +956,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					"value": vBase64
 				};
 
-                var oThat = this;
+				var oThat = this;
 				var sUrl = "/Configurations(pck_code='SYN_WORKER',conf_code='SCE-CONFIG')";
 				vServiceModel.update(sUrl, changedData, {
 					success: function (oData, response) {
@@ -965,7 +990,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 							"country_logic": {
 								"country": []
 							}
-                        },
+						},
 						"starting_date": {
 							"mappings": {
 								"mapping": []
@@ -1084,7 +1109,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					_secuence: vValue5SD
 				});
 			}
-            
+
 			//MAPPING CONFIGURATION - LANGUAGE
 			var vBPC7_default_code;
 
@@ -1139,18 +1164,38 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 			}
 
 			//CUSTOM FIELDS - FIELD/VALUE
+			// var vItems6 = this.getView().byId("table0_1605526253660").getItems();
+			// for (var k = 0; k < vItems6.length; k++) {
+			// 	var cells6 = vItems6[k].getAggregation("cells");
+			// 	var vValue21 = cells6[2].getProperty("text");
+			// 	var vValue31 = cells6[1].getProperty("value");
+			// 	array.global_configuration.mappings.custom_fields.fields.field.push({
+			// 		_custom_id: vValue21,
+			// 	});
+			// 	array.global_configuration.mappings.custom_fields.fields.field[k]['#text'] = vValue31;
+			// }
+			// for (var a = 0; a < array.global_configuration.mappings.custom_fields.fields.field.length; a++) {
+			// 	var aux = array.global_configuration.mappings.custom_fields.fields.field[a]['#text'].replace(/\s/g, '').length;
+			// 	if (aux == 0) {
+			// 		array.global_configuration.mappings.custom_fields.fields.field.splice(a, 1);
+			// 	}
+			// }
+
 			var vItems6 = this.getView().byId("table0_1605526253660").getItems();
 			for (var k = 0; k < vItems6.length; k++) {
 				var cells6 = vItems6[k].getAggregation("cells");
-				var vValue21 = cells6[2].getProperty("text");
-				var vValue31 = cells6[1].getProperty("value");
-				//if (vValue31.replace(/\s/g, '').length !== 0) {
+				var vValue21 = cells6[3].getProperty("text");
+				var vValue31 = cells6[1].getAggregation("items")[0].getProperty("value")
+				var vValue41 = cells6[2].getProperty("text");
+				var vValue51 = cells6[4].getProperty("value");
+				var vValue61 = cells6[5].getProperty("value");
 				array.global_configuration.mappings.custom_fields.fields.field.push({
 					_custom_id: vValue21,
-					//"#text": vValue31
+					_source: vValue41,
+					_mapping_type: vValue51,
+					_metadata: vValue61,
 				});
 				array.global_configuration.mappings.custom_fields.fields.field[k]['#text'] = vValue31;
-				//}
 			}
 			for (var a = 0; a < array.global_configuration.mappings.custom_fields.fields.field.length; a++) {
 				var aux = array.global_configuration.mappings.custom_fields.fields.field[a]['#text'].replace(/\s/g, '').length;
@@ -1204,6 +1249,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 			var string3 = oXML.split("</custom_fields>");
 			string3 = string3[1];
 
+			string2.replace(/\&#x2F;/g, "/");
 			oXML = string1 + string2 + string3;
 			base64 = window.btoa(oXML);
 			return base64;
@@ -1307,7 +1353,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 				}
 			}
 
-            /*
+			/*
 			var vStarting_Date = vMappings[1].childNodes;
 			var vMappingsSD = vStarting_Date[0].childNodes;
 			for (var n7 = 0; n7 < vMappingsSD.length; n7++) {
@@ -1327,7 +1373,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 				});
             }
             */
-            
+
 			var vLanguage = vMappings[1].childNodes;
 			var vDefaultValues1 = vLanguage[0].childNodes;
 			if (vDefaultValues1.length !== 0) {
@@ -1452,8 +1498,8 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 			}
 
 			return array;
-        },
-        
+		},
+
 		transformXML2JSON: function (oXML) {
 			var oThis = this;
 
@@ -1703,6 +1749,9 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 							//Custom Fields
 							var vVar19;
 							var vVar20;
+							var vVar211;
+							var vVar212
+							var vVar213
 							vCustomFields.forEach(function (entry) {
 								var vCustomField = entry.childNodes;
 								vCustomField.forEach(function (entry) {
@@ -1713,9 +1762,16 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 										vVar20 = " ";
 									}
 
+									vVar211 = entry.getAttribute("source");
+									vVar212 = entry.getAttribute("mapping_type");
+									vVar213 = entry.getAttribute("metadata");
+
 									array.global_configuration.mappings.custom_fields.fields.field.push({
 										id: vVar19,
-										value: vVar20
+										value: vVar20,
+										source: vVar211,
+										mapping_type: vVar212,
+										metadata: vVar213
 									});
 
 								})
@@ -1795,8 +1851,8 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 			})
 
 			return array;
-        },
-        
+		},
+
 		callCPIShapeIn_CustomFields: function () {
 
 			//var url = "/CPI-WD2PD/pd/custom_fields";
@@ -1840,9 +1896,17 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 									for (var a = 0; a < oData.global_configuration.mappings.custom_fields.fields.field.length; a++) {
 										if (oData.global_configuration.mappings.custom_fields.fields.field[a].id === result[i].id) {
 											var vValueA = oData.global_configuration.mappings.custom_fields.fields.field[a].value;
+
+											var vSourceA = oData.global_configuration.mappings.custom_fields.fields.field[a].source;
+											var vMappingTypeA = oData.global_configuration.mappings.custom_fields.fields.field[a].mapping_type;
+											var vMetadataA = oData.global_configuration.mappings.custom_fields.fields.field[a].metadata;
+
 											break;
 										} else {
 											vValueA = "";
+											vSourceA = "";
+											vMappingTypeA = "";
+											vMetadataA = "";
 										}
 									}
 									var oLabel1 = result[i].localized_labels[j].value + "(" + result[i].id + ")";
@@ -1853,6 +1917,9 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 										label: oLabel1,
 										language_code: result[i].localized_labels[j].language_code,
 										value: vValueA,
+										source: vSourceA,
+										mapping_type: vMappingTypeA,
+										metadata: vMetadataA,
 									});
 								}
 							}
@@ -1862,9 +1929,16 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 								for (var b = 0; b < oData.global_configuration.mappings.custom_fields.fields.field.length; b++) {
 									if (oData.global_configuration.mappings.custom_fields.fields.field[b].id === result[s].id) {
 										var vValueB = oData.global_configuration.mappings.custom_fields.fields.field[b].value;
+
+										var vSourceB = oData.global_configuration.mappings.custom_fields.fields.field[b].source;
+										var vMappingTypeB = oData.global_configuration.mappings.custom_fields.fields.field[b].mapping_type;
+										var vMetadataB = oData.global_configuration.mappings.custom_fields.fields.field[b].metadata;
 										break;
 									} else {
 										vValueB = "";
+										vSourceB = "";
+										vMappingTypeB = "";
+										vMetadataB = "";
 									}
 								}
 								var oLabel2 = result[s].label + "\u00a0" + "(" + result[s].id + ")";
@@ -1874,6 +1948,9 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 									label: oLabel2,
 									language_code: sap.ui.getCore().getConfiguration().getLanguage(),
 									value: vValueB,
+									source: vSourceB,
+									mapping_type: vMappingTypeB,
+									metadata: vMetadataB,
 								});
 							}
 						}
@@ -2017,6 +2094,1062 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 			};
 			var oModel = new JSONModel(oObject);
 			this.getView().setModel(oModel, "RadioButtonModel");
-		}
+		},
+
+		/* Al seleccionar una fuente para el xsd */
+		selectSource: function (oObject) {
+			this.context = oObject.getSource().getBindingContext("CustomFields");
+			var type = this.context.getProperty(this.context.getPath()).mapping_type;
+			var value = this.context.getProperty(this.context.getPath()).value;
+			this.value = this.context.getProperty(this.context.getPath()).value;
+			var source = this.context.getProperty(this.context.getPath()).source;
+			this.buttonIdSel = oObject.getSource().getId();
+			//var type = this.buttonIdSel = oObject.getSource().getId();
+			// if (this.buttonIdSel.match("ButPathAttri") || this.buttonIdSel.match("ButPathEditAttri")) {
+			// 	this.pathButtonSel = "";
+			// } else if (this.buttonIdSel.match("pathGlobVar")) {
+			// 	this.pathButtonSel = "";
+			// 	if (this.typeGVEdit != "" || this.sourceGVEdit != "") {
+			// 		var type = this.typeGVEdit;
+			// 		var source = this.sourceGVEdit;
+			// 		var value = this.byId("Value_GV").getValue();
+			// 	}
+			// } else {
+			// 	this.pathButtonSel = oObject.getSource().getParent().getBindingContext("template").getPath();
+			// 	var sourcePath = oObject.getSource().getParent().getBindingContext("template").getPath() + "/source";
+			// 	var source = this.getView().getModel("template").getProperty(sourcePath);
+			// 	var typePath = oObject.getSource().getParent().getBindingContext("template").getPath() + "/type";
+			// 	var type = this.getView().getModel("template").getProperty(typePath);
+			// 	var valPath = oObject.getSource().getParent().getBindingContext("template").getPath() + "/path";
+			// 	var value = this.getView().getModel("template").getProperty(valPath);
+			// }
+
+			if (!this.byId("selSource")) {
+				Fragment.load({
+					id: this.getView().getId(),
+					name: "shapein.ConfiguringWorkers.view.sourceXsd",
+					controller: this
+				}).then(function (oDialog) {
+					this.getView().addDependent(oDialog);
+					this.byId("constSource").setSelected(false);
+					this.byId("valueCte").setVisible(false);
+					this.byId("valueCte").setValue("");
+					this.byId("sourXsdPath").setEnabled(true);
+					//oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+					if (type == "CTE") {
+						this.byId("constSource").setSelected(true);
+						this.byId("valueCte").setVisible(true);
+						this.byId("sourXsdPath").setEnabled(false);
+						this.byId("valueCte").setValue(value);
+					} else {
+						this.byId("constSource").setSelected(false);
+						this.byId("valueCte").setVisible(false);
+						this.byId("valueCte").setValue("");
+						this.byId("sourXsdPath").setEnabled(true);
+						if (source) {
+							this.byId("sourXsdPath").setSelectedKey(source);
+						}
+					}
+					oDialog.open();
+				}.bind(this));
+			} else {
+				this.byId("constSource").setSelected(false);
+				this.byId("valueCte").setVisible(false);
+				this.byId("valueCte").setValue("");
+				this.byId("sourXsdPath").setEnabled(true);
+				if (type == "CTE") {
+					this.byId("constSource").setSelected(true);
+					this.byId("valueCte").setVisible(true);
+					this.byId("sourXsdPath").setEnabled(false);
+					this.byId("valueCte").setValue(value);
+				} else {
+					this.byId("constSource").setSelected(false);
+					this.byId("valueCte").setVisible(false);
+					this.byId("valueCte").setValue("");
+					this.byId("sourXsdPath").setEnabled(true);
+					if (source) {
+						this.byId("sourXsdPath").setSelectedKey(source);
+					}
+				}
+				this.byId("selSource").open();
+			}
+		},
+
+		/* Limpiar un mapeo */
+		clearMap: function (oObject) {
+			// var path = oObject.getSource().getParent().getBindingContext("template").getPath();
+			// var oModel = this.getModel("template");
+			// var path2 = path + "/map";
+			// oModel.setProperty(path2, "");
+			// path2 = path + "/metadata";
+			// oModel.setProperty(path2, "");
+			// path2 = path + "/path";
+			// oModel.setProperty(path2, "");
+			// path2 = path + "/type";
+			// oModel.setProperty(path2, "");
+			// path2 = path + "/source";
+			// oModel.setProperty(path2, "");
+			// path2 = path + "/map";
+			// oModel.setProperty(path2, "");
+			// oModel.refresh();
+
+			this.context = oObject.getSource().getBindingContext("CustomFields");
+			var oPath = this.context.getPath() + "/value";
+			this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPath, "");
+
+			var oPathSource = this.context.getPath() + "/source";
+			this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathSource, "");
+
+			var oPathType = this.context.getPath() + "/mapping_type";
+			this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathType, "");
+
+			var oPathMetadata = this.context.getPath() + "/metadata";
+			this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathMetadata, "");
+		},
+
+		/* Al seleccionar una fuente para el xsd */
+		selecSource: function (oEvent) {
+			var pathXsd = this.byId("sourXsdPath").getSelectedItem().getBindingContext().getPath() + "/xsd_id";
+			var pathCode = this.byId("sourXsdPath").getSelectedItem().getBindingContext().getPath() + "/code";
+			var pathType = this.byId("sourXsdPath").getSelectedItem().getBindingContext().getPath() + "/type";
+			var oModel = this.getOwnerComponent().getModel();
+			var xsd_id = oModel.getProperty(pathXsd);
+			var code = oModel.getProperty(pathCode);
+			var type = oModel.getProperty(pathType);
+
+			this.code = code;
+			//this.mapping_type = type;
+
+			if (this.byId("constSource").getSelected()) {
+				type = "CTE";
+			}
+			var dialogSelSource = oEvent.getSource().getParent();
+			if (type == 'XSD') {
+				if (code == this.code_id_filled) {
+					dialogSelSource.close();
+					this.openGetPath();
+				} else {
+					this.code_id_filled = code;
+					dialogSelSource.setBusy(true);
+					this.fill_Parser(xsd_id);
+				}
+			} else if (type == 'LVA') {
+				dialogSelSource.setBusy(true);
+				this.fill_List_Values(code);
+			} else {
+				//constantes
+				this.fill_cte();
+			}
+		},
+
+		/* Cancelar la selección de la fuente del xsd */
+		cancelSelSource: function (oEvent) {
+			var dialogSelSource = oEvent.getSource().getParent();
+			dialogSelSource.close();
+		},
+
+		/* Recuperamos los datos del xsd pertinente */
+		fill_Parser: function (xsd_id) {
+			var oModel = this.getOwnerComponent().getModel();
+			// var BPMode = this.getOwnerComponent().getModel("jerarquia");
+			// var XSDModel = this.getOwnerComponent().getModel("xsd");
+			var BPMode = this.getView().getModel("jerarquia");
+			var XSDModel = this.getView().getModel("xsd");
+			var that = this;
+			var aFilter = [];
+			var xsdFil = new sap.ui.model.Filter("xsd_id", sap.ui.model.FilterOperator.EQ, xsd_id);
+			aFilter.push(xsdFil);
+			var sPath = "/Di_Parser_Xsd_Definition";
+			oModel.read(sPath, {
+				filters: aFilter,
+				success: function (oData, oResponse) {
+					var results = oData.results;
+					delete oData.__metadata;
+					// var oRawModel = that.getModel("RawModel");
+					var oRawModel = that.getView().getModel("RawModel");
+					oRawModel.setData(results);
+					var tree = that.pasaratree(results);
+					XSDModel.setData(tree);
+					BPMode.setData({
+						nodeRoot: {
+							nodes: tree
+						}
+					});
+					BPMode.refresh();
+					var dialogSelSource = that.byId("selSource");
+					if (dialogSelSource) {
+						that.byId("selSource").setBusy(false);
+						that.byId("selSource").close();
+					}
+					that.openGetPath();
+				},
+				error: function (oError) {
+					var dialogSelSource = that.byId("selSource");
+					if (dialogSelSource) {
+						that.byId("selSource").setBusy(false);
+						that.byId("selSource").close();
+					}
+					var text = that.getResourceBundle().getText("errorLoad");
+					sap.m.MessageToast.show(text);
+				}
+			});
+		},
+
+		/* Recuperar los Custom Fields de persistencia */
+		fill_List_Values: function (lvaid) {
+			var aFilter = [];
+			var listFil = new sap.ui.model.Filter("lvaid", sap.ui.model.FilterOperator.EQ, lvaid);
+			// var oModel = this.getOwnerComponent().getModel();
+			// var LVModel = this.getOwnerComponent().getModel("LValues");
+			var oModel = this.getView().getModel();
+			var LVModel = this.getView().getModel("LValues");
+			var that = this;
+			var sPath = "/Di_List_Values";
+			aFilter.push(listFil);
+			oModel.read(sPath, {
+				filters: aFilter,
+				success: function (oData, oResponse) {
+					var results = oData.results;
+					delete oData.__metadata;
+					LVModel.setData(results);
+					LVModel.refresh();
+					var dialogSelSource = that.byId("selSource");
+					if (dialogSelSource) {
+						that.byId("selSource").setBusy(false);
+						that.byId("selSource").close();
+					}
+					that.openSelectList();
+				},
+				error: function (oError) {}
+			});
+		},
+
+		/* Recuperar los Custom Fields de persistencia */
+		fill_List_Values1: function () {
+			var aFilter = [];
+			var lvaid = this.keyList;
+			var listFil = new sap.ui.model.Filter("lvaid", sap.ui.model.FilterOperator.EQ, lvaid);
+			// var oModel = this.getOwnerComponent().getModel();
+			// var LVModel = this.getOwnerComponent().getModel("LValues");
+			var oModel = this.getView().getModel();
+			var LVModel = this.getView().getModel("LValues");
+			var that = this;
+			var sPath = "/Di_List_Values";
+			aFilter.push(listFil);
+			oModel.read(sPath, {
+				filters: aFilter,
+				success: function (oData, oResponse) {
+					var results = oData.results;
+					delete oData.__metadata;
+					LVModel.setData(results);
+					LVModel.refresh();
+				},
+				error: function (oError) {}
+			});
+		},
+		
+		/* Recuperar los Custom Fields de persistencia */
+		fill_List_Values2: function (lvaid) {
+			var aFilter = [];
+			var vFilter = this.keyList;
+
+			if (lvaid) {
+				var listFil = new sap.ui.model.Filter("lvaid", sap.ui.model.FilterOperator.EQ, lvaid);
+			} else {
+				var listFil = new sap.ui.model.Filter("lvaid", sap.ui.model.FilterOperator.EQ, vFilter);
+			}
+
+			//var listFil = new sap.ui.model.Filter("lvaid", sap.ui.model.FilterOperator.EQ, lvaid);
+			//var oModel = this.getOwnerComponent().getModel();
+			//var LVModel = this.getOwnerComponent().getModel("LValues");
+			var oModel = this.getView().getModel();
+			var LVModel = this.getView().getModel("LValues");
+			var that = this;
+			var sPath = "/Di_List_Values";
+			aFilter.push(listFil);
+			oModel.read(sPath, {
+				filters: aFilter,
+				success: function (oData, oResponse) {
+					var results = oData.results;
+					delete oData.__metadata;
+					LVModel.setData(results);
+					LVModel.refresh();
+					var dialogSelSource = that.byId("selSource");
+					if (dialogSelSource) {
+						that.byId("selSource").setBusy(false);
+						that.byId("selSource").close();
+					}
+					if (lvaid) {
+						that.openSelectList();
+					}
+				},
+				error: function (oError) {}
+			});
+		},
+		/* Formatear el xsd para que se pueda visualizar bien en el componente */
+		pasaratree: function (array, parent, tree) {
+			tree = typeof tree !== 'undefined' ? tree : [];
+			parent = typeof parent !== 'undefined' ? parent : {
+				node_id: 0
+			};
+			var nodes = array.filter(function (child) {
+				if (child.parent_id === parent.node_id) {
+					return true;
+				} else {
+					return false;
+				}
+			});
+			var that = this;
+			if (nodes.length > 0) {
+				if (parent.node_id === 0) {
+					tree = nodes;
+				} else {
+					parent['nodes'] = nodes;
+				}
+				nodes.forEach(function (child) {
+					that.pasaratree(array, child);
+				});
+			}
+			return tree;
+		},
+		/* Abrimos el pop-up para la visualización del xsd y gestionar los mapeos */
+		openGetPath: function () {
+			var buttonId = this.buttonIdSel;
+			var path = this.pathButtonSel;
+			var oView = this.getView();
+			var vThat = this;
+			var mapping_var = "";
+			var metadata_var = "";
+			var edit = "";
+			var oModel = this.getOwnerComponent().getModel();
+			var path2 = "/Di_Template_Mapping_Sources('" + this.code_id_filled + "')/text";
+			var title1 = oModel.getProperty(path2);
+			var globalVar = "";
+			if (buttonId.match("ButPathAttri")) {
+				var pat = this.byId("PathAttribu").getValue();
+			} else if (buttonId.match("ButPathEditAttri")) {
+				var pat = this.byId("PathAttribuEdit").getValue();
+				edit = "X";
+			} else if (buttonId.match("pathGlobVar")) {
+				var pat = this.byId("Value_GV").getValue();
+				globalVar = "X";
+			} else if (buttonId.match("pathMeta")) {
+				metadata_var = "X";
+				var property = path + "/code";
+				var property2 = path + "/path";
+				this.selectedVarMeta = this.getView().getModel("template").getProperty(property);
+				var pat = this.getView().getModel("template").getProperty(property2);
+			} else {
+				mapping_var = "X";
+				var property = path + "/slug";
+				var property2 = path + "/path";
+				this.selectedVar = this.getView().getModel("template").getProperty(property);
+				var pat = this.getView().getModel("template").getProperty(property2);
+
+				var pat = this.value;
+			}
+			if (!this.byId("treeTable")) {
+				Fragment.load({
+					id: oView.getId(),
+					name: "shapein.ConfiguringWorkers.view.treeTable",
+					controller: this
+				}).then(function (oDialog) {
+					oView.addDependent(oDialog);
+					//oDialog.addStyleClass(vThat.getOwnerComponent().getContentDensityClass());
+					if (mapping_var == "X") {
+						var title = title1 + ": " + vThat.selectedVar;
+						oDialog.setTitle(title);
+						vThat.byId("BtnAccept").setVisible(true);
+						vThat.byId("BtnAccept2").setVisible(false);
+						vThat.byId("BtnAccept3").setVisible(false);
+						vThat.byId("BtnAccept4").setVisible(false);
+						vThat.byId("BtnAccept5").setVisible(false);
+
+					} else if (metadata_var == "X") {
+						var title = title1 + ": " + vThat.selectedVarMeta;
+						oDialog.setTitle(title);
+						vThat.byId("BtnAccept").setVisible(false);
+						vThat.byId("BtnAccept2").setVisible(false);
+						vThat.byId("BtnAccept3").setVisible(false);
+						vThat.byId("BtnAccept4").setVisible(false);
+						vThat.byId("BtnAccept5").setVisible(true);
+					} else if (globalVar == "X") {
+						var title = title1;
+						oDialog.setTitle(title);
+						vThat.byId("BtnAccept").setVisible(false);
+						vThat.byId("BtnAccept2").setVisible(false);
+						vThat.byId("BtnAccept3").setVisible(false);
+						vThat.byId("BtnAccept4").setVisible(true);
+						vThat.byId("BtnAccept5").setVisible(false);
+					} else {
+						var title = title1;
+						oDialog.setTitle(title);
+						if (edit != "X") {
+							vThat.byId("BtnAccept2").setVisible(true);
+							vThat.byId("BtnAccept").setVisible(false);
+							vThat.byId("BtnAccept3").setVisible(false);
+							vThat.byId("BtnAccept4").setVisible(false);
+							vThat.byId("BtnAccept5").setVisible(false);
+						} else {
+							vThat.byId("BtnAccept3").setVisible(true);
+							vThat.byId("BtnAccept").setVisible(false);
+							vThat.byId("BtnAccept2").setVisible(false);
+							vThat.byId("BtnAccept4").setVisible(false);
+							vThat.byId("BtnAccept5").setVisible(false);
+						}
+					}
+					oDialog.open();
+					var oTreeTable = vThat.byId("TreeTableBasic1");
+					oTreeTable.expandToLevel(3);
+					var oInput = vThat.byId("pathTextArea");
+					oInput.setValue(pat);
+				});
+			} else {
+				if (mapping_var == "X") {
+					var title = title1 + ": " + vThat.selectedVar;
+					this.byId("treeTable").setTitle(title);
+					this.byId("BtnAccept").setVisible(true);
+					this.byId("BtnAccept2").setVisible(false);
+					this.byId("BtnAccept3").setVisible(false);
+					this.byId("BtnAccept4").setVisible(false);
+					this.byId("BtnAccept5").setVisible(false);
+				} else if (metadata_var == "X") {
+					var title = title1 + ": " + vThat.selectedVarMeta;
+					this.byId("treeTable").setTitle(title);
+					this.byId("BtnAccept").setVisible(false);
+					this.byId("BtnAccept2").setVisible(false);
+					this.byId("BtnAccept3").setVisible(false);
+					this.byId("BtnAccept4").setVisible(false);
+					this.byId("BtnAccept5").setVisible(true);
+				} else if (globalVar == "X") {
+					var title = title1;
+					this.byId("treeTable").setTitle(title);
+					this.byId("BtnAccept").setVisible(false);
+					this.byId("BtnAccept2").setVisible(false);
+					this.byId("BtnAccept3").setVisible(false);
+					this.byId("BtnAccept4").setVisible(true);
+					this.byId("BtnAccept5").setVisible(false);
+				} else {
+					if (edit != "X") {
+						this.byId("BtnAccept2").setVisible(true);
+						this.byId("BtnAccept").setVisible(false);
+						this.byId("BtnAccept3").setVisible(false);
+						this.byId("BtnAccept4").setVisible(false);
+						this.byId("BtnAccept5").setVisible(false);
+					} else {
+						this.byId("BtnAccept3").setVisible(true);
+						this.byId("BtnAccept2").setVisible(false);
+						this.byId("BtnAccept").setVisible(false);
+						this.byId("BtnAccept4").setVisible(false);
+						this.byId("BtnAccept5").setVisible(false);
+					}
+					var title = title1;
+					this.byId("treeTable").setTitle(title);
+				}
+				this.byId("treeTable").open();
+				var oInput = vThat.byId("pathTextArea");
+				oInput.setValue(pat);
+			}
+		},
+		/* Recuperar los Custom Fields de persistencia */
+		openSelectList: function () {
+			var buttonId = this.buttonIdSel;
+			var path = this.pathButtonSel;
+			var mapping_var = "";
+			var metadata_var = "";
+			var edit = "";
+			var globalVar = "";
+			var vThat = this;
+			if (buttonId.match("ButPathAttri")) {} else if (buttonId.match("ButPathEditAttri")) {
+				edit = "X";
+			} else if (buttonId.match("pathGlobVar")) {
+				globalVar = "X";
+			} else if (buttonId.match("pathMeta")) {
+				metadata_var = "X";
+			} else {
+				mapping_var = "X";
+			}
+
+			//mapping_var = "X";
+			if (!this.byId("selectLVs")) {
+				Fragment.load({
+					id: this.getView().getId(),
+					name: "shapein.ConfiguringWorkers.view.selectLVs",
+					controller: this
+				}).then(function (oDialog) {
+					this.getView().addDependent(oDialog);
+					//oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+					vThat.byId("tableSelLVs").removeSelections();
+					var items = vThat.byId("tableSelLVs").getItems();
+					if (mapping_var == "X") {
+						vThat.byId("BtnSelList1").setVisible(true);
+						vThat.byId("BtnSelList2").setVisible(false);
+						vThat.byId("BtnSelList3").setVisible(false);
+						vThat.byId("BtnSelList4").setVisible(false);
+						vThat.byId("BtnSelList5").setVisible(false);
+						var property = path + "/path";
+						var valList = vThat.getView().getModel("template").getProperty(property);
+						var valList = this.value;
+					} else if (metadata_var == "X") {
+						vThat.byId("BtnSelList1").setVisible(false);
+						vThat.byId("BtnSelList2").setVisible(false);
+						vThat.byId("BtnSelList3").setVisible(false);
+						vThat.byId("BtnSelList4").setVisible(false);
+						vThat.byId("BtnSelList5").setVisible(true);
+						var property = path + "/path";
+						var valList = vThat.getView().getModel("template").getProperty(property);
+						var valList = this.value;
+					} else if (globalVar == "X") {
+						vThat.byId("BtnSelList1").setVisible(false);
+						vThat.byId("BtnSelList2").setVisible(false);
+						vThat.byId("BtnSelList3").setVisible(false);
+						vThat.byId("BtnSelList4").setVisible(true);
+						vThat.byId("BtnSelList5").setVisible(false);
+						var valList = vThat.byId("Value_GV").getValue();
+						var valList = this.value;
+					} else {
+						if (edit != "X") {
+							vThat.byId("BtnSelList2").setVisible(true);
+							vThat.byId("BtnSelList1").setVisible(false);
+							vThat.byId("BtnSelList3").setVisible(false);
+							vThat.byId("BtnSelList4").setVisible(false);
+							vThat.byId("BtnSelList").setVisible(false);
+						} else {
+							vThat.byId("BtnSelList3").setVisible(true);
+							vThat.byId("BtnSelList1").setVisible(false);
+							vThat.byId("BtnSelList2").setVisible(false);
+							vThat.byId("BtnSelList4").setVisible(false);
+							vThat.byId("BtnSelList5").setVisible(false);
+						}
+					}
+					for (var i = 0; i < items.length; i++) {
+						var pathIt = items[i].getBindingContext("LValues").getPath() + "/text";
+						//var valueIt = vThat.getModel("LValues").getProperty(pathIt);
+						var valueIt = vThat.getView().getModel("LValues").getProperty(pathIt);
+						if (valueIt == valList) {
+							vThat.byId("tableSelLVs").setSelectedItem(items[i]);
+							break;
+						}
+					}
+					oDialog.open();
+				}.bind(this));
+			} else {
+				vThat.byId("tableSelLVs").removeSelections();
+				var items = vThat.byId("tableSelLVs").getItems();
+				if (mapping_var == "X") {
+					vThat.byId("BtnSelList1").setVisible(true);
+					vThat.byId("BtnSelList2").setVisible(false);
+					vThat.byId("BtnSelList3").setVisible(false);
+					vThat.byId("BtnSelList4").setVisible(false);
+					vThat.byId("BtnSelList5").setVisible(false);
+					var property = path + "/path";
+					var valList = vThat.getView().getModel("template").getProperty(property);
+					var valList = this.value;
+				} else if (metadata_var == "X") {
+					vThat.byId("BtnSelList1").setVisible(false);
+					vThat.byId("BtnSelList2").setVisible(false);
+					vThat.byId("BtnSelList3").setVisible(false);
+					vThat.byId("BtnSelList4").setVisible(false);
+					vThat.byId("BtnSelList5").setVisible(true);
+					var property = path + "/path";
+					var valList = vThat.getView().getModel("template").getProperty(property);
+					var valList = this.value;
+				} else if (globalVar == "X") {
+					vThat.byId("BtnSelList1").setVisible(false);
+					vThat.byId("BtnSelList2").setVisible(false);
+					vThat.byId("BtnSelList3").setVisible(false);
+					vThat.byId("BtnSelList4").setVisible(true);
+					vThat.byId("BtnSelList5").setVisible(false);
+					var valList = vThat.byId("Value_GV").getValue();
+					var valList = this.value;
+				} else {
+					if (edit != "X") {
+						vThat.byId("BtnSelList2").setVisible(true);
+						vThat.byId("BtnSelList1").setVisible(false);
+						vThat.byId("BtnSelList3").setVisible(false);
+						vThat.byId("BtnSelList4").setVisible(false);
+						vThat.byId("BtnSelList").setVisible(false);
+					} else {
+						vThat.byId("BtnSelList3").setVisible(true);
+						vThat.byId("BtnSelList1").setVisible(false);
+						vThat.byId("BtnSelList2").setVisible(false);
+						vThat.byId("BtnSelList4").setVisible(false);
+						vThat.byId("BtnSelList5").setVisible(false);
+					}
+				}
+				for (var i = 0; i < items.length; i++) {
+					var pathIt = items[i].getBindingContext("LValues").getPath() + "/text";
+					//var valueIt = vThat.getModel("LValues").getProperty(pathIt);
+					var valueIt = vThat.getView().getModel("LValues").getProperty(pathIt);
+					if (valueIt == valList) {
+						vThat.byId("tableSelLVs").setSelectedItem(items[i]);
+						break;
+					}
+				}
+				this.byId("selectLVs").open();
+			}
+		},
+		/*Al seleccionar mapear a valor constante */
+		selectConst: function (oEvent) {
+			var selected = oEvent.getParameter("selected");
+			if (selected) {
+				this.byId("valueCte").setVisible(true);
+				this.byId("sourXsdPath").setEnabled(false);
+			} else {
+				this.byId("valueCte").setVisible(false);
+				this.byId("sourXsdPath").setEnabled(true);
+			}
+		},
+		fill_cte: function () {
+			var buttonId = this.buttonIdSel;
+			var path = this.pathButtonSel;
+			var vThat = this;
+			var valu = this.byId("valueCte").getValue();
+			if (buttonId.match("pathGlobVar")) {
+				var oGlobalVariModel = this.getModel("globalVari");
+				var oGlobalVariData = oGlobalVariModel.getData();
+				oGlobalVariData.type = "CTE";
+				oGlobalVariData.metadata = null;
+				oGlobalVariData.source = null;
+				oGlobalVariData.required = false;
+				oGlobalVariModel.setData(oGlobalVariData);
+				this.byId("Value_GV").setValue(valu);
+				this.byId("Source_GV").setValue("");
+				oGlobalVariModel.refresh();
+				this.byId("selSource").close();
+			} else if (buttonId.match("pathMeta")) {
+				var data = this.getModel("template").getData();
+				var property = path + "/code";
+				this.selectedVarMeta = this.getView().getModel("template").getProperty(property);
+				var metadata = data.metadata.find(metada => metada.slug === this.selectedVarMeta);
+				metadata.path = valu;
+				metadata.source = null;
+				metadata.type = "CTE";
+				metadata.metadata = null;
+				this.getModel("template").setData(data);
+				this.getModel("template").refresh();
+				this.byId("selSource").close();
+			} else {
+				this.byId("text12").setValue(valu);
+
+				/*//var data = this.getModel("template").getData();
+				var data = this.getView().getModel("template").getData();
+				var property = path + "/slug";
+				this.selectedVar = this.getView().getModel("template").getProperty(property);
+				var variable = data.variables.find(variable => variable.slug === this.selectedVar);
+				//var variable;
+				variable.path = valu;
+				variable.source = null;
+				variable.type = "CTE";
+				variable.metadata = null;
+				this.getModel("template").setData(data);
+				this.getModel("template").refresh();*/
+
+				// var oPath = this.context.getPath() + "/value";
+				// this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPath, valu);
+
+				this.code = "";
+				this.mapping_type = "CTE";
+				this.metadata = "";
+
+				var oPathValue = this.context.getPath() + "/value";
+				this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathValue, valu);
+
+				var oPathSource = this.context.getPath() + "/source";
+				this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathSource, this.code);
+
+				var oPathType = this.context.getPath() + "/mapping_type";
+				this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathType, this.mapping_type);
+
+				var oPathMetadata = this.context.getPath() + "/metadata";
+				this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathMetadata, this.metadata);
+
+				this.byId("selSource").close();
+			}
+		},
+		/* Cerrar el popup de seleccionar valor del listado para mapeo*/
+		closeSelectLVs: function () {
+			this.byId("selectLVs").close();
+		},
+		/*Al seleccionar un valor del listado de valores */
+		selectLVs: function (oEvent) {
+			var oTable = this.getView().byId("tableSelLVs");
+			var selItem = oTable.getSelectedItem();
+			var buttonId = oEvent.getSource().getId();
+			var obj = "";
+			var path = this.pathButtonSel;
+			if (buttonId.match("BtnSelList1")) {
+				obj = "MAP";
+			} else if (buttonId.match("BtnSelList5")) {
+				obj = "META";
+			} else if (buttonId.match("BtnSelList4")) {
+				obj = "GV";
+			} else if (buttonId.match("BtnSelList2")) {
+				obj = "Attr";
+			} else if (buttonId.match("BtnSelList3")) {
+				obj = "AttrEdit";
+			}
+			if (selItem) {
+				var pathCode = selItem.getBindingContext("LValues").getPath() + "/lvaid";
+				var code_sel = this.getView().getModel("LValues").getProperty(pathCode);
+				var pathValue = selItem.getBindingContext("LValues").getPath() + "/value";
+				var value_sel = this.getView().getModel("LValues").getProperty(pathValue);
+				var pathText = selItem.getBindingContext("LValues").getPath() + "/text";
+				var text_sel = this.getView().getModel("LValues").getProperty(pathText);
+				if (obj == "MAP") {
+					// var data = this.getModel("template").getData();
+					// var property = path + "/slug";
+					// this.selectedVar = this.getView().getModel("template").getProperty(property);
+					// var variable = data.variables.find(variable => variable.slug === this.selectedVar);
+					// variable.path = text_sel;
+					// variable.source = code_sel;
+					// variable.type = "LVA";
+					// var meta = {
+					// 	lvaid: code_sel,
+					// 	value: value_sel
+					// };
+					// variable.metadata = JSON.stringify(meta);
+					// this.getModel("template").setData(data);
+					// this.getModel("template").refresh();
+
+					this.mapping_type = "LVA";
+
+					var meta = {
+						lvaid: code_sel,
+						value: value_sel
+					};
+					this.metadata = JSON.stringify(meta);
+
+					var oPathValue = this.context.getPath() + "/value";
+					this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathValue, text_sel);
+
+					var oPathSource = this.context.getPath() + "/source";
+					this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathSource, this.code);
+
+					var oPathType = this.context.getPath() + "/mapping_type";
+					this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathType, this.mapping_type);
+
+					var oPathMetadata = this.context.getPath() + "/metadata";
+					this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathMetadata, this.metadata);
+
+					this.byId("selectLVs").close();
+				} else if (obj == "META") {
+					var data = this.getModel("template").getData();
+					var property = path + "/code";
+					this.selectedVarMeta = this.getView().getModel("template").getProperty(property);
+					var metadata = data.metadata.find(metada => metada.code === this.selectedVarMeta);
+					metadata.path = text_sel;
+					metadata.source = code_sel;
+					metadata.type = "LVA";
+					var meta = {
+						lvaid: code_sel,
+						value: value_sel
+					};
+					metadata.metadata = JSON.stringify(meta);
+					this.getModel("template").setData(data);
+					this.getModel("template").refresh();
+					this.byId("selectLVs").close();
+				} else if (obj == "GV") {
+					var oGlobalVariModel = this.getModel("globalVari");
+					var oGlobalVariData = oGlobalVariModel.getData();
+					oGlobalVariData.type = "LVA";
+					var meta = {
+						lvaid: code_sel,
+						value: value_sel
+					};
+					oGlobalVariData.metadata = JSON.stringify(meta);
+					oGlobalVariData.source = code_sel;
+					oGlobalVariModel.setData(oGlobalVariData);
+					this.byId("Value_GV").setValue(text_sel);
+					this.byId("Source_GV").setValue(code_sel);
+					oGlobalVariModel.refresh();
+					this.byId("selectLVs").close();
+				} else if (obj == "Attr") {
+
+					// var oInput = this.getView().byId("pathTextArea");
+					// var oNewPath = oInput.getValue();
+					// this.byId("PathAttribu").setValue(oNewPath);
+					// this.byId("treeTable").close();
+
+				} else if (obj == "AttrEdit") {
+					// var oInput = this.getView().byId("pathTextArea");
+					// var oNewPath = oInput.getValue();
+					// this.byId("PathAttribuEdit").setValue(oNewPath);
+					// this.byId("treeTable").close();
+
+				}
+			} else {
+				// no item seleccionado
+			}
+		},
+
+		filterNode1: function (oEvent) {
+			var sQuery = oEvent.getParameter("query");
+			var oQuery = sQuery;
+			var oView = this.getView();
+			var oTreeTable = oView.byId("TreeTableBasic1");
+			var oRawData = this.getView().getModel("RawModel").getData();
+			oTreeTable.expandToLevel(15);
+			var oIndexArray = [];
+			for (var i = 0; i < oRawData.length; i++) {
+				var oContext = oTreeTable.getContextByIndex(i);
+				if (oContext) {
+					if (oContext.getObject().fieldname.toLowerCase().includes(sQuery.toLowerCase())) {
+						oIndexArray.push(i);
+					}
+				}
+			}
+			if (oIndexArray.length !== 0) {
+				var oSearchIndex = new JSONModel();
+				oSearchIndex.setData(oIndexArray);
+				this.getView().setModel(oSearchIndex, "SearchIndex");
+				oTreeTable.setSelectedIndex(oIndexArray[0]);
+				oTreeTable.setFirstVisibleRow(oIndexArray[0]);
+				var oIndex = 0;
+				//var text = this.getResourceBundle().getText("searchDot");
+				var text = "Search :";
+				sap.m.MessageToast.show(text + (oIndex + 1) + "/" + oIndexArray.length);
+			} else {
+				if (sQuery !== "") {
+					var oIndex2Clear = [];
+					var oModel2Clear = new JSONModel();
+					oModel2Clear.setData(oIndex2Clear);
+					this.getView().setModel(oModel2Clear, "SearchIndex");
+					var text = this.getResourceBundle().getText("noMatch");
+					sap.m.MessageToast.show(text);
+				}
+			}
+		},
+		applySearch1: function () {
+			var oIndexArray = this.getView().getModel("SearchIndex").getData();
+			var oView = this.getView();
+			var oTreeTable = oView.byId("TreeTableBasic1");
+			oIndex++;
+			if (oIndex < oIndexArray.length) {
+				var auxIndex = oIndexArray[oIndex];
+				oTreeTable.setSelectedIndex(auxIndex);
+				oTreeTable.setFirstVisibleRow(auxIndex);
+				//var text = this.getResourceBundle().getText("searchDot");
+				var text = "Search :";
+				sap.m.MessageToast.show(text + (oIndex + 1) + "/" + oIndexArray.length);
+			} else {
+				oIndex--;
+				var text = this.getResourceBundle().getText("noMatches");
+				sap.m.MessageToast.show(text);
+			}
+		},
+		applySearch2: function () {
+			var oIndexArray = this.getView().getModel("SearchIndex").getData();
+			var oView = this.getView();
+			var oTreeTable = oView.byId("TreeTableBasic1");
+			oIndex--;
+			if (oIndex > -1) {
+				var auxIndex = oIndexArray[oIndex];
+				oTreeTable.setSelectedIndex(auxIndex);
+				oTreeTable.setFirstVisibleRow(auxIndex);
+				//var text = this.getResourceBundle().getText("searchDot");
+				var text = "Search :";
+				sap.m.MessageToast.show(text + (oIndex + 1) + "/" + oIndexArray.length);
+
+			} else {
+				oIndex++;
+				var text = this.getResourceBundle().getText("noMatches");
+				sap.m.MessageToast.show(text);
+			}
+		},
+		onCollapseAll: function () {
+			var oTreeTable = this.byId("TreeTableBasic1");
+			oTreeTable.collapseAll();
+		},
+		onCollapseSelection: function () {
+			var oTreeTable = this.byId("TreeTableBasic1");
+			oTreeTable.collapse(oTreeTable.getSelectedIndices());
+		},
+		onExpandAll: function (oEvent) {
+			var oView = this.getView();
+			var oTreeTable = oView.byId("TreeTableBasic1");
+			oTreeTable.expandToLevel(15);
+		},
+		getPath: function (oEvent) {
+			var oTreeTable = this.byId("TreeTableBasic1");
+			var oIndex = oTreeTable.getSelectedIndex();
+			if (oIndex === -1) {
+				var text = this.getResourceBundle().getText("selecNode");
+				sap.m.MessageToast.show(text);
+			} else {
+				var oPath = oTreeTable.getContextByIndex(oIndex).getPath();
+				var oSplit = oPath.split("/");
+				var oNewPath = "/";
+				var oRoot = "/";
+				var oText;
+				for (var i = 1; i < oSplit.length; i++) {
+					if (/^\d+$/.test(oSplit[i])) {
+						oRoot = oRoot + oSplit[i] + "/";
+						oText = this.getView().getModel("jerarquia").getProperty(oRoot + "fieldname");
+						oNewPath = oNewPath + oText + "/";
+					} else {
+						oRoot = oRoot + oSplit[i] + "/";
+					}
+				}
+				oNewPath = oNewPath.slice(0, -1);
+				var oInput = this.getView().byId("pathTextArea");
+				var oOldPath = oInput.getValue();
+				oNewPath = oOldPath + oNewPath;
+				oInput.setValue(oNewPath);
+			}
+		},
+		/* Al seleccionar la sincronización de Business Process Types */
+		onSyncLV: function (oEvent) {
+			this.getView().getModel("i18n").getResourceBundle().getText("no")
+
+			var that = this;
+			var text1 = this.getView().getModel("i18n").getResourceBundle().getText("syncLVs1");
+			var text2 = this.getView().getModel("i18n").getResourceBundle().getText("syncLVs2");
+			var text3 = oEvent.getSource().getText().substring(5);
+			var text = text1 + " " + text3 + " " + text2;
+			var tit = this.getView().getModel("i18n").getResourceBundle().getText("confi");
+			var yes = this.getView().getModel("i18n").getResourceBundle().getText("yes");
+			var no = this.getView().getModel("i18n").getResourceBundle().getText("no");
+			var dialog = new sap.m.Dialog({
+				title: tit,
+				type: 'Message',
+				content: new sap.m.Text({
+					text: text
+				}),
+				beginButton: new sap.m.Button({
+					text: yes,
+					press: function () {
+						that.onSyncLVConfirm(text);
+						dialog.close();
+					}
+				}),
+				endButton: new sap.m.Button({
+					text: no,
+					press: function () {
+						dialog.close();
+					}
+				}),
+				afterClose: function () {
+					dialog.destroy();
+				}
+			});
+			dialog.open();
+		},
+		/* Al confirmar la sincronización de los Custom Fields */
+		onSyncLVConfirm: function () {
+			var that = this;
+			var lvaid = this.keyList;
+			this.byId("manageLVs").setBusy(true);
+			var url = "/CPI-WD2PD_Dest/di/workday/customer_fields/load";
+
+			if (this.getOwnerComponent().settings) {
+				var cuscode = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
+				var cusclientid = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
+				var cusscope = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
+				//var data = {
+				//		"list_values_id": lvaid
+				//	};
+				//var datajson = JSON.stringify(data);
+				jQuery.ajax({
+					url: url,
+					beforeSend: function (xhr) {
+						xhr.setRequestHeader('Customer-Code', cuscode.value);
+						xhr.setRequestHeader('Customer-Client_Id', cusclientid.value);
+						xhr.setRequestHeader('Customer-Scope', cusscope.value);
+					},
+					type: "GET",
+					dataType: "json",
+					//	contentType: "application/json",
+					//	data: datajson,
+					success: function (results) {
+						that.fill_List_Values1(lvaid);
+						that.byId("manageLVs").setBusy(false);
+						sap.m.MessageToast.show(results.message);
+					},
+					error: function (e) {
+						var err = that.getResourceBundle().getText("errorWd");
+						sap.m.MessageToast.show(err);
+						that.byId("manageLVs").setBusy(false);
+					}
+				});
+			}
+		},
+		onMap: function (oEvent) {
+			var oInput = this.getView().byId("pathTextArea");
+			var oNewPath = oInput.getValue();
+			// var data = this.getModel("template").getData();
+			// var variable = data.variables.find(variable => variable.slug === this.selectedVar);
+			// variable.path = oNewPath;
+			// variable.source = this.code_id_filled;
+			// variable.type = 'XPATH';
+			// variable.metadata = '';
+			// this.getModel("template").setData(data);
+			// this.getModel("template").refresh();
+
+			this.mapping_type = 'XPATH';
+
+			this.metadata = "";
+
+			var oPathValue = this.context.getPath() + "/value";
+			this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathValue, oNewPath);
+
+			var oPathSource = this.context.getPath() + "/source";
+			this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathSource, this.code);
+
+			var oPathType = this.context.getPath() + "/mapping_type";
+			this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathType, this.mapping_type);
+
+			var oPathMetadata = this.context.getPath() + "/metadata";
+			this.getView().byId("table0_1605526253660").getModel("CustomFields").setProperty(oPathMetadata, this.metadata);
+
+			this.byId("treeTable").close();
+		},
+		/* Operaciones para la gestión del componente para los mapeos desde el xsd */
+		onCloseTableTree: function (oObject) {
+			var oInput = this.byId("pathTextArea");
+			var oClear = "";
+			oInput.setValue(oClear);
+			this.byId("treeTable").close();
+		},
+		/* Abrir para la gestión de Custom Fields */
+		onListValues: function (oEvent) {
+			var menuItem = oEvent.getSource();
+			var key = menuItem.getKey();
+			this.keyList = "WD-WORKERS-CF";
+			var text = menuItem.getText();
+			var textno = this.getView().getModel("i18n").getResourceBundle().getText("no");
+			var textload = this.getView().getModel("i18n").getResourceBundle().getText("load");
+			// var textno = this.getResourceBundle().getText("no");
+			// var textload = this.getResourceBundle().getText("load");
+			var text2 = textno + ' ' + text;
+			var text3 = textload + ' ' + text;
+			this.fill_List_Values1();
+			if (!this.byId("manageLVs")) {
+				Fragment.load({
+					id: this.getView().getId(),
+					name: "shapein.ConfiguringWorkers.view.manageLVs",
+					controller: this
+				}).then(function (oDialog) {
+					this.getView().addDependent(oDialog);
+					//oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+					oDialog.setTitle(text);
+					this.byId("tableLVs").setNoDataText(text2);
+					this.byId("tableLVsHeader").setText(text);
+					this.byId("syncLV").setText(text3);
+					oDialog.open();
+				}.bind(this));
+			} else {
+				this.byId("manageLVs").setTitle(text);
+				this.byId("tableLVs").setNoDataText(text2);
+				this.byId("tableLVsHeader").setText(text);
+				this.byId("syncLV").setText(text3);
+				this.byId("manageLVs").open();
+			}
+		},
+		/* Al cerrar el dialog de la gestión de Custom fields */
+		closeManageLVs: function (oEvent) {
+			var dialogManageLVs = oEvent.getSource().getParent();
+			dialogManageLVs.close();
+		},
 	});
 }, /* bExport= */ true);

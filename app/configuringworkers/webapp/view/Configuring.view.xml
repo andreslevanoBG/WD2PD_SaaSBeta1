@@ -24,8 +24,7 @@
 										<form:formElements>
 											<form:FormElement visible="true">
 												<form:label>
-													<Label text="{i18n>viewLabel1}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit"
-														visible="true"/>
+													<Label text="{i18n>viewLabel1}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 												</form:label>
 												<form:fields>
 													<RadioButtonGroup
@@ -61,8 +60,7 @@
 											</form:FormElement>
 											<form:FormElement visible="true">
 												<form:label>
-													<Label text="{i18n>viewLabel3}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit"
-														visible="true"/>
+													<Label text="{i18n>viewLabel3}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
 												</form:label>
 												<form:fields>
 													<RadioButtonGroup
@@ -99,362 +97,425 @@
 				<uxap:subSections>
 					<uxap:ObjectPageSubSection title="{i18n>objectPageSubSectionTitle1}" mode="Expanded">
 						<uxap:blocks>
-							<form:Form width="100%" editable="true" visible="true">
-								<form:title/>
-								<form:formContainers>
-									<form:FormContainer visible="true">
-										<form:formElements>
-											<form:FormElement id="element15">
-												<form:fields>
-													<IconTabBar id="bar7" backgroundDesign="Translucent" headerBackgroundDesign="Transparent">
-														<items>
-															<IconTabFilter id="filter0" icon="sap-icon://heatmap-chart" iconColor="Contrast">
-																<content>
-																	<Table xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns="sap.m"
-																		items="{path:'ModelJSON>/global_configuration/mappings/address_data/filters/filter'}" mode="SingleSelectMaster"
-																		noDataText="{i18n>viewTextNoData}" id="table0">
-																		<headerToolbar>
-																			<Toolbar id="toolbar6">
-																				<Button icon="sap-icon://add" press="addRow_address"/>
-																				<Button icon="sap-icon://delete" press="deleteRow_address"/>
-																			</Toolbar>
-																		</headerToolbar>
-																		<items>
-																			<ColumnListItem type="Active" id="item27_copy_table0_0">
-																				<cells>
-																					<ComboBox id="combo03334"
-																						items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_ADDRESS'}, { path : 'level2', operator : 'EQ', value1 : 'PUBLIC'}]}"
-																						selectedKey="{ModelJSON>usage_public}">
-																						<core:Item key="{Base64>value}" text="{Base64>text}"/>
-																					</ComboBox>
-																					<ComboBox id="combo04213"
-																						items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_ADDRESS'}, { path : 'level2', operator : 'EQ', value1 : 'PRIMARY'}]}"
-																						selectedKey="{ModelJSON>type_data_primary}">
-																						<core:Item key="{Base64>value}" text="{Base64>text}"/>
-																					</ComboBox>
-																					<ComboBox id="combo0576"
-																						items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_ADDRESS'}, { path : 'level2', operator : 'EQ', value1 : 'TYPE'}]}"
-																						selectedKey="{ModelJSON>type_reference}">
-																						<core:Item key="{Base64>value}" text="{Base64>text}"/>
-																					</ComboBox>
-																					<MaskInput value="{ModelJSON>_secuence}" mask="99" id="text5_copy2_table0_0"/>
-																				</cells>
-																			</ColumnListItem>
-																		</items>
-																		<columns>
-																			<Column id="column0">
-																				<header>
-																					<Label text="{i18n>viewLabelColumnUsageType}" id="label16"/>
-																				</header>
-																			</Column>
-																			<Column id="column1">
-																				<header>
-																					<Label text="{i18n>viewLabelColumnUsageTypePrimary}" id="label17"/>
-																				</header>
-																			</Column>
-																			<Column id="column454">
-																				<header>
-																					<Label text="{i18n>viewLabelColumnTypeData}" id="label167"/>
-																				</header>
-																			</Column>
-																			<Column id="column2">
-																				<header>
-																					<Label text="{i18n>viewLabelColumnSequence}" id="label15"/>
-																				</header>
-																			</Column>
-																		</columns>
-																	</Table>
-																</content>
-															</IconTabFilter>
-															<IconTabFilter icon="sap-icon://technical-object" iconColor="Contrast" id="filter1">
-																<content>
-																	<Table items="{path: 'CountryLogic>/', sorter: { path: 'country', group: true }}" mode="SingleSelectMaster"
-																		noDataText="{i18n>viewTextNoData}" id="table0_copy">
-																		<headerToolbar>
-																			<Toolbar id="toolbar6_copy">
-																				<Button icon="sap-icon://add" press="addRow_country"/>
-																				<Button icon="sap-icon://delete" press="deleteRow_country"/>
-																				<ComboBox items="{Base64>/Countries}" id="combo03423">
-																					<core:Item key="{Base64>code}" text="{Base64>text}"/>
-																				</ComboBox>
-																				<u:FileUploader id="fileUploader" name="myFileUpload" uploadUrl="upload/" tooltip="Upload your file to the local server"
-																					uploadComplete="handleUploadComplete" iconOnly="true" buttonOnly="true" icon="sap-icon://upload"/>
-																			</Toolbar>
-																		</headerToolbar>
-																		<items>
-																			<ColumnListItem type="Active" id="item27_copy_table0_0_copy_table0_copy_0">
-																				<cells>
-																					<Text text="{CountryLogic>country}" id="text3_copy_table0_0_copy_table0_copy_0"/>
-																					<Text text="{CountryLogic>field}" id="text4_copy_table0_0_copy_table0_copy_0"/>
-																					<Input value="{CountryLogic>value}" id="text5_copy" editable="false"/>
-																					<Button icon="sap-icon://edit-outside" press="buildAddressChk" type="Ghost"/>
-																				</cells>
-																			</ColumnListItem>
-																		</items>
-																		<columns>
-																			<Column id="column0_copy">
-																				<header>
-																					<Label text="{i18n>viewLabelColumnCountry}" id="label16_copy"/>
-																				</header>
-																			</Column>
-																			<Column id="column1_copy">
-																				<header>
-																					<Label text="{i18n>viewLabelColumnField}" id="label17_copy"/>
-																				</header>
-																			</Column>
-																			<Column id="column2_copy" width="50%">
-																				<header>
-																					<Label text="{i18n>viewLabelColumnValue}" id="label15_copy"/>
-																				</header>
-																			</Column>
-																			<Column id="column2_copy_1" hAlign="Center" width="10%">
-																				<header>
-																					<Label text="{i18n>viewLabelColumnEdit}" id="label15_copy_1"/>
-																				</header>
-																			</Column>
-																		</columns>
-																	</Table>
-																</content>
-															</IconTabFilter>
-														</items>
-													</IconTabBar>
-												</form:fields>
-											</form:FormElement>
-										</form:formElements>
-										<form:title>
-											<core:Title text="{i18n>formContainerTitle2}" level="H4" icon="sap-icon://addresses"/>
-										</form:title>
-									</form:FormContainer>
-									<form:FormContainer visible="true">
-										<form:formElements>
-											<form:FormElement id="element10">
-												<form:fields>
-													<IconTabBar id="bar6" backgroundDesign="Translucent" headerBackgroundDesign="Transparent">
-														<items>
-															<IconTabFilter id="filter0_1610888805895" icon="sap-icon://heatmap-chart" iconColor="Contrast">
-																<content>
-																	<Table items="{ModelJSON>/global_configuration/mappings/zip_code/default_values/country}" mode="SingleSelectMaster"
-																		noDataText="{i18n>viewTextNoData}" id="table0_1603812570312">
-																		<headerToolbar>
-																			<Toolbar>
-																				<Button icon="sap-icon://add" press="addRow_zipcode"/>
-																				<Button icon="sap-icon://delete" press="deleteRow_zipcode"/>
-																			</Toolbar>
-																		</headerToolbar>
-																		<items>
-																			<ColumnListItem type="Active" id="item15">
-																				<cells>
-																					<ComboBox items="{Base64>/Countries}" id="combo02" selectionChange="validateCountryZipCode" selectedKey="{ModelJSON>_id}">
+							<sap.ui.layout:VerticalLayout xmlns:sap.ui.layout="sap.ui.layout" width="100%" id="layout7">
+								<form:Form width="100%" editable="true" visible="true">
+									<form:title/>
+									<form:formContainers>
+										<form:FormContainer visible="true">
+											<form:formElements>
+												<form:FormElement id="element15">
+													<form:fields>
+														<IconTabBar id="bar7" backgroundDesign="Translucent" headerBackgroundDesign="Transparent">
+															<items>
+																<IconTabFilter id="filter0" icon="sap-icon://heatmap-chart" iconColor="Contrast">
+																	<content>
+																		<Table xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns="sap.m"
+																			items="{path:'ModelJSON>/global_configuration/mappings/address_data/filters/filter'}" mode="SingleSelectMaster"
+																			noDataText="{i18n>viewTextNoData}" id="table0">
+																			<headerToolbar>
+																				<Toolbar id="toolbar6">
+																					<Button icon="sap-icon://add" press="addRow_address"/>
+																					<Button icon="sap-icon://delete" press="deleteRow_address"/>
+																				</Toolbar>
+																			</headerToolbar>
+																			<items>
+																				<ColumnListItem type="Active" id="item27_copy_table0_0">
+																					<cells>
+																						<ComboBox id="combo03334"
+																							items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_ADDRESS'}, { path : 'level2', operator : 'EQ', value1 : 'PUBLIC'}]}"
+																							selectedKey="{ModelJSON>usage_public}">
+																							<core:Item key="{Base64>value}" text="{Base64>text}"/>
+																						</ComboBox>
+																						<ComboBox id="combo04213"
+																							items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_ADDRESS'}, { path : 'level2', operator : 'EQ', value1 : 'PRIMARY'}]}"
+																							selectedKey="{ModelJSON>type_data_primary}">
+																							<core:Item key="{Base64>value}" text="{Base64>text}"/>
+																						</ComboBox>
+																						<ComboBox id="combo0576"
+																							items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_ADDRESS'}, { path : 'level2', operator : 'EQ', value1 : 'TYPE'}]}"
+																							selectedKey="{ModelJSON>type_reference}">
+																							<core:Item key="{Base64>value}" text="{Base64>text}"/>
+																						</ComboBox>
+																						<MaskInput value="{ModelJSON>_secuence}" mask="99" id="text5_copy2_table0_0"/>
+																					</cells>
+																				</ColumnListItem>
+																			</items>
+																			<columns>
+																				<Column id="column0">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnUsageType}" id="label16"/>
+																					</header>
+																				</Column>
+																				<Column id="column1">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnUsageTypePrimary}" id="label17"/>
+																					</header>
+																				</Column>
+																				<Column id="column454">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnTypeData}" id="label167"/>
+																					</header>
+																				</Column>
+																				<Column id="column2">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnSequence}" id="label15"/>
+																					</header>
+																				</Column>
+																			</columns>
+																		</Table>
+																	</content>
+																</IconTabFilter>
+																<IconTabFilter icon="sap-icon://technical-object" iconColor="Contrast" id="filter1">
+																	<content>
+																		<Table items="{path: 'CountryLogic>/', sorter: { path: 'country', group: true }}" mode="SingleSelectMaster"
+																			noDataText="{i18n>viewTextNoData}" id="table0_copy">
+																			<headerToolbar>
+																				<Toolbar id="toolbar6_copy">
+																					<Button icon="sap-icon://add" press="addRow_country"/>
+																					<Button icon="sap-icon://delete" press="deleteRow_country"/>
+																					<ComboBox items="{Base64>/Countries}" id="combo03423">
 																						<core:Item key="{Base64>code}" text="{Base64>text}"/>
 																					</ComboBox>
-																					<Input value="{ModelJSON>__text}" type="Number" id="text4_1603812570306"/>
-																				</cells>
-																			</ColumnListItem>
-																		</items>
-																		<columns>
-																			<Column id="column0_1603812570309">
-																				<header>
-																					<Label text="{i18n>viewLabelColumnCountry}" id="label10"/>
-																				</header>
-																			</Column>
-																			<Column id="column1_1603812570310">
-																				<header>
-																					<Label text="{i18n>viewLabelColumnDefaultValue}" id="label11"/>
-																				</header>
-																			</Column>
-																		</columns>
-																	</Table>
-																</content>
-															</IconTabFilter>
-														</items>
-													</IconTabBar>
-												</form:fields>
-											</form:FormElement>
-										</form:formElements>
-										<form:title>
-											<core:Title text="{i18n>formContainerTitle3}" level="H4" icon="sap-icon://map"/>
-										</form:title>
-									</form:FormContainer>
-									<form:FormContainer visible="true">
-										<form:formElements>
-											<form:FormElement id="element10_1603812780297">
-												<form:fields>
-													<Table items="{path:'ModelJSON>/global_configuration/mappings/email/filters/filter'}" mode="SingleSelectMaster"
-														noDataText="{i18n>viewTextNoData}" id="table0_1603812787387">
-														<headerToolbar>
-															<Toolbar>
-																<Button icon="sap-icon://add" press="addRow_email"/>
-																<Button icon="sap-icon://delete" press="deleteRow_email"/>
-															</Toolbar>
-														</headerToolbar>
-														<items>
-															<ColumnListItem type="Active" id="item15_1603812787384">
-																<cells>
-                                                                    <ComboBox id="combo03"
-                                                                        items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PUBLIC'}]}"
-                                                                        selectedKey="{ModelJSON>usage_public}">
-                                                                        <core:Item key="{Base64>value}" text="{Base64>text}"/>
-                                                                    </ComboBox>
-																	<ComboBox id="combo04"
-																		items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PRIMARY'}]}"
-																		selectedKey="{ModelJSON>type_data_primary}">
-																		<core:Item key="{Base64>value}" text="{Base64>text}"/>
-																	</ComboBox>
-																	<ComboBox id="combo05"
-																		items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'TYPE'}]}"
-																		selectedKey="{ModelJSON>type_reference}">
-																		<core:Item key="{Base64>value}" text="{Base64>text}"/>
-																	</ComboBox>
-																	<MaskInput value="{ModelJSON>_secuence}" mask="99" id="text7"/>
-																</cells>
-															</ColumnListItem>
-														</items>
-														<columns>
-															<Column id="column0_1603812787385">
-																<header>
-																	<Label text="{i18n>viewLabelColumnUsageType}" id="label11_1603812787385"/>
-																</header>
-															</Column>
-															<Column id="column1_1603812787386">
-																<header>
-																	<Label text="{i18n>viewLabelColumnUsageTypePrimary}" id="label12_1603812787386"/>
-																</header>
-															</Column>
-															<Column id="column2_1603812787386">
-																<header>
-																	<Label text="{i18n>viewLabelColumnTypeData}" id="label13_1603812787386"/>
-																</header>
-															</Column>
-															<Column id="column3_1603812787386">
-																<header>
-																	<Label text="{i18n>viewLabelColumnSequence}" id="label10_1603812787385"/>
-																</header>
-															</Column>
-														</columns>
-													</Table>
-												</form:fields>
-											</form:FormElement>
-										</form:formElements>
-										<form:title>
-											<core:Title text="{i18n>formContainerTitle4}" level="H4" icon="sap-icon://email"/>
-										</form:title>
-									</form:FormContainer>
-									<form:FormContainer xmlns:u="sap.ui.unified" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns="sap.m" xmlns:core="sap.ui.core"
-										xmlns:form="sap.ui.layout.form" title="{i18n>formContainerTitle5}" id="container7">
-										<form:formElements>
-											<form:FormElement id="element5">
-												<form:fields>
-													<Table items="{CustomFields>/}" noDataText="{i18n>viewTextNoData}" id="table0_1605526253660">
-														<headerToolbar>
-															<Toolbar>
-															</Toolbar>
-														</headerToolbar>
-														<items>
-															<ColumnListItem type="Active" id="item16_1605526253655">
-																<cells>
-																	<Text text="{CustomFields>label}" id="text11"/>
-																	<Input value="{CustomFields>value}" id="text12"/>
-																	<Text text="{CustomFields>id}" id="text13"/>
-																</cells>
-															</ColumnListItem>
-														</items>
-														<columns>
-															<Column id="column0_1605526253656">
-																<header>
-																	<Label text="{i18n>viewLabelColumnPDCustomField}" id="label5"/>
-																</header>
-															</Column>
-															<Column id="column1_1605526253658">
-																<header>
-																	<Label text="{i18n>viewLabelColumnWorkdayInput}" id="label6"/>
-																</header>
-															</Column>
-														</columns>
-													</Table>
-												</form:fields>
-											</form:FormElement>
-										</form:formElements>
-										<form:title>
-											<core:Title text="{i18n>formContainerTitle5}" level="H4" icon="sap-icon://customize"/>
-										</form:title>
-									</form:FormContainer>
-									<form:FormContainer visible="true">
-										<form:formElements>
-											<form:FormElement id="element1SD">
-												<form:fields>
-													<IconTabBar id="bar6SD" backgroundDesign="Translucent" headerBackgroundDesign="Transparent">
-														<items>
-															<IconTabFilter id="filter0_SD" icon="sap-icon://heatmap-chart" iconColor="Contrast">
-																<content>
-																	<Table items="{ModelJSON>/global_configuration/mappings/starting_date/mappings/mapping}" mode="SingleSelectMaster"
-																		noDataText="{i18n>viewTextNoData}" id="table0_SD">
-																		<headerToolbar>
-																			<Toolbar>
-																				<Button icon="sap-icon://add" press="addRow_startingdate"/>
-																				<Button icon="sap-icon://delete" press="deleteRow_startingdate"/>
-																			</Toolbar>
-																		</headerToolbar>
-																		<items>
-																			<ColumnListItem type="Active" id="item15SD">
-																				<cells>
-																					<ComboBox id="combo04SD"
-																						items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_STARTING_DATE'}, { path : 'level2', operator : 'EQ', value1 : 'DATE'}]}"
-																						selectedKey="{ModelJSON>sender_node}">
-																						<core:Item key="{Base64>value}" text="{Base64>text}"/>
-																					</ComboBox>
-																					<MaskInput value="{ModelJSON>_secuence}" mask="99" id="text7SD"/>
-																				</cells>
-																			</ColumnListItem>
-																		</items>
-																		<columns>
-																			<Column id="column0_SD">
-																				<header>
-																					<Label text="{i18n>viewLabelColumnStartingDate}" id="label10SD"/>
-																				</header>
-																			</Column>
-																			<Column id="column1_SD">
-																				<header>
-																					<Label text="{i18n>viewLabelColumnSequence}" id="label11SD"/>
-																				</header>
-																			</Column>
-																		</columns>
-																	</Table>
-																</content>
-															</IconTabFilter>
-														</items>
-													</IconTabBar>
-												</form:fields>
-											</form:FormElement>
-										</form:formElements>
-										<form:title>
-											<core:Title text="{i18n>formContainerTitle6}" level="H4" icon="sap-icon://date-time"/>
-										</form:title>
-									</form:FormContainer>
-									<form:FormContainer xmlns:u="sap.ui.unified" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns="sap.m" xmlns:core="sap.ui.core"
-										xmlns:form="sap.ui.layout.form" visible="true" id="container8">
-										<form:formElements>
-											<form:FormElement visible="true" id="element6">
-												<form:label>
-													<Label xmlns="sap.m" text="{i18n>viewLabel4}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit"
-														visible="true" id="label4"/>
-												</form:label>
-												<form:fields>
-													<ComboBox xmlns="sap.m" id="combo01" items="{Language>/}"
-														selectedKey="{ModelJSON>/global_configuration/mappings/language/default_values/BPC7_default_code}">
-														<core:Item xmlns:core="sap.ui.core" key="{Language>code}" text="{Language>text}"/>
-													</ComboBox>
-												</form:fields>
-											</form:FormElement>
-										</form:formElements>
-										<form:title>
-											<core:Title xmlns:core="sap.ui.core" text="{i18n>formContainerTitle7}" level="H4" icon="sap-icon://education" id="title14"/>
-										</form:title>
-									</form:FormContainer>
-								</form:formContainers>
-								<form:layout>
-									<form:ResponsiveGridLayout adjustLabelSpan="false" columnsL="2" labelSpanL="3" columnsM="1" labelSpanM="2" labelSpanS="12"/>
-								</form:layout>
-							</form:Form>
+																					<u:FileUploader id="fileUploader" name="myFileUpload" uploadUrl="upload/" tooltip="Upload your file to the local server"
+																						uploadComplete="handleUploadComplete" iconOnly="true" buttonOnly="true" icon="sap-icon://upload"/>
+																				</Toolbar>
+																			</headerToolbar>
+																			<items>
+																				<ColumnListItem type="Active" id="item27_copy_table0_0_copy_table0_copy_0">
+																					<cells>
+																						<Text text="{CountryLogic>country}" id="text3_copy_table0_0_copy_table0_copy_0"/>
+																						<Text text="{CountryLogic>field}" id="text4_copy_table0_0_copy_table0_copy_0"/>
+																						<Input value="{CountryLogic>value}" id="text5_copy" editable="false"/>
+																						<Button icon="sap-icon://edit-outside" press="buildAddressChk" type="Ghost"/>
+																					</cells>
+																				</ColumnListItem>
+																			</items>
+																			<columns>
+																				<Column id="column0_copy">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnCountry}" id="label16_copy"/>
+																					</header>
+																				</Column>
+																				<Column id="column1_copy">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnField}" id="label17_copy"/>
+																					</header>
+																				</Column>
+																				<Column id="column2_copy" width="50%">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnValue}" id="label15_copy"/>
+																					</header>
+																				</Column>
+																				<Column id="column2_copy_1" hAlign="Center" width="10%">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnEdit}" id="label15_copy_1"/>
+																					</header>
+																				</Column>
+																			</columns>
+																		</Table>
+																	</content>
+																</IconTabFilter>
+															</items>
+														</IconTabBar>
+													</form:fields>
+												</form:FormElement>
+											</form:formElements>
+											<form:title>
+												<core:Title text="{i18n>formContainerTitle2}" level="H4" icon="sap-icon://addresses"/>
+											</form:title>
+										</form:FormContainer>
+										<form:FormContainer visible="true">
+											<form:formElements>
+												<form:FormElement id="element10">
+													<form:fields>
+														<IconTabBar id="bar6" backgroundDesign="Translucent" headerBackgroundDesign="Transparent">
+															<items>
+																<IconTabFilter id="filter0_1610888805895" icon="sap-icon://heatmap-chart" iconColor="Contrast">
+																	<content>
+																		<Table items="{ModelJSON>/global_configuration/mappings/zip_code/default_values/country}" mode="SingleSelectMaster"
+																			noDataText="{i18n>viewTextNoData}" id="table0_1603812570312">
+																			<headerToolbar>
+																				<Toolbar>
+																					<Button icon="sap-icon://add" press="addRow_zipcode"/>
+																					<Button icon="sap-icon://delete" press="deleteRow_zipcode"/>
+																				</Toolbar>
+																			</headerToolbar>
+																			<items>
+																				<ColumnListItem type="Active" id="item15">
+																					<cells>
+																						<ComboBox items="{Base64>/Countries}" id="combo02" selectionChange="validateCountryZipCode" selectedKey="{ModelJSON>_id}">
+																							<core:Item key="{Base64>code}" text="{Base64>text}"/>
+																						</ComboBox>
+																						<Input value="{ModelJSON>__text}" type="Number" id="text4_1603812570306"/>
+																					</cells>
+																				</ColumnListItem>
+																			</items>
+																			<columns>
+																				<Column id="column0_1603812570309">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnCountry}" id="label10"/>
+																					</header>
+																				</Column>
+																				<Column id="column1_1603812570310">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnDefaultValue}" id="label11"/>
+																					</header>
+																				</Column>
+																			</columns>
+																		</Table>
+																	</content>
+																</IconTabFilter>
+															</items>
+														</IconTabBar>
+													</form:fields>
+												</form:FormElement>
+											</form:formElements>
+											<form:title>
+												<core:Title text="{i18n>formContainerTitle3}" level="H4" icon="sap-icon://map"/>
+											</form:title>
+										</form:FormContainer>
+										<form:FormContainer visible="true">
+											<form:formElements>
+												<form:FormElement id="element10_1603812780297">
+													<form:fields>
+														<IconTabBar id="bar7_1631263234854" backgroundDesign="Translucent" headerBackgroundDesign="Transparent">
+															<items>
+																<IconTabFilter id="filter0_1631263234852" icon="sap-icon://heatmap-chart" iconColor="Contrast">
+																	<content>
+																		<Table items="{path:'ModelJSON>/global_configuration/mappings/email/filters/filter'}" mode="SingleSelectMaster"
+																			noDataText="{i18n>viewTextNoData}" id="table0_1603812787387">
+																			<headerToolbar>
+																				<Toolbar>
+																					<Button icon="sap-icon://add" press="addRow_email"/>
+																					<Button icon="sap-icon://delete" press="deleteRow_email"/>
+																				</Toolbar>
+																			</headerToolbar>
+																			<items>
+																				<ColumnListItem type="Active" id="item15_1603812787384">
+																					<cells>
+																						<ComboBox id="combo03"
+																							items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PUBLIC'}]}"
+																							selectedKey="{ModelJSON>usage_public}">
+																							<core:Item key="{Base64>value}" text="{Base64>text}"/>
+																						</ComboBox>
+																						<ComboBox id="combo04"
+																							items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PRIMARY'}]}"
+																							selectedKey="{ModelJSON>type_data_primary}">
+																							<core:Item key="{Base64>value}" text="{Base64>text}"/>
+																						</ComboBox>
+																						<ComboBox id="combo05"
+																							items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'TYPE'}]}"
+																							selectedKey="{ModelJSON>type_reference}">
+																							<core:Item key="{Base64>value}" text="{Base64>text}"/>
+																						</ComboBox>
+																						<MaskInput value="{ModelJSON>_secuence}" mask="99" id="text7"/>
+																					</cells>
+																				</ColumnListItem>
+																			</items>
+																			<columns>
+																				<Column id="column0_1603812787385">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnUsageType}" id="label11_1603812787385"/>
+																					</header>
+																				</Column>
+																				<Column id="column1_1603812787386">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnUsageTypePrimary}" id="label12_1603812787386"/>
+																					</header>
+																				</Column>
+																				<Column id="column2_1603812787386">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnTypeData}" id="label13_1603812787386"/>
+																					</header>
+																				</Column>
+																				<Column id="column3_1603812787386">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnSequence}" id="label10_1603812787385"/>
+																					</header>
+																				</Column>
+																			</columns>
+																		</Table>
+																	</content>
+																</IconTabFilter>
+															</items>
+														</IconTabBar>
+													</form:fields>
+												</form:FormElement>
+											</form:formElements>
+											<form:title>
+												<core:Title text="{i18n>formContainerTitle4}" level="H4" icon="sap-icon://email"/>
+											</form:title>
+										</form:FormContainer>
+										<form:FormContainer visible="true">
+											<form:formElements>
+												<form:FormElement id="element1SD">
+													<form:fields>
+														<IconTabBar id="bar6SD" backgroundDesign="Translucent" headerBackgroundDesign="Transparent">
+															<items>
+																<IconTabFilter id="filter0_SD" icon="sap-icon://heatmap-chart" iconColor="Contrast">
+																	<content>
+																		<Table items="{ModelJSON>/global_configuration/mappings/starting_date/mappings/mapping}" mode="SingleSelectMaster"
+																			noDataText="{i18n>viewTextNoData}" id="table0_SD">
+																			<headerToolbar>
+																				<Toolbar>
+																					<Button icon="sap-icon://add" press="addRow_startingdate"/>
+																					<Button icon="sap-icon://delete" press="deleteRow_startingdate"/>
+																				</Toolbar>
+																			</headerToolbar>
+																			<items>
+																				<ColumnListItem type="Active" id="item15SD">
+																					<cells>
+																						<ComboBox id="combo04SD"
+																							items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_WORKER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_STARTING_DATE'}, { path : 'level2', operator : 'EQ', value1 : 'DATE'}]}"
+																							selectedKey="{ModelJSON>sender_node}">
+																							<core:Item key="{Base64>value}" text="{Base64>text}"/>
+																						</ComboBox>
+																						<MaskInput value="{ModelJSON>_secuence}" mask="99" id="text7SD"/>
+																					</cells>
+																				</ColumnListItem>
+																			</items>
+																			<columns>
+																				<Column id="column0_SD">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnStartingDate}" id="label10SD"/>
+																					</header>
+																				</Column>
+																				<Column id="column1_SD">
+																					<header>
+																						<Label text="{i18n>viewLabelColumnSequence}" id="label11SD"/>
+																					</header>
+																				</Column>
+																			</columns>
+																		</Table>
+																	</content>
+																</IconTabFilter>
+															</items>
+														</IconTabBar>
+													</form:fields>
+												</form:FormElement>
+											</form:formElements>
+											<form:title>
+												<core:Title text="{i18n>formContainerTitle6}" level="H4" icon="sap-icon://date-time"/>
+											</form:title>
+										</form:FormContainer>
+										<form:FormContainer xmlns:u="sap.ui.unified" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns="sap.m" xmlns:core="sap.ui.core"
+											xmlns:form="sap.ui.layout.form" visible="true" id="container8">
+											<form:formElements>
+												<form:FormElement visible="true" id="element6">
+													<form:label>
+														<Label xmlns="sap.m" text="{i18n>viewLabel4}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit"
+															visible="true" id="label4"/>
+													</form:label>
+													<form:fields>
+														<ComboBox xmlns="sap.m" id="combo01" items="{Language>/}"
+															selectedKey="{ModelJSON>/global_configuration/mappings/language/default_values/BPC7_default_code}">
+															<core:Item xmlns:core="sap.ui.core" key="{Language>code}" text="{Language>text}"/>
+														</ComboBox>
+													</form:fields>
+												</form:FormElement>
+											</form:formElements>
+											<form:title>
+												<core:Title xmlns:core="sap.ui.core" text="{i18n>formContainerTitle7}" level="H4" icon="sap-icon://education" id="title14"/>
+											</form:title>
+										</form:FormContainer>
+										<form:FormContainer id="container7_1631262788608">
+											<form:formElements>
+												<form:FormElement id="element3_1631262788607">
+													<form:fields>
+														<Input width="100%" id="input0" visible="false"/>
+													</form:fields>
+												</form:FormElement>
+											</form:formElements>
+										</form:FormContainer>
+									</form:formContainers>
+									<form:layout>
+										<form:ResponsiveGridLayout adjustLabelSpan="false" columnsL="2" labelSpanL="3" columnsM="1" labelSpanM="2" labelSpanS="12"/>
+									</form:layout>
+								</form:Form>
+								<sap.ui.layout:content>
+									<form:Form editable="true" id="form4">
+										<form:formContainers>
+											<form:FormContainer xmlns:u="sap.ui.unified" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns="sap.m" xmlns:core="sap.ui.core"
+												xmlns:form="sap.ui.layout.form" title="{i18n>formContainerTitle5}" id="container7">
+												<form:formElements>
+													<form:FormElement id="element5">
+														<form:fields>
+															<Table items="{ path: 'CustomFields>/', sorter: { path: 'label', descending: false }}"
+                            								noDataText="{i18n>viewTextNoData}" id="table0_1605526253660">
+																<!--<Table  noDataText="{i18n>viewTextNoData}" id="table0_1605526253660">-->
+																<headerToolbar>
+																	<Toolbar>
+																		<MenuButton text="{i18n>loadMaster}" type="Accept">
+																			<menu>
+																				<Menu>
+																					<!--<MenuItem text="{i18n>busProc}" icon="sap-icon://business-by-design" press="onBPs"/>-->
+																					<MenuItem text="{i18n>workCF}" icon="sap-icon://list" key="WD-WORKERS-CF" press="onListValues"/>
+																				</Menu>
+																			</menu>
+																		</MenuButton>
+																		<!--<Button id="syncLV" class="sapUiTinyMargin" icon="sap-icon://upload-to-cloud" type="Emphasized" text="{i18n>viewTextLoadWDCustomFields}" tooltip="" press="onSyncLV"/>-->
+																	</Toolbar>
+																</headerToolbar>
+																<items>
+																	<ColumnListItem type="Active" id="item16_1605526253655">
+																		<cells>
+																			<Text text="{CustomFields>label}" id="text11"/>
+																			<HBox alignItems="Stretch" alignContent="SpaceBetween" direction="Row" fitContainer="true" width="auto" height="auto"
+																				justifyContent="Center" renderType="Div" visible="true" displayInline="false">
+																				<items>
+																					<Input value="{CustomFields>value}" id="text12" enabled="false" width="500px" textAlign="Right" class="sapUiTinyMargin"
+																						valueLiveUpdate="false"/>
+																					<!--<Input value="test" id="text12" enabled="false" width="500px" textAlign="Right" class="sapUiTinyMargin" valueLiveUpdate="false"/>-->
+																					<!--<Input id="Path" textAlign="Right" value="{path: 'template>path' }" class="sapUiTinyMargin" valueLiveUpdate="false" enabled="false"-->
+																					<!--	width="500px"/>-->
+																					<Button id="path" text="{i18n>fieMapp}" type="Emphasized" icon="sap-icon://sys-find" class="sapUiTinyMargin"
+																						enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }" press="selectSource"/>
+																					<Button id="clear" text="" tooltip="{i18n>clearMap}" type="Reject" icon="sap-icon://clear-all" class="sapUiTinyMargin"
+																						enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}, {path:'template>path'}], formatter: '.formatter.enableActiveClear' }"
+																						press="clearMap"/>
+																				</items>
+																			</HBox>
+																			<Label text="{ path: 'CustomFields>source' }"/>
+																			<Text text="{CustomFields>id}" id="text13"/>
+																			<Input value="{CustomFields>mapping_type}" id="text0112"/>
+																			<Input value="{CustomFields>metadata}" id="text0113"/>
+																			<!--<Text text="{CustomFields>mapping_type}" id="text0112"/>-->
+																			<!--<Text text="{CustomFields>metadata}" id="text0113"/>-->
+																		</cells>
+																	</ColumnListItem>
+																</items>
+																<columns>
+																	<Column id="column0_1605526253656" width="20%" hAlign="Begin">
+																		<header>
+																			<Label text="{i18n>viewLabelColumnPDCustomField}" id="label5"/>
+																		</header>
+																	</Column>
+																	<Column id="column1_1605526253658" width="auto" hAlign="Center">
+																		<header>
+																			<Label text="{i18n>viewLabelColumnWorkdayInput}" id="label6"/>
+																		</header>
+																	</Column>
+																	<Column id="column1_1605526253659" width="15%" hAlign="Center">
+																		<header>
+																			<Label text="{i18n>viewLabelColumnSource}" id="label7"/>
+																		</header>
+																	</Column>
+																</columns>
+															</Table>
+														</form:fields>
+													</form:FormElement>
+												</form:formElements>
+												<form:title>
+													<core:Title text="{i18n>formContainerTitle5}" level="H4" icon="sap-icon://customize"/>
+												</form:title>
+											</form:FormContainer>
+										</form:formContainers>
+										<form:layout>
+											<form:ResponsiveGridLayout id="layout7_1631270519613"/>
+										</form:layout>
+									</form:Form>
+								</sap.ui.layout:content>
+							</sap.ui.layout:VerticalLayout>
 						</uxap:blocks>
 						<uxap:moreBlocks/>
 						<uxap:actions/>

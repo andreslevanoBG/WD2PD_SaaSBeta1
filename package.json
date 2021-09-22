@@ -46,7 +46,12 @@
             },
             "db": {
                 "[production]": {
-                    "kind": "hana"
+                    "kind": "hana",
+                    "pool": {
+                        "acquireTimeoutMillis": 5000,
+                        "min": 0,
+                        "max": 100
+                    }
                 },
                 "[development]": {
                     "kind": "sql"

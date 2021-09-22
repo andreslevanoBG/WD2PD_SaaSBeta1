@@ -1,0 +1,44 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	<Dialog id="selectLVs" state="None" icon="sap-icon://list" title="{i18n>selectValue}" resizable="true"
+		draggable="true" contentHeight="350px" contentWidth="750px">
+		<ScrollContainer id="ScrollContSelLVs" height="100%" width="100%" horizontal="false" vertical="true" visible="true">
+			<Table id="tableSelLVs" width="auto" items="{ path: 'LValues>/', sorter: { path: 'name', descending: false } }"
+				noDataText="{i18n>noCfs}" mode="SingleSelectLeft" busyIndicatorDelay="{worklistView>/tableBusyDelay}">
+				<headerToolbar>
+					<OverflowToolbar>
+						<!--<Title id="tableSelLVsHeader" text="" level="H3"/>-->
+						<ToolbarSpacer/>
+					</OverflowToolbar>
+				</headerToolbar>
+				<columns>
+					<Column id="LVSelSeqno" width="100px" hAlign="Center">
+						<Text text="{i18n>seqno}"/>
+					</Column>
+					<Column id="LVSelValue" width="auto" hAlign="Center">
+						<Text text="{i18n>value}"/>
+					</Column>
+					<Column id="LVSelText" width="auto" hAlign="Center">
+						<Text text="{i18n>text}"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem type="Inactive">
+						<cells>
+							<Text text="{ path: 'LValues>seqno' }"/>
+							<Text text="{ path: 'LValues>value' }"/>
+							<Text text="{ path: 'LValues>text' }"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</ScrollContainer>
+		<buttons>
+			<Button id="BtnSelList1" text="{i18n>ok}" type="Accept" press="selectLVs"/>
+			<Button id="BtnSelList2" text="{i18n>ok}" visible="false" type="Accept" press="selectLVs"/>
+			<Button id="BtnSelList3" text="{i18n>ok}" visible="false" type="Accept" press="selectLVs"/>
+			<Button id="BtnSelList4" text="{i18n>ok}" visible="false" type="Accept" press="selectLVs"/>
+			<Button id="BtnSelList5" text="{i18n>ok}" visible="false" type="Accept" press="selectLVs"/>
+			<Button text="{i18n>close}" type="Reject" press="closeSelectLVs"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

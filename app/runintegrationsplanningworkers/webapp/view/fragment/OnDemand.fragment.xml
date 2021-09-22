@@ -25,7 +25,7 @@
 					<Label labelFor="RefIdWorkers" text="{i18n>refId}"/>
 					<Select id="RefIdWorkers" width="50%">
 						<core:Item key="WID" text="WID"/>
-						<core:Item key="Employee_ID" text="{i18n>empID}"/>
+						<core:Item key="Employee_ID" text="{i18n>empId}"/>
 						<core:Item key="Contingent_Worker_ID" text="{i18n>contWorkID}"/>
 					</Select>
 					<MultiInput id="multiInput2" required="true" width="auto" showValueHelp="false"/>

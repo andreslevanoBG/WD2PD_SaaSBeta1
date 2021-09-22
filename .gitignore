@@ -19,3 +19,5 @@ _out
 .DS_Store
 # auto generated wildcard
 wd2pdsaas/.env2
+# auto generated wildcard
+.env1

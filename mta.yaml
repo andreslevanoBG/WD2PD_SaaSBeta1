@@ -399,9 +399,9 @@ resources:
           getDependencies: https://${org}-${space}-wd2pdsaas-srv.${default-domain}/mtx/v1/provisioning/dependencies
         #    onSubscription: https://bigcore-shapeinlabs-shapeinsubs-wd2pdsaas-srv.cfapps.eu10.hana.ondemand.com/mtx/v1/provisioning/tenant/{tenantId}
           onSubscription: https://${org}-${space}-wd2pdsaas-srv.${default-domain}/mtx/v1/provisioning/tenant/{tenantId}
-          category: SHAPEiN Solutions
-          description: Workday 2 PeopleDoc Integration
-          displayName: WD2PD Integration App
+          category: 'SHAPEiN Solutions'
+          description: 'Workday - UKG HR Service Delivery Integration'
+          displayName: 'WD2UKGHRSD Integration App'
         xsappname: ~{wd2pdsaas-uaa/XSAPPNAME}
       service: saas-registry
       service-plan: application
