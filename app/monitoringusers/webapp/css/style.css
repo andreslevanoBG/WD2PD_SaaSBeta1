@@ -1,0 +1,70 @@
+@-moz-keyframes spin {
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.colorIntro > .sapMLIBContent > .sapMObjLIntro {
+	color: #333333;
+	font-weight: bold;
+}
+
+.colorIntroDet > .sapMOH > .sapMOHIntro > .sapMText {
+	color: #333333;
+	font-weight: bold;
+}
+
+.colorIcon > .sapMLIBContent > .sapMObjLTopRow > .sapMObjLIconDiv > .sapMObjLIcon {
+	color: #0c26e3d9;
+}
+
+.colorIconDet > .sapMOH > .sapMOHTopRow > .sapMOHTitleDiv > .sapMOHIcon > .sapUiIcon {   
+	color: #0c26e3d9;
+}
+
+.spinningBusy > .sapMBtnInner > .sapMBtnIcon {
+  -webkit-animation-name: spin;
+  -webkit-animation-duration: 1000ms;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  -moz-animation-name: spin;
+  -moz-animation-duration: 1000ms;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+  animation-name: spin;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+
+.spinningBusy > .sapMObjStatusIcon { 
+  -webkit-animation-name: spin;
+  -webkit-animation-duration: 1000ms;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  -moz-animation-name: spin;
+  -moz-animation-duration: 1000ms;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+  animation-name: spin;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  padding-right: 0;
+}
+
+.spinningBusy > .sapMObjStatusText { 
+  padding-left: 0.25rem;
+}

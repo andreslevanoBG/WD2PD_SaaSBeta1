@@ -289,9 +289,13 @@ sap.ui.define([
 				this._oTableFilterState.aSearch = [];
 				if (sQuery && sQuery.length > 0) {
 					this._oTableFilterState.aSearch.push(new Filter([
-						new Filter("name", FilterOperator.Contains, sQuery),
+						// new Filter("name", FilterOperator.Contains, sQuery),
+						// new Filter("external_id", FilterOperator.Contains, sQuery),
+						// new Filter("corporate_name", FilterOperator.Contains, sQuery)
+						
+						new Filter("tolower(name)", FilterOperator.Contains, "'" + sQuery.toLowerCase() + "'"),
 						new Filter("external_id", FilterOperator.Contains, sQuery),
-						new Filter("corporate_name", FilterOperator.Contains, sQuery)
+						new Filter("tolower(corporate_name)", FilterOperator.Contains, "'" + sQuery.toLowerCase() + "'")
 					], false));
 				}
 			}

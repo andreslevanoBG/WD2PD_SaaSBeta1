@@ -25,7 +25,7 @@ entity Integrations : managed {
                               on status.code = status_code;
         pck             : Association to Integration_Pck
                               on pck.code = pck_code;
-        integ_items     : Association to many Integration_Items
+        integ_items     : Composition of many Integration_Items
                               on integ_items.integ_id = id;
         reprocess       : Association to many Reprocess
                               on reprocess.integ_id = id;
@@ -211,7 +211,6 @@ entity Countries {
         text : localized String(50);
 }
 
-
 entity Pd_Languages {
     key code : String(20);
         text : localized String(50);
@@ -354,6 +353,7 @@ entity Di_Template : managed {
         planning_rep_uuid : UUID;
         language          : String(5);
         signature         : Boolean;
+     //   future_changes    : Boolean;
         format            : String(10);
         updated_at        : String(30);
         description       : String(200);
@@ -454,7 +454,7 @@ entity Di_Template_Sign_Cfg {
     key uuid          : UUID;
         template_uuid : UUID;
         api_version   : String(5);
-        json_cfg      : LargeString;
+        json_cfg      : String;
         template      : Association to Di_Template
                             on template.uuid = template_uuid;
 }
@@ -472,7 +472,7 @@ entity Di_Template_Page_Content {
 entity Di_Document_Sign : managed {
     key uuid     : UUID;
         //   doc_uuid : UUID;
-        pd_id    : String(10);
+        pd_id    : String(15);
         status   : String(50);
         message  : String;
         document : Association to Di_Generation_Processes_Doc
@@ -569,6 +569,7 @@ entity Subscription_Settings {
         description : String;
 }
 
+
 entity Di_Template_Mapping_Sources_Types {
     key code        : String(5);
         description : localized String;
@@ -586,7 +587,7 @@ entity Di_Template_Mapping_Types {
 }
 
 entity Organization_Types {
-    key code : String(50);
-    description: String;
-    metadata: String;
+    key code        : String(50);
+        description : String;
+        metadata    : String;
 }

@@ -8,16 +8,19 @@
 				columnsL="2" columnsM="1" singleContainerFullSize="false">
 				<f:content>
 					<core:Title text="Updated"/>
-					<Label labelFor="DTP1" text="From"/>
-					<DateTimePicker id="DTP11" required="true" change="changeDatesDemand" value="{path:'newExec>/fromUpd', formatter: '.formatter.Demanddate' }"/>
+					<Label labelFor="DTP11" text="From"/>
+					<DateTimePicker id="DTP11" required="true" change="changeDatesDemand" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"
+					value="{path:'newExec>/fromUpd', formatter: '.formatter.Demanddate' }"/>
 					<Label labelFor="DTP12" text="To"/>
-					<DateTimePicker id="DTP12" required="true" change="changeDatesDemand" value="{path:'newExec>/toUpd', formatter: '.formatter.Demanddate' }"/>
+					<DateTimePicker id="DTP12" required="true" change="changeDatesDemand" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"
+					value="{path:'newExec>/toUpd', formatter: '.formatter.Demanddate' }"/>
 					<core:Title text="Effective"/>
 					<Label labelFor="DTP13" text="From"/>
-					<DateTimePicker id="DTP13" required="true" change="changeDatesDemand"
+					<DateTimePicker id="DTP13" required="true" change="changeDatesDemand" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"
 						value="{path:'newExec>/fromEffec', formatter: '.formatter.Demanddate' }"/>
 					<Label labelFor="DTP14" text="To"/>
-					<DateTimePicker id="DTP14" required="true" change="changeDatesDemand" value="{path:'newExec>/toEffec', formatter: '.formatter.Demanddate' }"/>
+					<DateTimePicker id="DTP14" required="true" change="changeDatesDemand" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"
+					value="{path:'newExec>/toEffec', formatter: '.formatter.Demanddate' }"/>
 					<core:Title text="Organizations"/>
 					<Label labelFor="multiInput1" text="Organizations Allowed"/>
 					<MultiInput id="multiInput1" width="auto" showValueHelp="false"/>

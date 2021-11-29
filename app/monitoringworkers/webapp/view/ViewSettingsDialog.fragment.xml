@@ -22,10 +22,10 @@
 			</ViewSettingsCustomItem>
 			<ViewSettingsFilterItem text="Status" key="status_code">
 				<items>
-					<ViewSettingsItem text="{i18n>Success}" key="S"/>
 					<ViewSettingsItem text="{i18n>Error}" key="E"/>
-					<ViewSettingsItem text="{i18n>Warning}" key="W"/>
 					<ViewSettingsItem text="{i18n>Running}" key="R"/>
+					<ViewSettingsItem text="{i18n>Success}" key="S"/>
+					<ViewSettingsItem text="{i18n>Warning}" key="W"/>
 				</items>
 			</ViewSettingsFilterItem>
 			<ViewSettingsCustomItem id="idCustomFilterItem2" text="{i18n>numWork}" key="numberOfItems">

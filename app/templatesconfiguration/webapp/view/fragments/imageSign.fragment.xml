@@ -2,9 +2,9 @@
 	<Dialog id="imagen" state="Warning" icon="sap-icon://filter-fields" title="{i18n>selCoord}" contentHeight="842px" contentWidth="600px">
 		<ScrollContainer id="ScrollCoordenates" height="100%" width="100%" horizontal="false" vertical="true" focusable="true">
 			<MessageStrip id="messageCoord" text="{i18n>step1Coord}" type="Warning"></MessageStrip>
-			<Carousel id="carouselContainerCoordenates" class="sapUiContentPadding" pages="{ path: 'template>/pages_preview' }" showPageIndicator="true"
+			<Carousel id="carouselContainerCoordenates" class="sapUiContentPadding" pages="{ path: 'pages>/pages' }" showPageIndicator="true"
 				pageIndicatorPlacement="Top" arrowsPlacement="PageIndicator" width="100%" height="100%" loop="false">
-				<Image src="{ path: 'template>base64'}" width="100%" height="100%" press="pressPage"></Image>
+				<Image src="{ path: 'pages>content'}" width="100%" height="100%" press="pressPage"></Image>
 			</Carousel>
 			<Image id="imagePage" visible="false" src="" width="100%" height="100%"></Image>
 		</ScrollContainer>

@@ -6,26 +6,26 @@
 				columnsL="2" columnsM="1" singleContainerFullSize="false">
 				<f:content>
 					<core:Title text="{i18n>updated}"/>
-					<Label labelFor="DTP1" text="{i18n>from}"/>
+					<Label labelFor="DTP11" text="{i18n>from}"/>
 					<DateTimePicker id="DTP11" required="true" change="changeDatesDemand"
-					value="{path:'newExec>/fromUpd', formatter: '.formatter.Demanddate' }"/>
+					value="{path:'newExec>/fromUpd', formatter: '.formatter.Demanddate' }" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
 					<Label labelFor="DTP12" text="{i18n>to}"/>
 					<DateTimePicker id="DTP12" required="true" change="changeDatesDemand"
-					value="{path:'newExec>/toUpd', formatter: '.formatter.Demanddate' }"/>
+					value="{path:'newExec>/toUpd', formatter: '.formatter.Demanddate' }" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
 					<core:Title text="{i18n>effec}"/>
 					<Label labelFor="DTP13" text="{i18n>from}"/>
 					<DateTimePicker id="DTP13" required="true" change="changeDatesDemand"
-					value="{path:'newExec>/fromEffec', formatter: '.formatter.Demanddate' }"/>
+					value="{path:'newExec>/fromEffec', formatter: '.formatter.Demanddate' }" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
 					<Label labelFor="DTP14" text="{i18n>to}"/>
 					<DateTimePicker id="DTP14" required="true" change="changeDatesDemand"
-					value="{path:'newExec>/toEffec', formatter: '.formatter.Demanddate' }"/>
+					value="{path:'newExec>/toEffec', formatter: '.formatter.Demanddate' }" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
 					<core:Title text="{i18n>superv}"/>
 					<MultiInput id="multiInput1" width="auto" showValueHelp="false"/>
 					<core:Title text="{i18n>work}"/>
 					<Label labelFor="RefIdWorkers" text="{i18n>refId}"/>
 					<Select id="RefIdWorkers" width="50%">
 						<core:Item key="WID" text="WID"/>
-						<core:Item key="Employee_ID" text="{i18n>empId}"/>
+						<core:Item key="Employee_ID" text="{i18n>empID}"/>
 						<core:Item key="Contingent_Worker_ID" text="{i18n>contWorkID}"/>
 					</Select>
 					<MultiInput id="multiInput2" required="true" width="auto" showValueHelp="false"/>

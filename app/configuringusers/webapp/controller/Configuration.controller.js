@@ -9,17 +9,17 @@ sap.ui.define([
 		onInit: function () {
 			var vThat = this;
 			var modelBase64 = this.getOwnerComponent().getModel();
-            this.getView().setModel(modelBase64, "Base64");
-            
-            var oGlobalBusyDialog = new sap.m.BusyDialog();
-            oGlobalBusyDialog.open();
+			this.getView().setModel(modelBase64, "Base64");
+
+			var oGlobalBusyDialog = new sap.m.BusyDialog();
+			oGlobalBusyDialog.open();
 
 			modelBase64.attachBatchRequestCompleted(function (oEvent) {
 				var requests = oEvent.getParameter('requests');
 				for (var i = 0; i < requests.length; i++) {
 					if (requests[i].url == "Subscription_Settings") {
-                        vThat.readBase64(modelBase64);
-                        oGlobalBusyDialog.close();
+						vThat.readBase64(modelBase64);
+						oGlobalBusyDialog.close();
 					}
 				}
 			});
@@ -176,6 +176,11 @@ sap.ui.define([
 					var oModelJSON = vThat.getJsonModel(oJSON);
 					vThat.getView().setModel(oModelJSON, "ModelJSON");
 					vThat.callCPIShapeIn_Language();
+				},
+				error: function (e) {
+					//that.byId("selSource").setBusy(false);
+					var mensaje = JSON.parse(e.responseText).message_error.substring(66);
+					sap.m.MessageToast.show(mensaje);
 				}
 			});
 			oModel.read(sUrl_Languages);
@@ -350,7 +355,7 @@ sap.ui.define([
 					"value": vBase64
 				};
 
-                var oThat = this;
+				var oThat = this;
 				var sUrl = "/Configurations(pck_code='SYN_USER',conf_code='SCE-CONFIG')";
 				vServiceModel.update(sUrl, changedData, {
 					success: function (oData, response) {
@@ -532,7 +537,11 @@ sap.ui.define([
 						oLanguages.setData(array);
 						vThat.getView().setModel(oLanguages, "Language");
 					},
-					error: function (e) {}
+					error: function (e) {
+						//that.byId("selSource").setBusy(false);
+						var mensaje = JSON.parse(e.responseText).message_error.substring(66);
+						sap.m.MessageToast.show(mensaje);
+					}
 				});
 			}
 		},

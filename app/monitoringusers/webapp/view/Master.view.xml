@@ -30,20 +30,26 @@
 					</Toolbar>
 				</infoToolbar>
 				<items>
-					<ObjectListItem type="Navigation" press=".onSelectionChange" number="{ path: 'numberOfItems'}"
+					<ObjectListItem type="Navigation" press=".onSelectionChange" number="{ path: 'numberOfItems', formatter: '.formatter.numberInt'}"
 						numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }" intro="{i18n>introUser}" title="{id}"
-						numberState="{ path: 'status_code', formatter: '.formatter.IntegStatus' }" icon="sap-icon://collaborate">
+						numberState="{ path: 'status_code', formatter: '.formatter.IntegStatus' }" icon="sap-icon://collaborate" class="colorIntro colorIcon">
 						<attributes>
 							<ObjectAttribute text="{ parts:[{path:'timestamp_start'},{path:'status_code'}], formatter: '.formatter.Startdate' }" active="false"
 								visible="true"/>
 							<ObjectAttribute text="{ parts:[{path:'timestamp_end'},{path:'status_code'}], formatter: '.formatter.Enddate' }" active="false"
 								visible="true"/>
-							<ObjectAttribute text="{ path:'numberOfSeconds', formatter: '.formatter.duration' }" active="false" visible="true"/>
+							<ObjectAttribute text="{ parts:[{path:'numberOfSeconds'},{path:'timestamp_start'}], formatter: '.formatter.duration' }" active="false"
+								visible="true"/>
 						</attributes>
 						<firstStatus>
 							<ObjectStatus text="{ path: 'status_code', formatter: '.formatter.ItemStatusTex' }"
-								state="{ path: 'status_code', formatter: '.formatter.IntegStatus' }"/>
+								inverted="{path:'status_code', formatter: '.formatter.IntegStatusInv' }"
+								state="{ path: 'status_code', formatter: '.formatter.IntegStatus' }" icon="{path:'status_code', formatter: '.formatter.IntegStatusIcon' }"
+								class="spinningBusy"/>
 						</firstStatus>
+						<secondStatus>
+							<ObjectStatus text="{ path: 'type', formatter: '.formatter.ItemStatus2Tex' }" state="{ path: 'type', formatter: '.formatter.IntegStatus2' }"/>
+						</secondStatus>
 					</ObjectListItem>
 				</items>
 			</List>

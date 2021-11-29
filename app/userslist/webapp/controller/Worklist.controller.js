@@ -296,11 +296,17 @@ sap.ui.define([
 				if (sQuery && sQuery.length > 0) {
 
 					this._oTableFilterState.aSearch.push(new Filter([
+						// new Filter("employee_number", FilterOperator.Contains, sQuery),
+						// new Filter("firstname", FilterOperator.Contains, sQuery),
+						// new Filter("email", FilterOperator.Contains, sQuery),
+						// new Filter("organization_id", FilterOperator.Contains, sQuery),
+						// new Filter("lastname", FilterOperator.Contains, sQuery)
+						
 						new Filter("employee_number", FilterOperator.Contains, sQuery),
-						new Filter("firstname", FilterOperator.Contains, sQuery),
-						new Filter("email", FilterOperator.Contains, sQuery),
+						new Filter("tolower(firstname)", FilterOperator.Contains, "'" + sQuery.toLowerCase() + "'"),
+						new Filter("tolower(email)", FilterOperator.Contains, "'" + sQuery.toLowerCase() + "'"),
 						new Filter("organization_id", FilterOperator.Contains, sQuery),
-						new Filter("lastname", FilterOperator.Contains, sQuery)
+						new Filter("tolower(lastname)", FilterOperator.Contains, "'" + sQuery.toLowerCase() + "'")
 					], false));
 				}
 			}

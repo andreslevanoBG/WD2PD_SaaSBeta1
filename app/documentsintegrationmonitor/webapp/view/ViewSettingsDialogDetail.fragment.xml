@@ -6,7 +6,7 @@
 			<ViewSettingsItem text="{i18n>viewFragmentLastName}" key="lastname" selected="false"/>
 		</sortItems>
 		<filterItems>
-			<ViewSettingsCustomItem id="idCustomFilterItem" text="{i18n>viewFragmentEmployees}"key="pernr">
+			<ViewSettingsCustomItem id="idCustomFilterItem" text="{i18n>viewFragmentEmployees}" key="pernr">
 				<customControl>
 					<l:VerticalLayout class="sapUiContentPadding" width="100%">
 						<Label text="{i18n>viewFragmentLabel2}"/>

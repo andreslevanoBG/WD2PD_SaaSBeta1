@@ -113,9 +113,10 @@
 														<items>
 															<ColumnListItem type="Active" id="item15_1603812787384">
 																<cells>
-																	<ComboBox id="combo03" items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_USER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PUBLIC'}]}" selectedKey="{ModelJSON>usage_public}">
-																		<core:Item key="{Base64>value}" text="{Base64>text}"/>
-																	</ComboBox>
+																	<ComboBox id="combo03" items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_USER'}, { path : 'pck_code', operator : 'EQ', value1 : 'SYN_USER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PUBLIC'}]}"
+                                                                        selectedKey="{ModelJSON>usage_public}">
+                                                                        <core:Item key="{Base64>value}" text="{Base64>text}"/>
+                                                                    </ComboBox>
 																	<ComboBox id="combo04" items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_USER'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PRIMARY'}]}" selectedKey="{ModelJSON>type_data_primary}">
 																		<core:Item key="{Base64>value}" text="{Base64>text}"/>
 																	</ComboBox>

@@ -65,6 +65,15 @@ sap.ui.define([
 			this._formFragments = null;
 		},
 
+		changeDTP: function (oEvent) {
+			var bValid = oEvent.getParameter("valid");
+			if (!bValid) {
+				oEvent.getSource().setValueState("Error");
+			} else {
+				oEvent.getSource().setValueState("None");
+			}
+		},
+
 		/* Instanciamos los fragmentos para la visualización o edición de los aDatas */
 		createFragmentsData: function () {
 			var sFragmentName = "DisplayData";
@@ -325,6 +334,12 @@ sap.ui.define([
 				oIconTabFilter.removeContent(id);
 			}
 			var conte = this._getFormFragment(sFragmentName);
+			if (Fragment.byId("changeData", "dp1")) {
+				Fragment.byId("changeData", "dp1").setValueState("None");
+				Fragment.byId("changeData", "dp2").setValueState("None");
+				Fragment.byId("changeData", "dp3").setValueState("None");
+				Fragment.byId("changeData", "dp4").setValueState("None");
+			}
 			oIconTabFilter.insertContent(conte);
 		},
 
@@ -359,6 +374,9 @@ sap.ui.define([
 			var oBinding = oInput.getBinding("value");
 			var value = oInput.getValue();
 			if (value == "") {
+				sValueState = "Error";
+				bValidationError = true;
+			} else if (oInput.getValueState() == "Error") {
 				sValueState = "Error";
 				bValidationError = true;
 			}
@@ -562,6 +580,10 @@ sap.ui.define([
 				this.byId("createBut").setVisible(true);
 				this.byId("saveBut").setVisible(false);
 				this.byId("PlanningD").setTitle(text);
+				this.byId("begda").setValueState("None");
+				this.byId("endda").setValueState("None");
+				this.byId("TP1").setValueState("None");
+				this.byId("TP2").setValueState("None");
 				this.byId("PlanningD").open();
 			}
 		},
@@ -588,7 +610,10 @@ sap.ui.define([
 			var value = oEvent.getParameter("value");
 			var oInput = oEvent.getSource();
 			var sValueState = "None";
+			var bValid = oEvent.getParameter("valid");
 			if (value == "") {
+				sValueState = "Error";
+			} else if (!bValid) {
 				sValueState = "Error";
 			}
 			oInput.setValueState(sValueState);
@@ -601,7 +626,10 @@ sap.ui.define([
 			var value = oEvent.getParameter("value");
 			var oInput = oEvent.getSource();
 			var sValueState = "None";
+			var bValid = oEvent.getParameter("valid");
 			if (value == "") {
+				sValueState = "Error";
+			} else if (!bValid) {
 				sValueState = "Error";
 			}
 			oInput.setValueState(sValueState);
@@ -731,7 +759,10 @@ sap.ui.define([
 			var value = oEvent.getParameter("value");
 			var oInput = oEvent.getSource();
 			var sValueState = "None";
+			var bValid = oEvent.getParameter("valid");
 			if (value == "") {
+				sValueState = "Error";
+			} else if (!bValid) {
 				sValueState = "Error";
 			}
 			oInput.setValueState(sValueState);
@@ -820,6 +851,10 @@ sap.ui.define([
 				this.byId("createBut").setVisible(false);
 				this.byId("saveBut").setVisible(true);
 				var texto = this.getResourceBundle().getText("editPlanD");
+				this.byId("begda").setValueState("None");
+				this.byId("endda").setValueState("None");
+				this.byId("TP1").setValueState("None");
+				this.byId("TP2").setValueState("None");
 				this.byId("PlanningD").setTitle(texto);
 				this.byId("PlanningD").open();
 			}
@@ -832,6 +867,9 @@ sap.ui.define([
 			var oBinding = oInput.getBinding("value");
 			var value = oInput.getValue();
 			if (value == "") {
+				sValueState = "Error";
+				bValidationError = true;
+			} else if (oInput.getValueState() == "Error") {
 				sValueState = "Error";
 				bValidationError = true;
 			}

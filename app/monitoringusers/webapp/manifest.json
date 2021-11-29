@@ -39,7 +39,7 @@
 					"subTitle": "Integration Monitor",
 					"indicatorDataSource": {
 						"dataSource": "mainService",
-						"path": "Integrations/$count?$filter=pck_code eq  'SYN_USER'",
+						"path": "counterIntUsers",
 						"refresh": 8000
 					}
 				}
@@ -104,6 +104,13 @@
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/parametros.json"
 			}
+		},
+		"resources": {
+		  "css": [
+			{
+			  "uri": "css/style.css"
+			}
+		  ]
 		},
 		"routing": {
 			"config": {

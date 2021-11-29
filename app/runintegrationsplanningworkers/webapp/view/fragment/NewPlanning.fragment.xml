@@ -27,13 +27,13 @@
 							<core:Item key="{timezones>Key}" text="{timezones>Name}"/>
 						</ComboBox>
 						<Label labelFor="DTP1" text="{i18n>initZone}"/>
-						<DateTimePicker id="DTP1" required="true" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
+						<DateTimePicker id="DTP1" required="true" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss" change="changeDTP"/>
 						<Label labelFor="DTP2" text="{i18n>fromRetro}"/>
-						<DateTimePicker id="DTP2" required="true" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
+						<DateTimePicker id="DTP2" required="true" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss" change="changeDTP"/>
 						<Label labelFor="DTP3" text="{i18n>toFuture}"/>
-						<DateTimePicker id="DTP3" required="true" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
+						<DateTimePicker id="DTP3" required="true" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss" change="changeDTP"/>
 						<Label labelFor="DTP4" text="{i18n>fromNext}" visible="false"/>
-						<DateTimePicker id="DTP4" required="true" valueFormat="yyyy-MM-ddTHH:mm:ss" visible="false" displayFormat="yyyy-MM-dd HH:mm:ss"/>
+						<DateTimePicker id="DTP4" required="true" valueFormat="yyyy-MM-ddTHH:mm:ss" visible="false" displayFormat="yyyy-MM-dd HH:mm:ss" change="changeDTP"/>
 					</VBox>
 					<core:Title text="{i18n>superv}"/>
 					<Label labelFor="RefId" text="{i18n>refId}"/>

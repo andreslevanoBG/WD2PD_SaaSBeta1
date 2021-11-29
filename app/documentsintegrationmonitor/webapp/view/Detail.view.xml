@@ -1,35 +1,31 @@
-<mvc:View 
-    controllerName="shapein.DocumentsIntegrationMonitor.controller.Detail" 
-	xmlns="sap.m"
-	xmlns:semantic="sap.f.semantic"
+<mvc:View controllerName="shapein.DocumentsIntegrationMonitor.controller.Detail" xmlns="sap.m" xmlns:semantic="sap.f.semantic"
 	xmlns:mvc="sap.ui.core.mvc">
-
-		<semantic:SemanticPage
-		id="detailPage"
-		busy="{detailView>/busy}"
-		busyIndicatorDelay="{detailView>/delay}">
+	<semantic:SemanticPage id="detailPage" busy="{detailView>/busy}" busyIndicatorDelay="{detailView>/delay}">
 		<semantic:titleHeading>
 			<Title text="{ path:'template/doc_title', formatter: '.formatter.headtitle' }" level="H2"/>
 		</semantic:titleHeading>
 		<semantic:headerContent>
-			<ObjectHeader intro="Process ID: Document Integration" title="{uuid}" icon="sap-icon://process" number="{ path: 'numberOfItems' }"
+			<ObjectHeader intro="Process ID: Document Integration" title="{uuid}" icon="sap-icon://process"
+				number="{ path: 'numberOfItems', formatter: '.formatter.numberInt' }" class="colorIntroDet colorIconDet"
 				numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }"
-				numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" titleActive="false" backgroundDesign="Translucent"
-				condensed="false" visible="true">
+				numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" titleActive="false" backgroundDesign="Translucent" condensed="false"
+				visible="true">
 				<attributes>
 					<ObjectAttribute text="{ parts:[{path:'timestamp_start'},{path:'status'}], formatter: '.formatter.Startdate' }" active="false"
 						visible="true"/>
-					<ObjectAttribute text="{ parts:[{path:'timestamp_end'},{path:'status'}], formatter: '.formatter.Enddate' }" active="false"
+					<ObjectAttribute text="{ parts:[{path:'timestamp_end'},{path:'status'}], formatter: '.formatter.Enddate' }" active="false" visible="true"/>
+					<ObjectAttribute text="{ parts:[{path:'numberOfSeconds'},{path:'timestamp_start'}], formatter: '.formatter.duration' }" active="false"
 						visible="true"/>
-                    <ObjectAttribute text="{ path:'numberOfSeconds', formatter: '.formatter.duration' }" active="false" visible="true"/>    
-
-                    <ObjectAttribute text="{ path:'template/template_id', formatter: '.formatter.tempid' }" active="false" visible="true"/>    
-                    <ObjectAttribute text="{ path:'template/template_version', formatter: '.formatter.tempversion' }" active="false" visible="true"/>
+					<ObjectAttribute text="{ path:'template/template_id', formatter: '.formatter.tempid' }" active="false" visible="true"/>
+					<ObjectAttribute text="{ path:'template/template_version', formatter: '.formatter.tempversion' }" active="false" visible="true"/>
 				</attributes>
 				<statuses>
-                    <ObjectStatus text="{ parts:[{path:'error_code'},{path:'status'}], formatter: '.formatter.ItemStatusText' }"
-                            state="{ path: 'status', formatter: '.formatter.IntegStatus' }"  press="pressError" 
-                            active="{ parts:[{path:'status'},{path:'error_code'}], formatter: '.formatter.VisError' }" icon="{ path: 'status', formatter: '.formatter.IconError' }" />
+					<ObjectStatus text="{ parts:[{path:'error_code'},{path:'status'}], formatter: '.formatter.ItemStatusText' }"
+						state="{ path: 'status', formatter: '.formatter.IntegStatus' }" press="pressError"
+						inverted="{path:'status_code', formatter: '.formatter.IntegStatusInv' }"
+						active="{ parts:[{path:'status'},{path:'error_code'}], formatter: '.formatter.VisError' }"
+						icon="{ path: 'status', formatter: '.formatter.IconError' }"/>
+					<ObjectStatus text="{ path: 'type', formatter: '.formatter.ItemStatus2Tex' }" state="{ path: 'type', formatter: '.formatter.IntegStatus2' }"/>
 				</statuses>
 				<markers/>
 			</ObjectHeader>
@@ -38,24 +34,24 @@
 			<IconTabBar id="iconTab" expandable="false" expanded="true" applyContentPadding="false" backgroundDesign="Solid" upperCase="false"
 				visible="true" selectedKey="Ok" select="searchFilters">
 				<items>
-					<IconTabFilter icon="sap-icon://drop-down-list" iconColor="Default" text="{i18n>viewIconTabFilterAllItems}" count="{numberOfItems}" design="Vertical"
-						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+					<IconTabFilter icon="sap-icon://drop-down-list" iconColor="Default" text="{i18n>viewIconTabFilterAllItems}" count="{numberOfItems}"
+						design="Vertical" showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content></content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
-					<IconTabFilter id="tabfSuc" key="Suc" icon="sap-icon://accept" iconColor="Positive" text="{i18n>viewIconTabFilterSuccess}" count="" design="Vertical"
-						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+					<IconTabFilter id="tabfSuc" key="Suc" icon="sap-icon://accept" iconColor="Positive" text="{i18n>viewIconTabFilterSuccess}" count=""
+						design="Vertical" showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content></content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
-					<IconTabFilter id="tabfErr" key="Err" icon="sap-icon://decline" iconColor="Negative" text="{i18n>viewIconTabFilterError}" count="" design="Vertical" showAll="false"
-						textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+					<IconTabFilter id="tabfErr" key="Err" icon="sap-icon://decline" iconColor="Negative" text="{i18n>viewIconTabFilterError}" count=""
+						design="Vertical" showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content></content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
 				</items>
 				<content>
-                    <Table id="lineItemsList" width="auto" noDataText="{i18n>viewTextNoData}" mode="SingleSelectMaster" showSeparators="All" growing="true"
+					<Table id="lineItemsList" width="auto" noDataText="{i18n>viewTextNoData}" mode="SingleSelectMaster" showSeparators="All" growing="true"
 						growingThreshold="20" growingScrollToLoad="true" items="{ path: 'items>/docs'}" class="sapUiResponsiveMargin">
 						<infoToolbar/>
 						<headerToolbar>
@@ -64,12 +60,12 @@
 									<Title text="" titleStyle="Auto" width="auto" textAlign="Begin" visible="true" wrapping="false"/>
 									<ToolbarSpacer width=""/>
 									<Button id="reproc" text="{i18n>viewTextReprocessing}" type="Reject" icon="sap-icon://process" iconFirst="true" width="auto" visible="true"
-									press="onActionRepro2" iconDensityAware="false"/>
+										press="onActionRepro2" iconDensityAware="false"/>
 									<SearchField id="search" search="searchFilters" placeholder="Search" showSearchButton="true" visible="true" width="auto"/>
-									<OverflowToolbarButton id="sortButton1" text="{i18n>viewTextSort}" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true"
-										visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
-									<OverflowToolbarButton id="filterButton1" text="{i18n>viewTextFilter}" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto"
+									<OverflowToolbarButton id="sortButton1" text="{i18n>viewTextSort}" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto"
 										enabled="true" visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
+									<OverflowToolbarButton id="filterButton1" text="{i18n>viewTextFilter}" type="Transparent" icon="sap-icon://filter" iconFirst="true"
+										width="auto" enabled="true" visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
 								</content>
 							</OverflowToolbar>
 						</headerToolbar>
@@ -82,14 +78,16 @@
 							</Column>
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Phone" demandPopin="true" popinDisplay="Inline" mergeDuplicates="false">
 								<header>
-									<Text text="{i18n>viewLabelColumnCreatedAt}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>viewLabelColumnCreatedAt}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"
+										visible="true"/>
 								</header>
 								<footer/>
 							</Column>
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
 								mergeDuplicates="false">
 								<header>
-									<Text text="{i18n>viewLabelColumnLastName}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>viewLabelColumnLastName}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"
+										visible="true"/>
 								</header>
 								<footer/>
 							</Column>
@@ -100,25 +98,27 @@
 								</header>
 								<footer/>
 							</Column>
-
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
 								mergeDuplicates="false">
 								<header>
-									<Text text="{i18n>viewLabelColumnEmployee}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>viewLabelColumnEmployee}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"
+										visible="true"/>
 								</header>
 								<footer/>
 							</Column>
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
 								mergeDuplicates="false">
 								<header>
-									<Text text="{i18n>viewLabelColumnDetail}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>viewLabelColumnDetail}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"
+										visible="true"/>
 								</header>
 								<footer/>
 							</Column>
 							<Column width="auto" hAlign="Center" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline"
 								mergeDuplicates="false">
 								<header>
-									<Text text="{i18n>viewLabelColumnAction}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+									<Text text="{i18n>viewLabelColumnAction}" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"
+										visible="true"/>
 								</header>
 								<footer/>
 							</Column>
@@ -126,44 +126,35 @@
 						<items>
 							<ColumnListItem type="Active" visible="true">
 								<cells>
-                                    <Text text="{items>uuid}"/> 
-                                    <Text text="{ parts:[{path:'items>createdAt'},{path:'status'}], formatter: '.formatter.Startdate' }"/>
-                                    <Text text="{items>worker/lastname}"/> 
-                                    <Text text="{items>worker/firstname}"/> 
-                                    <Text text="{ path: 'items>employee_number' }"/> 
+									<Text text="{items>uuid}"/>
+									<Text text="{ parts:[{path:'items>createdAt'},{path:'status'}], formatter: '.formatter.Startdate' }"/>
+									<Text text="{items>worker/lastname}"/>
+									<Text text="{items>worker/firstname}"/>
+									<Text text="{ path: 'items>employee_number' }"/>
 									<Button text="" type="Default" icon="sap-icon://message-error" iconFirst="true" width="60px"
 										enabled="{ path: 'items>status', formatter: '.formatter.ItemButEnabled' }" visible="true" iconDensityAware="false"
 										press="handleMessagePopoverPress"/>
 									<Button id="reproc_ind" text="" type="Default" icon="sap-icon://action" iconFirst="true" width="60px" visible="true"
-                                    enabled="{ parts:[{path:'items>action'},{path:'items>status'}], formatter: '.formatter.ActionButEnabled' }"
-									press="onAction" iconDensityAware="false"/>
+										enabled="{ parts:[{path:'items>action'},{path:'items>status'}], formatter: '.formatter.ActionButEnabled' }" press="onAction"
+										iconDensityAware="false"/>
 								</cells>
 							</ColumnListItem>
 						</items>
 					</Table>
 				</content>
-			</IconTabBar>            
+			</IconTabBar>
 		</semantic:content>
 		<!--Semantic ShareMenu Buttons-->
 		<semantic:closeAction>
-			<semantic:CloseAction
-					id="closeColumn"
-					press=".onCloseDetailPress"/>
+			<semantic:CloseAction id="closeColumn" press=".onCloseDetailPress"/>
 		</semantic:closeAction>
-
 		<semantic:fullScreenAction>
-			<semantic:FullScreenAction
-					id="enterFullScreen"
-					visible="{= !${device>/system/phone} &amp;&amp; !${appView>/actionButtonsInfo/midColumn/fullScreen}}"
-					press=".toggleFullScreen"/>
+			<semantic:FullScreenAction id="enterFullScreen"
+				visible="{= !${device>/system/phone} &amp;&amp; !${appView>/actionButtonsInfo/midColumn/fullScreen}}" press=".toggleFullScreen"/>
 		</semantic:fullScreenAction>
 		<semantic:exitFullScreenAction>
-			<semantic:ExitFullScreenAction
-					id="exitFullScreen"
-					visible="{= !${device>/system/phone} &amp;&amp; ${appView>/actionButtonsInfo/midColumn/fullScreen}}"
-					press=".toggleFullScreen"/>
+			<semantic:ExitFullScreenAction id="exitFullScreen"
+				visible="{= !${device>/system/phone} &amp;&amp; ${appView>/actionButtonsInfo/midColumn/fullScreen}}" press=".toggleFullScreen"/>
 		</semantic:exitFullScreenAction>
-
 	</semantic:SemanticPage>
-
 </mvc:View>

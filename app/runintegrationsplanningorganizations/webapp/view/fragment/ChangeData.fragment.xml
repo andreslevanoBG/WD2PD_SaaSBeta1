@@ -10,13 +10,13 @@
 				</Select>
 				<Label text="Initial Date From "/>
 				<DateTimePicker id="dp1" value="{adata>/initial_date_from}" editable="{path:'last_execution', formatter: '.formatter.editInitDate' }"
-				valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
+				valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss" change="changeDTP"/>
 				<Label text="Timestamp for Retroactive Changes (From)"/>
-				<DateTimePicker id="dp2" value="{adata>/retro_effec_from}" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
+				<DateTimePicker id="dp2" value="{adata>/retro_effec_from}" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss" change="changeDTP"/>
 				<Label text="Timestamp Date for Future Changes (To)"/>
-				<DateTimePicker id="dp3" value="{adata>/fut_upd_from}" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
+				<DateTimePicker id="dp3" value="{adata>/fut_upd_from}" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss" change="changeDTP"/>
 				<Label text="Next Execution - Next Updated From"/>
-				<DateTimePicker id="dp4" value="{adata>/next_upd_from}" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss"/>
+				<DateTimePicker id="dp4" value="{adata>/next_upd_from}" valueFormat="yyyy-MM-ddTHH:mm:ss" displayFormat="yyyy-MM-dd HH:mm:ss" change="changeDTP"/>
 				<Label text="Reference ID"/>
 				<Select id="RefId" selectedKey="{adata>/ref_id}">
 						<core:Item key="WID" text="Workday ID"/>

@@ -66,9 +66,9 @@
 				<items>
 					<IconTabFilter icon="sap-icon://inspection" key="display">
 						<ScrollContainer height="100%" width="100%" horizontal="false" vertical="true">
-							<Carousel id="carouselContainer" class="sapUiContentPadding" pages="{ path: 'template>/pages_preview' }" showPageIndicator="true"
+							<Carousel id="carouselContainer" class="sapUiContentPadding" pages="{ path: 'pages>/pages' }" showPageIndicator="true"
 								pageIndicatorPlacement="Top" arrowsPlacement="PageIndicator" width="100%" height="100%" loop="false">
-								<Image src="{ path: 'template>base64'}" width="100%" height="100%"></Image>
+								<Image src="{ path: 'pages>content'}" width="100%" height="100%"></Image>
 							</Carousel>
 						</ScrollContainer>
 					</IconTabFilter>
@@ -104,6 +104,14 @@
 									</SegmentedButton>
 									<Label id="labSignature" labelFor="segButton3" text="{i18n>tempWithSig}" class="sapUiTinyMargin"/>
 									<SegmentedButton id="segButton3" selectedKey="{path:'header>/signature', formatter: '.formatter.enableKey' }"
+										enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }" class="sapUiTinyMargin">
+										<items>
+											<SegmentedButtonItem text="{i18n>yes}" key="A"/>
+											<SegmentedButtonItem text="{i18n>no}" key="I"/>
+										</items>
+									</SegmentedButton>
+									<Label id="labFutuChanges" labelFor="segButton4" text="{i18n>tempWithFut}" class="sapUiTinyMargin"/>
+									<SegmentedButton id="segButton4" selectedKey="{path:'header>/future_changes', formatter: '.formatter.enableKey' }"
 										enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }" class="sapUiTinyMargin">
 										<items>
 											<SegmentedButtonItem text="{i18n>yes}" key="A"/>
@@ -289,9 +297,9 @@
 									<layout:DynamicSideContent id="DynamicSideContent" visible="false" class="sapUiDSCExplored sapUiContentPadding" containerQuery="true"
 										equalSplit="true" breakpointChanged="handleBreakpointChanged">
 										<VBox>
-											<Carousel id="carouselContainer2" class="sapUiContentPadding" pages="{ path: 'template>/pages_preview' }" showPageIndicator="true"
+											<Carousel id="carouselContainer2" class="sapUiContentPadding" pages="{ path: 'pages>/pages' }" showPageIndicator="true"
 												pageIndicatorPlacement="Top" arrowsPlacement="PageIndicator" width="100%" height="100%" loop="false">
-												<Image src="{ path: 'template>base64'}" width="100%" height="100%"></Image>
+												<Image src="{ path: 'pages>content'}" width="100%" height="100%"></Image>
 											</Carousel>
 										</VBox>
 										<layout:sideContent>
@@ -332,7 +340,7 @@
 																justifyContent="Center" renderType="Div" visible="true" displayInline="false">
 																<items>
 																	<Input id="Path2" textAlign="Right" value="{path: 'template>path' }" class="sapUiTinyMargin" valueLiveUpdate="false" enabled="false"
-																		width="250px"/>
+																		width="200px"/>
 																	<Button id="path2" text="{i18n>fieMapp2}" type="Emphasized" icon="sap-icon://sys-find"
 																		enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }" class="sapUiTinyMargin"
 																		press="selectSource"/>
@@ -717,15 +725,16 @@
 							</f:SimpleForm>
 							<ScrollContainer id="ScrollContSigners" height="100%" width="100%" horizontal="false" vertical="true" visible="true">
 								<Table id="tableSigners" width="auto" items="{ path: 'signature>/signers', sorter: { path: 'signing_order', descending: false } }"
-									noDataText="{i18n>noSigners}" mode="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.modeSigners' }" 
+									noDataText="{i18n>noSigners}" mode="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.modeSigners' }"
 									rememberSelections="false">
 									<headerToolbar>
 										<OverflowToolbar>
 											<Title id="tableCheckHeader" text="{i18n>signers}" level="H3"/>
 											<ToolbarSpacer/>
 											<Button icon="sap-icon://arrow-top" tooltip="moveUp"
-											enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }" press="moveUp"/>
-											<Button icon="sap-icon://arrow-bottom" tooltip="moveDown" press="moveBottom" enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }"/>
+												enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }" press="moveUp"/>
+											<Button icon="sap-icon://arrow-bottom" tooltip="moveDown" press="moveBottom"
+												enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }"/>
 											<Button text="{i18n>addSigner}"
 												enabled="{parts: [{path:'header>/active'}, {path:'header>/deprecated'}], formatter: '.formatter.enableActive' }"
 												icon="sap-icon://add-activity-2" type="Accept" press="addSigner"/>

@@ -43,7 +43,7 @@
 											</form:FormElement>
 											<form:FormElement label="Organization Type" id="element1">
 												<form:fields>
-													<ComboBox xmlns="sap.m" id="box0" items="{Base64>/Organization_Types}" selectedKey="{ModelJSON>/global_configuration/web_services/ws_get_organizations/request_filter/type}">
+													<ComboBox xmlns="sap.m" id="box0" items="{ path: 'Base64>/Organization_Types', sorter: { path: 'description', descending: false }}" selectedKey="{ModelJSON>/global_configuration/web_services/ws_get_organizations/request_filter/type}">
 														<items>
 															<core:Item xmlns:core="sap.ui.core" key="{Base64>code}" text="{Base64>description}"/>
 														</items>
@@ -104,6 +104,7 @@
 																						selectedKey="{ModelJSON>usage_public}">
 																						<core:Item key="{Base64>value}" text="{Base64>text}"/>
 																					</ComboBox>
+																					
 																					<ComboBox id="combo04213"
 																						items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_ORG'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_ADDRESS'}, { path : 'level2', operator : 'EQ', value1 : 'PRIMARY'}]}"
 																						selectedKey="{ModelJSON>type_data_primary}">
@@ -287,10 +288,10 @@
 															<ColumnListItem type="Active" id="item15_1603812787384">
 																<cells>
 																	<ComboBox id="combo03"
-																		items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_ORG'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PUBLIC'}]}"
-																		selectedKey="{ModelJSON>usage_public}">
-																		<core:Item key="{Base64>value}" text="{Base64>text}"/>
-																	</ComboBox>
+                                                                        items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_ORG'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PUBLIC'}]}"
+                                                                        selectedKey="{ModelJSON>usage_public}">
+                                                                        <core:Item key="{Base64>value}" text="{Base64>text}"/>
+                                                                    </ComboBox>
 																	<ComboBox id="combo04"
 																		items="{ path: 'Base64>/Domain_Values', filters: [{ path : 'pck_code', operator : 'EQ', value1 : 'SYN_ORG'}, { path : 'level1', operator : 'EQ', value1 : 'MAPPING_EMAIL'}, { path : 'level2', operator : 'EQ', value1 : 'PRIMARY'}]}"
 																		selectedKey="{ModelJSON>type_data_primary}">

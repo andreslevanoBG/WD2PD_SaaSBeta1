@@ -70,7 +70,8 @@ sap.ui.define([
 			this._oListFilterState.aFilter = [new Filter("pck_code", FilterOperator.EQ, "SYN_USER")];
 			var sQuery = oEvent.getParameter("query");
 			if (sQuery) {
-				this._oListFilterState.aSearch = [new Filter("comments", FilterOperator.Contains, sQuery)];
+				//this._oListFilterState.aSearch = [new Filter("comments", FilterOperator.Contains, sQuery)];
+				this._oListFilterState.aSearch = [new Filter("tolower(comments)", FilterOperator.Contains, "'" + sQuery.toLowerCase() + "'")];
 			} else {
 				this._oListFilterState.aSearch = [];
 			}
@@ -255,19 +256,33 @@ sap.ui.define([
 			if (value == "") {
 				sValueState = "Error";
 				bValidationError = true;
+			}else if (oInput.getValueState() == "Error") {
+				sValueState = "Error";
+				bValidationError = true;
 			}
 			oInput.setValueState(sValueState);
 			return bValidationError;
 		},
 
+		changeDTP: function (oEvent) {
+			var bValid = oEvent.getParameter("valid");
+			if (!bValid) {
+				oEvent.getSource().setValueState("Error");
+			} else {
+				oEvent.getSource().setValueState("None");
+			}
+		},
 		/* Al cambiar fechas de la ejecución on Demand */
 		changeDatesDemand: function (oEvent) {
 			var value = oEvent.getParameter("value");
 			var oInput = oEvent.getSource();
 			var sValueState = "None";
+			var bValid = oEvent.getParameter("valid");
 			if (value == "") {
 				sValueState = "Error";
-			} else {}
+			} else if (!bValid) {
+				sValueState = "Error";
+			}
 			oInput.setValueState(sValueState);
 		},
 
@@ -428,6 +443,9 @@ sap.ui.define([
 			var oBinding = oInput.getBinding("value");
 			var value = oInput.getValue();
 			if (value == "") {
+				sValueState = "Error";
+				bValidationError = true;
+			}else if (oInput.getValueState() == "Error") {
 				sValueState = "Error";
 				bValidationError = true;
 			}

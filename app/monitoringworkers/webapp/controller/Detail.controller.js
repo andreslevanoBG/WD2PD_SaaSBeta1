@@ -60,6 +60,8 @@ sap.ui.define([
 		handleMessagePopoverPress: function (oEvent) {
 			var sPath = oEvent.getSource().getParent().getBindingContext("items").getPath();
 			var itemsModel = this.getView().getModel("items");
+			//var sPath = oEvent.getSource().getParent().getBindingContext().getPath();
+			//var itemsModel = this.getView().getModel();
 			var sPath1 = sPath + "/timestamp_start";
 			var sPath2 = sPath + "/error_code";
 			var sPath3 = sPath + "/error/text";
@@ -165,15 +167,21 @@ sap.ui.define([
 			var itemsModel = this.getView().getModel("items");
 			var that = this;
 			oViewModel.refresh();
-			oModel.read(sPath, {
+			var sPath2 = sPath + "/integ_items"
+			oModel.read(sPath2, {
 				urlParameters: {
-					"$expand": "integ_items/error,integ_items/worker"
+					"$skip": 0,
+					"$top": 100,
+					//"$expand": "integ_items/error,integ_items/worker"
+					"$expand": "error,worker"
 				},
 				success: function (oData, oResponse) {
-					var results = oData.integ_items.results;
+					//	var results = oData.integ_items.results;
+					var results = oData.results;
 					delete oData.__metadata;
 					var scount = 0;
 					var ecount = 0;
+					var dcount = 0;
 					that.reprocesses = [];
 					results.forEach(function (entry) {
 						delete entry.__metadata;
@@ -189,11 +197,13 @@ sap.ui.define([
 						}
 						if (entry.status_code == "S") {
 							scount++;
+						} else if (entry.status_code == "D") {
+							dcount++;
 						} else {
 							ecount++;
 						}
 						if (worker) {
-							if (entry.worker.last_item_id == entry.item_id) {
+							if (entry.worker.last_item_id == entry.item_id && entry.status_code != "D") {
 								entry.action = "X";
 							} else {
 								entry.action = "";
@@ -214,17 +224,20 @@ sap.ui.define([
 					} else {
 						that.getView().byId("reproc").setVisible(false);
 					}
-					that.getView().byId("tabfSuc").setCount(scount);
-					that.getView().byId("tabfErr").setCount(ecount);
+						that.getView().byId("tabfSuc").setCount(scount);
+						that.getView().byId("tabfErr").setCount(ecount);
+						that.getView().byId("tabfDisc").setCount(dcount);
 				},
 				error: function (oError) {
 					oViewModel.setProperty("/busy", false);
 				}
 			});
 			this.getOwnerComponent().oListSelector.selectAListItem(sPath);
-			oViewModel.setProperty("/saveAsTileTitle", oResourceBundle.getText("shareSaveTileAppTitle", [sObjectName]));
+			oViewModel.setProperty("/saveAsTileTitle", oResourceBundle.getText(
+				"shareSaveTileAppTitle", [sObjectName]));
 			oViewModel.setProperty("/shareOnJamTitle", sObjectName);
-			oViewModel.setProperty("/shareSendEmailSubject",
+			oViewModel.setProperty(
+				"/shareSendEmailSubject",
 				oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
 			oViewModel.setProperty("/shareSendEmailMessage",
 				oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, location.href]));
@@ -296,13 +309,18 @@ sap.ui.define([
 		/* Al ejecutar el reprocesamiento de un único elemento */
 		onAction: function (oEvent) {
 			var sPath = oEvent.getSource().getParent().getBindingContext("items").getPath();
+			var but = oEvent.getSource().getParent();
 			var itemsModel = this.getView().getModel("items");
 			var sPath2 = sPath + "/worker/external_id";
 			var external_id = itemsModel.getProperty(sPath2);
 			var sPath3 = sPath + "/worker/employee_number";
 			var worker = itemsModel.getProperty(sPath3);
+			var sPath4 = sPath + "/worker/uuid";
+			var workeruuid = itemsModel.getProperty(sPath4);
+			var sPath5 = sPath + "/item_id";
+			var item_id = itemsModel.getProperty(sPath5);
 			var text = this.getView().getModel("i18n").getResourceBundle().getText("repWork");
-			text = " " + text + worker + "?";
+			text = " " + text + " " + worker + "?";
 			var that = this;
 			var tit = this.getResourceBundle().getText("Confirmation");
 			var yes = this.getResourceBundle().getText("Yes");
@@ -316,71 +334,189 @@ sap.ui.define([
 				beginButton: new sap.m.Button({
 					text: yes,
 					press: function () {
-						var now = new Date();
-						var utc_now = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
-							now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()));
-						var effective = JSON.parse(JSON.stringify(utc_now));
-						effective = effective.slice(0, -5);
-						var data = {
-							"test_mode": "False",
-							"reprocess": "True",
-							"transaction_log": {
-								"time_zone": "UTC",
-								"effective_from": "1900-01-01T00:00:01",
-								"effective_to": effective,
-							},
-							"workers": {
-								"reference_id": "WID",
-								"workers_list": [external_id]
-							}
-						};
-						var oViewModel = that.getModel("detailView");
-						var datajson = JSON.stringify(data);
-						var url = "/CPI-WD2PD_Dest/md/workers_sync/ondemand";
-						if (that.getOwnerComponent().settings) {
-							var cuscode = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
-							var cusclientid = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
-							var cusscope = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
-							var settings = {
-								"url": url,
-								"method": "POST",
-								"headers": {
-									"Content-Type": "application/json",
-									"Accept": "application/json",
-									"Customer-Code": cuscode.value,
-									"Customer-Client_Id": cusclientid.value,
-									"Customer-Scope": cusscope.value,
-								},
-								"data": datajson
-							};
-							$.ajax(settings).done(function (data, textStatus, jqXHR) {
-									var a = data;
-									var b = textStatus;
-									var c = jqXHR;
-									if (textStatus == "success") {
-										var sPath4 = sPath + "/action";
-										itemsModel.setProperty(sPath4, "");
-										itemsModel.refresh();
-										var items = itemsModel.getData().integ_items;
-										that.reprocesses = [];
-										for (var i = 0; i < items.length; i++) {
-											if (items[i].action == "X") {
-												that.reprocesses.push(items[i].worker.external_id);
-											}
+						var oModel = that.getOwnerComponent().getModel();
+						var path = "/Workers(guid'" + workeruuid + "')";
+						oModel.read(path, {
+							success: function (oData, oResponse) {
+								var lastnow = oData.last_item_id;
+								if (lastnow == item_id) {
+									var now = new Date();
+									var utc_now = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+										now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()));
+									var effective = JSON.parse(JSON.stringify(utc_now));
+									effective = effective.slice(0, -5);
+									var data = {
+										"test_mode": "False",
+										"reprocess": "True",
+										"transaction_log": {
+											"time_zone": "UTC",
+											"effective_from": "1900-01-01T00:00:01",
+											"effective_to": effective,
+										},
+										"workers": {
+											"reference_id": "WID",
+											"workers_list": [external_id]
 										}
-										var text1 = that.getView().getModel("i18n").getResourceBundle().getText("Worker");
-										var text2 = that.getView().getModel("i18n").getResourceBundle().getText("Reprocessed");
-										var texto = text1 + " " + org + " " + text2;
-										sap.m.MessageToast.show(texto);
+									};
+									var oViewModel = that.getModel("detailView");
+									var datajson = JSON.stringify(data);
+									var url = "/CPI-WD2PD_Dest/md/workers_sync/ondemand";
+									if (that.getOwnerComponent().settings) {
+										var cuscode = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
+										var cusclientid = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
+										var cusscope = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
+										var settings = {
+											"url": url,
+											"method": "POST",
+											"headers": {
+												"Content-Type": "application/json",
+												"Accept": "application/json",
+												"Customer-Code": cuscode.value,
+												"Customer-Client_Id": cusclientid.value,
+												"Customer-Scope": cusscope.value,
+											},
+											"data": datajson
+										};
+										$.ajax(settings).done(function (data, textStatus, jqXHR) {
+												var a = data;
+												var b = textStatus;
+												var c = jqXHR;
+												if (textStatus == "success") {
+													var sPath4 = sPath + "/action";
+													itemsModel.setProperty(sPath4, "");
+													itemsModel.refresh();
+													var items = itemsModel.getData().integ_items;
+													that.reprocesses = [];
+													for (var i = 0; i < items.length; i++) {
+														if (items[i].action == "X") {
+															that.reprocesses.push(items[i].worker.external_id);
+														}
+													}
+													var text1 = that.getView().getModel("i18n").getResourceBundle().getText("Worker");
+													var text2 = that.getView().getModel("i18n").getResourceBundle().getText("Reprocessed");
+													var texto = text1 + " " + org + " " + text2;
+													sap.m.MessageToast.show(texto);
+												}
+											})
+											.fail(function (jqXHR, textStatus, errorThrown) {
+												var d = jqXHR;
+												var e = textStatus;
+												var f = errorThrown;
+											});
 									}
-								})
-								.fail(function (jqXHR, textStatus, errorThrown) {
-									var d = jqXHR;
-									var e = textStatus;
-									var f = errorThrown;
-								});
-						}
+									dialog.close();
+
+								} else {
+									var text1 = that.getView().getModel("i18n").getResourceBundle().getText("noLastExec");
+									sap.m.MessageToast.show(text1);
+									var sPath6 = sPath + "/action";
+									itemsModel.setProperty(sPath6, "");
+									itemsModel.refresh()
+									dialog.close();
+								}
+
+							},
+							error: function (oError) {}
+						});
+
+					}
+				}),
+				endButton: new sap.m.Button({
+					text: no,
+					press: function () {
 						dialog.close();
+					}
+				}),
+				afterClose: function () {
+					dialog.destroy();
+				}
+			});
+			dialog.open();
+		},
+
+		/* Al ejecutar la acción de cancelar reprocesamiento */
+		noRepro: function (oEvent) {
+			var sPath = oEvent.getSource().getParent().getBindingContext("items").getPath();
+			var itemsModel = this.getView().getModel("items");
+			var sPath2 = sPath + "/item_id";
+			var item_id = itemsModel.getProperty(sPath2);
+			var sPath4 = sPath + "/worker/uuid";
+			var workeruuid = itemsModel.getProperty(sPath4);
+			var sPath5 = sPath + "/item_id";
+			var item_id = itemsModel.getProperty(sPath5);
+			var text = this.getView().getModel("i18n").getResourceBundle().getText("norepWork");
+			//	text = " " + text + " " + worker + "?";
+			var that = this;
+			var tit = this.getResourceBundle().getText("Confirmation");
+			var yes = this.getResourceBundle().getText("Yes");
+			var no = this.getResourceBundle().getText("No");
+			var oModel = that.getOwnerComponent().getModel();
+			var dialog = new sap.m.Dialog({
+				title: tit,
+				type: 'Message',
+				content: new sap.m.Text({
+					text: text
+				}),
+				beginButton: new sap.m.Button({
+					text: yes,
+					press: function () {
+						var oModel = that.getOwnerComponent().getModel();
+						var path = "/Workers(guid'" + workeruuid + "')";
+						oModel.read(path, {
+							success: function (oData, oResponse) {
+								var lastnow = oData.last_item_id;
+								if (lastnow == item_id) {
+									var sPath3 = "/Integration_Items(guid'" + item_id + "')";
+									var oUpdatePayload = {
+										status_code: "D"
+									};
+									oModel.sDefaultUpdateMethod = sap.ui.model.odata.UpdateMethod.Merge;
+									oModel.update(sPath3, oUpdatePayload, {
+										headers: {
+											"Content-Type": "application/json",
+											'Accept': 'application/json'
+										},
+										success: function (oData, response) {
+											var sPath4 = sPath + "/status_code";
+											itemsModel.setProperty(sPath4, "D");
+											var sPath5 = sPath + "/action";
+											itemsModel.setProperty(sPath5, "");
+											var sPath6 = sPath + "/external_id";
+											var external_id = itemsModel.getProperty(sPath6);
+											var i = that.reprocesses.indexOf(external_id);
+											if (i !== -1) {
+												that.reprocesses.splice(i, 1);
+											}
+											if (that.reprocesses.length > 0) {
+												that.getView().byId("reproc").setVisible(true);
+											} else {
+												that.getView().byId("reproc").setVisible(false);
+											}
+											var num_err = that.getView().byId("tabfErr").getCount();
+											var num_dis = that.getView().byId("tabfDisc").getCount();
+											num_err--;
+											num_dis++;
+											that.getView().byId("tabfErr").setCount(num_err);
+											that.getView().byId("tabfDisc").setCount(num_dis);
+											itemsModel.refresh();
+										},
+										error: function (oError) {
+											var text = that.getResourceBundle().getText("error");
+											sap.m.MessageToast.show(text);
+										}
+									});
+									dialog.close();
+								} else {
+									var text1 = that.getView().getModel("i18n").getResourceBundle().getText("noLastExec");
+									sap.m.MessageToast.show(text1);
+									var sPath6 = sPath + "/action";
+									itemsModel.setProperty(sPath6, "");
+									itemsModel.refresh()
+									dialog.close();
+								}
+							},
+							error: function (oError) {}
+						});
 					}
 				}),
 				endButton: new sap.m.Button({
@@ -399,8 +535,19 @@ sap.ui.define([
 		/* Al ejecutar el reprocesamiento de todos los elementos */
 		onActionRepro: function (oEvent) {
 			var itemsModel = this.getView().getModel("items");
+			var items = itemsModel.getProperty("/integ_items");
 			var text = this.getResourceBundle().getText("reproAll");
 			var that = this;
+			var aFilters = [new Filter([
+				new Filter("external_id", FilterOperator.EQ, that.reprocesses[0])
+			], false)];
+			for (var i = 1; i < that.reprocesses.length; i++) {
+				aFilters[0].aFilters.push(new Filter("external_id", FilterOperator.EQ, that.reprocesses[i]));
+			}
+			var oModel = that.getOwnerComponent().getModel();
+			var path = "/Workers";
+			var update = "";
+
 			var tit = this.getResourceBundle().getText("Confirmation");
 			var yes = this.getResourceBundle().getText("Yes");
 			var no = this.getResourceBundle().getText("No");
@@ -413,69 +560,98 @@ sap.ui.define([
 				beginButton: new sap.m.Button({
 					text: yes,
 					press: function () {
-						var now = new Date();
-						var utc_now = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
-							now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()));
-						var effective = JSON.parse(JSON.stringify(utc_now));
-						effective = effective.slice(0, -5);
-						var data = {
-							"test_mode": "False",
-							"reprocess": "True",
-							"transaction_log": {
-								"time_zone": "UTC",
-								"effective_from": "1900-01-01T00:00:01",
-								"effective_to": effective
-							},
-							"workers": {
-								"reference_id": "WID",
-								"workers_list": that.reprocesses
-							}
-						};
-						var oViewModel = that.getModel("detailView");
-						var datajson = JSON.stringify(data);
-						var url = "/CPI-WD2PD_Dest/md/workers_sync/ondemand";
-						if (that.getOwnerComponent().settings) {
-							var cuscode = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
-							var cusclientid = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
-							var cusscope = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");;
-							var settings = {
-								"url": url,
-								"method": "POST",
-								"headers": {
-									"Content-Type": "application/json",
-									"Accept": "application/json",
-									"Customer-Code": cuscode.value,
-									"Customer-Client_Id": cusclientid.value,
-									"Customer-Scope": cusscope.value,
-								},
-								"data": datajson
-							};
-							$.ajax(settings).done(function (data, textStatus, jqXHR) {
-									var a = data;
-									var b = textStatus;
-									var c = jqXHR;
-									if (textStatus == "success") {
-										var dataItems = itemsModel.getData();
-										var items = dataItems.integ_items;
-										that.reprocesses = [];
-										for (var i = 0; i < items.length; i++) {
-											items[i].action = "";
+						oModel.read(path, {
+							filters: aFilters,
+							success: function (oData, oResponse) {
+								for (var i = 0; i < oData.results.length; i++) {
+									var item_check = items.find(item => item.external_id == oData.results[i].external_id);
+									if (item_check) {
+										if (item_check.item_id != oData.results[i].last_item_id) {
+											update = "X";
+											break;
 										}
-										dataItems.integ_items = items;
-										itemsModel.setData(dataItems);
-										itemsModel.refresh();
-										that.getView().byId("reproc").setVisible(false);
-										var texto = "All Workers reprocessed.";
-										sap.m.MessageToast.show(texto);
+									} else {
+										update = "X";
+										break;
 									}
-								})
-								.fail(function (jqXHR, textStatus, errorThrown) {
-									var d = jqXHR;
-									var e = textStatus;
-									var f = errorThrown;
-								});
-						}
-						dialog.close();
+								}
+								if (update == "") {
+									var now = new Date();
+									var utc_now = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+										now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()));
+									var effective = JSON.parse(JSON.stringify(utc_now));
+									effective = effective.slice(0, -5);
+									var data = {
+										"test_mode": "False",
+										"reprocess": "True",
+										"transaction_log": {
+											"time_zone": "UTC",
+											"effective_from": "1900-01-01T00:00:01",
+											"effective_to": effective
+										},
+										"workers": {
+											"reference_id": "WID",
+											"workers_list": that.reprocesses
+										}
+									};
+									var oViewModel = that.getModel("detailView");
+									var datajson = JSON.stringify(data);
+									var url = "/CPI-WD2PD_Dest/md/workers_sync/ondemand";
+									if (that.getOwnerComponent().settings) {
+										var cuscode = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
+										var cusclientid = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
+										var cusscope = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");;
+										var settings = {
+											"url": url,
+											"method": "POST",
+											"headers": {
+												"Content-Type": "application/json",
+												"Accept": "application/json",
+												"Customer-Code": cuscode.value,
+												"Customer-Client_Id": cusclientid.value,
+												"Customer-Scope": cusscope.value,
+											},
+											"data": datajson
+										};
+										$.ajax(settings).done(function (data, textStatus, jqXHR) {
+												var a = data;
+												var b = textStatus;
+												var c = jqXHR;
+												if (textStatus == "success") {
+													var dataItems = itemsModel.getData();
+													var items = dataItems.integ_items;
+													that.reprocesses = [];
+													for (var i = 0; i < items.length; i++) {
+														items[i].action = "";
+													}
+													dataItems.integ_items = items;
+													itemsModel.setData(dataItems);
+													itemsModel.refresh();
+													that.getView().byId("reproc").setVisible(false);
+													var texto = "All Workers reprocessed.";
+													sap.m.MessageToast.show(texto);
+												}
+											})
+											.fail(function (jqXHR, textStatus, errorThrown) {
+												var d = jqXHR;
+												var e = textStatus;
+												var f = errorThrown;
+											});
+									}
+									dialog.close();
+
+								} else {
+									var text1 = that.getView().getModel("i18n").getResourceBundle().getText("noLastExec2");
+									sap.m.MessageToast.show(text1);
+									dialog.close();
+								}
+							},
+							error: function (oError) {
+								var text1 = that.getView().getModel("i18n").getResourceBundle().getText("noLastExec2");
+								sap.m.MessageToast.show(text1);
+								dialog.close();
+							}
+						});
 					}
 				}),
 				endButton: new sap.m.Button({
@@ -495,6 +671,8 @@ sap.ui.define([
 		onDataDialogPress: function (oEvent) {
 			var sPath = oEvent.getSource().getParent().getBindingContext("items").getPath();
 			var itemsModel = this.getView().getModel("items");
+			//var sPath = oEvent.getSource().getParent().getBindingContext().getPath();
+			//var itemsModel = this.getView().getModel();
 			sPath = sPath + "/request";
 			var request = itemsModel.getProperty(sPath);
 			var text = this.b64DecodeUnicode(request);
@@ -612,6 +790,20 @@ sap.ui.define([
 						new Filter("pernr", FilterOperator.LE, workerto)
 					], true));
 				}
+			/*	if (workerfrom !== "" && workerto == "") {
+					aFilters.push(new Filter([
+						new Filter("worker/employee_number", FilterOperator.GE, workerfrom)
+					], true));
+				} else if (workerfrom == "" && workerto !== "") {
+					aFilters.push(new Filter([
+						new Filter("worker/employee_number", FilterOperator.LE, workerto)
+					], true));
+				} else if (workerfrom !== "" && workerto !== "") {
+					aFilters.push(new Filter([
+						new Filter("worker/employee_number", FilterOperator.GE, workerfrom),
+						new Filter("worker/employee_number", FilterOperator.LE, workerto)
+					], true));
+				}*/
 				var vLayout2 = this.byId("viewSettingsDialogDetail").getFilterItems()[1].getCustomControl();
 				var lastfrom = vLayout2.getContent()[1].getValue();
 				var lastto = vLayout2.getContent()[3].getValue();
@@ -619,15 +811,15 @@ sap.ui.define([
 				this.toLastPreviousValue = lastto;
 				if (lastfrom !== "" && lastto == "") {
 					aFilters.push(new Filter([
-						new Filter("lastname", FilterOperator.GE, lastfrom)
+						new Filter("worker/lastname", FilterOperator.GE, lastfrom)
 					], true));
 				} else if (lastfrom == "" && lastto !== "") {
 					aFilters.push(new Filter([
-						new Filter("lastname", FilterOperator.LE, lastto)
+						new Filter("worker/lastname", FilterOperator.LE, lastto)
 					], true));
 				} else if (lastfrom !== "" && lastto !== "") {
 					aFilters.push(new Filter([
-						new Filter("lastname", FilterOperator.BT, lastfrom, lastto)
+						new Filter("worker/lastname", FilterOperator.BT, lastfrom, lastto)
 					], true));
 				}
 				var sortItems = this.byId("viewSettingsDialogDetail").getSortItems();
@@ -644,6 +836,8 @@ sap.ui.define([
 				aFilters.push(new Filter("status_code", FilterOperator.EQ, "S"));
 			} else if (keySel == "Err") {
 				aFilters.push(new Filter("status_code", FilterOperator.EQ, "E"));
+			} else if (keySel == "Dis") {
+				aFilters.push(new Filter("status_code", FilterOperator.EQ, "D"));
 			}
 			var query = this.getView().byId("search").getValue();
 			if (query !== "") {
@@ -652,6 +846,13 @@ sap.ui.define([
 					new Filter("pernr", FilterOperator.Contains, query)
 				], false));
 			}
+			/*if (query !== "") {
+				aFilters.push(new Filter([
+					new Filter("worker/lastname", FilterOperator.Contains, query),
+					new Filter("worker/firstname", FilterOperator.Contains, query),
+					new Filter("worker/employee_number", FilterOperator.Contains, query)
+				], false));
+			}*/
 			this._oTableFilterState.aFilter = aFilters;
 			this._applyFilterSearch();
 			if (this.byId("viewSettingsDialogDetail")) {
@@ -662,6 +863,9 @@ sap.ui.define([
 		/* Aplicar los filtros */
 		_applyFilterSearch: function () {
 			var aFilters = this._oTableFilterState.aSearch.concat(this._oTableFilterState.aFilter);
+			//this.getView().byId("lineItemsList").getBinding("items").filter(aFilters, "Application");
+		//	var pat = this.getView().byId("lineItemsList").getBindingContext().getPath();
+		//	this.getView().byId("lineItemsList").bindItems(pat, aFilters);
 			this.getView().byId("lineItemsList").getBinding("items").filter(aFilters, "Application");
 		},
 

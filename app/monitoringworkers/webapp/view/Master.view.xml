@@ -7,7 +7,7 @@
 		<semantic:content>
 			<List id="list" width="auto" class="sapFDynamicPageAlignContent"
 				items="{ path: '/Integrations', parameters:{expand: 'error'}, filters: { path: 'pck_code', operator: 'EQ', value1: 'SYN_WORKER' }, sorter: { path: 'timestamp_start', descending: true }, groupHeaderFactory: '.createGroupHeader' }"
-				busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" growingThreshold="100"
+				busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" growingThreshold="1000"
 				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" growing="true" growingScrollToLoad="true"
 				updateFinished=".onUpdateFinished" selectionChange=".onSelectionChange">
 				<headerToolbar>
@@ -22,6 +22,8 @@
 							visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
 						<Button id="filterButton" text="{i18n>Filter}" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto" enabled="true"
 							visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
+						<!--<Button id="filterButtondf"  type="Transparent" icon="sap-icon://goalseek" iconFirst="true" width="auto" enabled="true"-->
+						<!--visible="true" class="spinningBusy" iconDensityAware="false" press=".onOpenViewSettings"/>-->
 					</OverflowToolbar>
 				</headerToolbar>
 				<infoToolbar>
@@ -30,20 +32,25 @@
 					</Toolbar>
 				</infoToolbar>
 				<items>
-					<ObjectListItem type="Navigation" press=".onSelectionChange" number="{ path: 'numberOfItems'}"
+					<ObjectListItem type="Navigation" press=".onSelectionChange" number="{ path: 'numberOfItems', formatter: '.formatter.numberInt'}"
 						numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }" intro="{i18n>introWork}" title="{id}"
-						numberState="{ path: 'status_code', formatter: '.formatter.IntegStatus' }" icon="sap-icon://collaborate">
+						numberState="{ path: 'status_code', formatter: '.formatter.IntegStatus' }" icon="sap-icon://collaborate" class="colorIntro colorIcon">
 						<attributes>
 							<ObjectAttribute text="{ parts:[{path:'timestamp_start'},{path:'status_code'}], formatter: '.formatter.Startdate' }" active="false"
 								visible="true"/>
 							<ObjectAttribute text="{ parts:[{path:'timestamp_end'},{path:'status_code'}], formatter: '.formatter.Enddate' }" active="false"
 								visible="true"/>
-							<ObjectAttribute text="{ path:'numberOfSeconds', formatter: '.formatter.duration' }" active="false" visible="true"/>
+							<ObjectAttribute text="{ parts:[{path:'numberOfSeconds'},{path:'timestamp_start'}], formatter: '.formatter.duration' }" active="false"
+								visible="true"/>
 						</attributes>
 						<firstStatus>
 							<ObjectStatus text="{path:'status_code', formatter: '.formatter.ItemStatusTex' }"
-								state="{path:'status_code', formatter: '.formatter.IntegStatus' }"/>
+								icon="{path:'status_code', formatter: '.formatter.IntegStatusIcon' }" class="spinningBusy"
+								inverted="{path:'status_code', formatter: '.formatter.IntegStatusInv' }" state="{path:'status_code', formatter: '.formatter.IntegStatus' }"/>
 						</firstStatus>
+						<secondStatus>
+							<ObjectStatus text="{ path: 'type', formatter: '.formatter.ItemStatus2Tex' }" state="{ path: 'type', formatter: '.formatter.IntegStatus2' }"/>
+						</secondStatus>
 					</ObjectListItem>
 				</items>
 			</List>

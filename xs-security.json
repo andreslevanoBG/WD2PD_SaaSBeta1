@@ -1,5 +1,5 @@
 {
-    "xsappname": "wd2pdsaas",
+    "xsappname": "wd2pdsaasdev",
     "tenant-mode": "shared",
     "scopes": [
         {
@@ -110,28 +110,28 @@
     ],
     "role-collections": [
         {
-            "name": "wd2pdsaas_Service",
+            "name": "wd2pdsaasdev_Service",
             "description": "Service access",
             "role-template-references": [
                 "$XSAPPNAME.Service"
             ]
         },
         {
-            "name": "wd2pdsaas_Workers",
+            "name": "wd2pdsaasdev_Workers",
             "description": "Workers apps Access",
             "role-template-references": [
                 "$XSAPPNAME.Workers"
             ]
         },
         {
-            "name": "wd2pdsaas_Organizations",
+            "name": "wd2pdsaasdev_Organizations",
             "description": "Organizations apps Access",
             "role-template-references": [
                 "$XSAPPNAME.Organizations"
             ]
         },
         {
-            "name": "wd2pdsaas_Users",
+            "name": "wd2pdsaasdev_Users",
             "description": "Users apps Access",
             "role-template-references": [
                 "$XSAPPNAME.Users"
@@ -145,7 +145,7 @@
             ]
         },
         {
-            "name": "wd2pdsaas_Extension_Developer_Delete",
+            "name": "wd2pdsaasdev_Extension_Developer_Delete",
             "description": "Extension development delete access",
             "role-template-references": [
                 "$XSAPPNAME.ExtendCDSdelete"

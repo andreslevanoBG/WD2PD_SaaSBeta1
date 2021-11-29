@@ -903,6 +903,11 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					vThat.callCPIShapeIn_CustomFields();
 					vThat.callCPIShapeIn_Language();
 
+				},
+				error: function (e) {
+					//oViewModel.setProperty("/busy", false);
+					var mensaje = JSON.parse(e.responseText).message_error.substring(66);
+					sap.m.MessageToast.show(mensaje);
 				}
 			});
 			oModel.read(sUrl_Languages);
@@ -979,7 +984,13 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 								"exclude_contingent_workers": "",
 								"exclude_employees": "",
 								"exclude_inactive_workers": ""
-							}
+							},
+							"response_include_data": {
+								"rg_organization": "",
+								"rg_compensation": "",
+								"rg_additional_jobs": "",
+								"custom_fields_is": ""
+							},
 						}
 					},
 					"mappings": {
@@ -1058,6 +1069,38 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 			array.global_configuration.global_parameters.ws_get_workers.request_filter.exclude_contingent_workers = vContigenteWorkers;
 			array.global_configuration.global_parameters.ws_get_workers.request_filter.exclude_employees = vExcludeEmployees;
 			array.global_configuration.global_parameters.ws_get_workers.request_filter.exclude_inactive_workers = vInactiveWorkers;
+
+			//ADDITIONAL RESPONSE DATA
+			var vOrganizationData;
+			var vCompensationData;
+			var vAdditionalJobs;
+			var vCustomFields;
+
+			if (this.getView().byId("button24").getProperty("selected")) {
+				vOrganizationData = "True";
+			} else {
+				vOrganizationData = "False";
+			}
+			if (this.getView().byId("button26").getProperty("selected")) {
+				vCompensationData = "True";
+			} else {
+				vCompensationData = "False";
+			}
+			if (this.getView().byId("button28").getProperty("selected")) {
+				vAdditionalJobs = "True";
+			} else {
+				vAdditionalJobs = "False";
+			}
+			if (this.getView().byId("button30").getProperty("selected")) {
+				vCustomFields = "True";
+			} else {
+				vCustomFields = "False";
+			}
+
+			array.global_configuration.global_parameters.ws_get_workers.response_include_data.rg_organization = vOrganizationData;
+			array.global_configuration.global_parameters.ws_get_workers.response_include_data.rg_compensation = vCompensationData;
+			array.global_configuration.global_parameters.ws_get_workers.response_include_data.rg_additional_jobs = vAdditionalJobs;
+			array.global_configuration.global_parameters.ws_get_workers.response_include_data.custom_fields_is = vCustomFields;
 
 			//MAPPING CONFIGURATION - COMMON ADDRESS
 			var vItems4 = this.getView().byId("table0").getItems();
@@ -1526,14 +1569,32 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 
 					//Global Parameters
 					var vWSGetWorkers = vGlobalParameters[0].childNodes;
-					var vRequestFilter = vWSGetWorkers[0].childNodes;
-					var vContingentWorkers = vRequestFilter[0].childNodes[0].textContent;
-					var vEmployees = vRequestFilter[1].childNodes[0].textContent;
-					var vInactiveWorkers = vRequestFilter[2].childNodes[0].textContent;
 
-					array.global_configuration.global_parameters.ws_get_workers.request_filter.exclude_contingent_workers = vContingentWorkers;
-					array.global_configuration.global_parameters.ws_get_workers.request_filter.exclude_employees = vEmployees;
-					array.global_configuration.global_parameters.ws_get_workers.request_filter.exclude_inactive_workers = vInactiveWorkers;
+					// - Request Filter
+					if (vWSGetWorkers[0]) {
+						var vRequestFilter = vWSGetWorkers[0].childNodes;
+						var vContingentWorkers = vRequestFilter[0].childNodes[0].textContent;
+						var vEmployees = vRequestFilter[1].childNodes[0].textContent;
+						var vInactiveWorkers = vRequestFilter[2].childNodes[0].textContent;
+
+						array.global_configuration.global_parameters.ws_get_workers.request_filter.exclude_contingent_workers = vContingentWorkers;
+						array.global_configuration.global_parameters.ws_get_workers.request_filter.exclude_employees = vEmployees;
+						array.global_configuration.global_parameters.ws_get_workers.request_filter.exclude_inactive_workers = vInactiveWorkers;
+					}
+
+					// - Additional Response Data
+					if (vWSGetWorkers[1]) {
+						var vAdditionalResponseData = vWSGetWorkers[1].childNodes;
+						var vOrganizationData = vAdditionalResponseData[0].childNodes[0].textContent;
+						var vCompensationData = vAdditionalResponseData[1].childNodes[0].textContent;
+						var vAdditionalJobs = vAdditionalResponseData[2].childNodes[0].textContent;
+						var vCustomFields = vAdditionalResponseData[3].childNodes[0].textContent;
+
+						array.global_configuration.global_parameters.ws_get_workers.response_include_data.rg_organization = vOrganizationData;
+						array.global_configuration.global_parameters.ws_get_workers.response_include_data.rg_compensation = vCompensationData;
+						array.global_configuration.global_parameters.ws_get_workers.response_include_data.rg_additional_jobs = vAdditionalJobs;
+						array.global_configuration.global_parameters.ws_get_workers.response_include_data.custom_fields_is = vCustomFields;
+					}
 				}
 
 				//MAPPINGS
@@ -1956,8 +2017,26 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 						}
 						customFields.oData = array;
 						vThat.getView().setModel(customFields, "CustomFields");
+						
+						if(array.length == 0){
+							vThat.getView().byId("button25").setSelected(true);
+							vThat.getView().byId("group0_1632738530611").setEnabled(false);
+							
+							vThat.getView().byId("button27").setSelected(true);
+							vThat.getView().byId("group1").setEnabled(false);
+							
+							vThat.getView().byId("button29").setSelected(true);
+							vThat.getView().byId("group2").setEnabled(false);
+							
+							vThat.getView().byId("button31").setSelected(true);
+							vThat.getView().byId("group3").setEnabled(false);
+						}
 					},
-					error: function (e) {}
+					error: function (e) {
+						that.byId("selSource").setBusy(false);
+						var mensaje = JSON.parse(e.responseText).message_error.substring(66);
+						sap.m.MessageToast.show(mensaje);
+					}
 				});
 			}
 		},
@@ -2007,7 +2086,11 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 						oLanguages.setData(array);
 						vThat.getView().setModel(oLanguages, "Language");
 					},
-					error: function (e) {}
+					error: function (e) {
+						//that.byId("selSource").setBusy(false);
+						var mensaje = JSON.parse(e.responseText).message_error.substring(66);
+						sap.m.MessageToast.show(mensaje);
+					}
 				});
 			}
 		},
@@ -2320,7 +2403,11 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					}
 					that.openSelectList();
 				},
-				error: function (oError) {}
+				error: function (e) {
+					that.byId("selSource").setBusy(false);
+					var mensaje = JSON.parse(e.responseText).message_error.substring(66);
+					sap.m.MessageToast.show(mensaje);
+				}
 			});
 		},
 
@@ -2344,10 +2431,14 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 					LVModel.setData(results);
 					LVModel.refresh();
 				},
-				error: function (oError) {}
+				error: function (e) {
+					//that.byId("selSource").setBusy(false);
+					var mensaje = JSON.parse(e.responseText).message_error.substring(66);
+					sap.m.MessageToast.show(mensaje);
+				}
 			});
 		},
-		
+
 		/* Recuperar los Custom Fields de persistencia */
 		fill_List_Values2: function (lvaid) {
 			var aFilter = [];
@@ -2383,7 +2474,11 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 						that.openSelectList();
 					}
 				},
-				error: function (oError) {}
+				error: function (e) {
+					that.byId("selSource").setBusy(false);
+					var mensaje = JSON.parse(e.responseText).message_error.substring(66);
+					sap.m.MessageToast.show(mensaje);
+				}
 			});
 		},
 		/* Formatear el xsd para que se pueda visualizar bien en el componente */
@@ -3067,8 +3162,8 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 						sap.m.MessageToast.show(results.message);
 					},
 					error: function (e) {
-						var err = that.getResourceBundle().getText("errorWd");
-						sap.m.MessageToast.show(err);
+						var error = e.responseJSON;
+						sap.m.MessageToast.show(error.message);
 						that.byId("manageLVs").setBusy(false);
 					}
 				});

@@ -80,7 +80,24 @@ sap.ui.define([
                     this.getOwnerComponent().oListSelector.setBoundMasterList(oList);
                 }.bind(this)
             });
-
+			this.getView().attachAfterRendering(function () {
+				var date = new Date();
+				date.setDate(date.getDate() - 1);
+				var day = date.getUTCDate() < 10 ? "0" + date.getUTCDate() : date.getUTCDate(),
+					month = date.getUTCMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getUTCMonth() + 1,
+					year = date.getUTCFullYear(),
+					hours = date.getUTCHours() < 10 ? "0" + date.getUTCHours() : date.getUTCHours(),
+					minutes =
+					date.getUTCMinutes() < 10 ? "0" + date.getUTCMinutes() : date.getUTCMinutes(),
+					seconds =
+					date.getUTCSeconds() < 10 ? "0" + date.getUTCSeconds() : date.getUTCSeconds();
+				var lastday = year + "-" + month + "-" + day + "T" + hours + ":" + minutes + ":" + seconds + "Z";
+				var sPath = "timestamp_start";
+				var sOperator = "GE";
+				var oBinding = this.byId("list").getBinding("items");
+				oBinding.filter([new sap.ui.model.Filter(sPath, sOperator, lastday)
+				], "Application");
+			});
             this.getRouter().getRoute("master").attachPatternMatched(this._onMasterMatched, this);
             this.getRouter().attachBypassed(this.onBypassed, this);
 
@@ -356,6 +373,23 @@ sap.ui.define([
                 this._updateFilterBar(oText);
 
             } else {
+            	var date = new Date();
+				date.setDate(date.getDate() - 1);
+				var day = date.getUTCDate() < 10 ? "0" + date.getUTCDate() : date.getUTCDate(),
+					month = date.getUTCMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getUTCMonth() + 1,
+					year = date.getUTCFullYear(),
+					hours = date.getUTCHours() < 10 ? "0" + date.getUTCHours() : date.getUTCHours(),
+					minutes =
+					date.getUTCMinutes() < 10 ? "0" + date.getUTCMinutes() : date.getUTCMinutes(),
+					seconds =
+					date.getUTCSeconds() < 10 ? "0" + date.getUTCSeconds() : date.getUTCSeconds();
+				var lastday = year + "-" + month + "-" + day + "T" + hours + ":" + minutes + ":" + seconds + "Z";
+				var sPath = "timestamp_start";
+				var sOperator = "GE";
+				var oBinding = this.byId("list").getBinding("items");
+				aFilters.push(new Filter([
+					new Filter("timestamp_start", FilterOperator.GE, lastday)
+				], true));
                 this._updateFilterBar("Past 24 Hours");
             }
             var aFilters2 = [];

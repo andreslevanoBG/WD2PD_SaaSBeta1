@@ -1,153 +1,160 @@
-<mvc:View xmlns="sap.m" xmlns:semantic="sap.f.semantic" xmlns:mvc="sap.ui.core.mvc" 
-controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
+<mvc:View xmlns="sap.m" xmlns:semantic="sap.f.semantic" xmlns:mvc="sap.ui.core.mvc"
+	controllerName="shapein.DocumentsIntegrationMonitor.controller.Master">
 	<semantic:SemanticPage id="masterPage" preserveHeaderStateOnScroll="true" toggleHeaderOnTitleClick="false">
 		<semantic:titleHeading>
 			<Title id="masterPageTitle" text="{masterView>/title}" level="H2"/>
 		</semantic:titleHeading>
 		<semantic:content>
-			<IconTabBar id="iconTab" expandable="false" expanded="true" applyContentPadding="false" backgroundDesign="Solid" upperCase="false" visible="true" selectedKey="Ok" select="checkTab">
+			<IconTabBar id="iconTab" expandable="false" expanded="true" applyContentPadding="false" backgroundDesign="Solid" upperCase="false"
+				visible="true" selectedKey="Ok" select="checkTab">
 				<items>
-					<IconTabFilter icon="" iconColor="Default" text="{i18n>viewIconTabFilterPerProcess}" design="Vertical" showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false" key="proc">
+					<IconTabFilter icon="" iconColor="Default" text="{i18n>viewIconTabFilterPerProcess}" design="Vertical" showAll="false"
+						textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false" key="proc">
 						<content>
-                            <List id="list" width="auto" class="sapFDynamicPageAlignContent" 
-                            items="{ path: '/Di_Generation_Processes', parameters: {expand: 'message,template'}, 
-                            sorter: { path: 'timestamp_start', descending: true }, groupHeaderFactory: '.createGroupHeader' }" 
-                            busyIndicatorDelay="{masterView>/delay}" 
-                            noDataText="{masterView>/noDataText}" mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" 
-                            updateFinished=".onUpdateFinished" selectionChange=".onSelectionChange">
-                                <headerToolbar>
-                                    <OverflowToolbar>
-                                        <SearchField id="searchField" showRefreshButton="true" tooltip="{i18n>masterSearchTooltip}" search=".onSearch" width="auto">
-                                            <layoutData>
-                                                <OverflowToolbarLayoutData minWidth="150px" maxWidth="240px" shrinkable="true" priority="NeverOverflow"/>
-                                            </layoutData>
-                                        </SearchField>
-                                        <ToolbarSpacer/>
-                                        <Button id="sortButton" text="{i18n>Sort}" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true" visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
-                                        <Button id="filterButton" text="{i18n>Filter}" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto" enabled="true" visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
-                                    </OverflowToolbar>
-                                </headerToolbar>
-                                <infoToolbar>
-                                    <Toolbar active="true" id="filterBar" visible="{masterView>/isFilterBarVisible}" press="onOpenViewSettings">
-                                        <Title id="filterBarLabel" text="{masterView>/filterBarLabel}"/>
-                                    </Toolbar>
-                                </infoToolbar>
-                                <items>
-                                    <ObjectListItem type="Navigation" press=".onSelectionChange" number="{ path: 'numberOfItems'}" numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }" intro="{i18n>objectHeaderTitle}" title="{uuid}" numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" icon="sap-icon://process">
-                                        <attributes>
-                                            <ObjectAttribute text="{ path:'template/template_id', formatter: '.formatter.tempid' }" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ path:'template/doc_title', formatter: '.formatter.temptitle' }" active="false" visible="true"/>
-                                            
-                                            <ObjectAttribute text="{ parts:[{path:'timestamp_start'},{path:'status'}], formatter: '.formatter.Startdate' }" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ parts:[{path:'timestamp_end'},{path:'status'}], formatter: '.formatter.Enddate' }" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ path:'numberOfSeconds', formatter: '.formatter.duration' }" active="false" visible="true"/>
-                                        </attributes>
-                                        <firstStatus>
-                                            <ObjectStatus text="{ path: 'status', formatter: '.formatter.ItemStatus2' }" state="{ path: 'status', formatter: '.formatter.IntegStatus' }"/>
-                                        </firstStatus>
-                                    </ObjectListItem>
-                                </items>
-                            </List>
-
-                        </content>
+							<List id="list" width="auto" class="sapFDynamicPageAlignContent"
+								items="{ path: '/Di_Generation_Processes', parameters: {expand: 'message,template'}, sorter: { path: 'timestamp_start', descending: true }, groupHeaderFactory: '.createGroupHeader' }"
+								busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}"
+								mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" updateFinished=".onUpdateFinished" selectionChange=".onSelectionChange">
+								<headerToolbar>
+									<OverflowToolbar>
+										<SearchField id="searchField" showRefreshButton="true" tooltip="{i18n>masterSearchTooltip}" search=".onSearch" width="auto">
+											<layoutData>
+												<OverflowToolbarLayoutData minWidth="150px" maxWidth="240px" shrinkable="true" priority="NeverOverflow"/>
+											</layoutData>
+										</SearchField>
+										<ToolbarSpacer/>
+										<Button id="sortButton" text="{i18n>Sort}" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true"
+											visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
+										<Button id="filterButton" text="{i18n>Filter}" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto" enabled="true"
+											visible="true" iconDensityAware="false" press=".onOpenViewSettings"/>
+									</OverflowToolbar>
+								</headerToolbar>
+								<infoToolbar>
+									<Toolbar active="true" id="filterBar" visible="{masterView>/isFilterBarVisible}" press="onOpenViewSettings">
+										<Title id="filterBarLabel" text="{masterView>/filterBarLabel}"/>
+									</Toolbar>
+								</infoToolbar>
+								<items>
+									<ObjectListItem type="Navigation" press=".onSelectionChange" number="{ path: 'numberOfItems', formatter: '.formatter.numberInt'}"
+										numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }" intro="{i18n>objectHeaderTitle}" title="{uuid}"
+										numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" icon="sap-icon://process" class="colorIntro colorIcon">
+										<attributes>
+											<ObjectAttribute text="{ path:'template/template_id', formatter: '.formatter.tempid' }" active="false" visible="true"/>
+											<ObjectAttribute text="{ path:'template/doc_title', formatter: '.formatter.temptitle' }" active="false" visible="true"/>
+											<ObjectAttribute text="{ parts:[{path:'timestamp_start'},{path:'status'}], formatter: '.formatter.Startdate' }" active="false"
+												visible="true"/>
+											<ObjectAttribute text="{ parts:[{path:'timestamp_end'},{path:'status'}], formatter: '.formatter.Enddate' }" active="false" visible="true"/>
+											<ObjectAttribute text="{ parts:[{path:'numberOfSeconds'},{path:'timestamp_start'}], formatter: '.formatter.duration' }" active="false"
+												visible="true"/>
+										</attributes>
+										<firstStatus>
+											<ObjectStatus text="{ path: 'status', formatter: '.formatter.ItemStatus2' }"
+												inverted="{path:'status', formatter: '.formatter.IntegStatusInv' }" state="{ path: 'status', formatter: '.formatter.IntegStatus' }"
+												icon="{path:'status', formatter: '.formatter.IntegStatusIcon' }" class="spinningBusy"/>
+										</firstStatus>
+										<secondStatus>
+											<ObjectStatus text="{ path: 'type', formatter: '.formatter.ItemStatus2Tex' }" state="{ path: 'type', formatter: '.formatter.IntegStatus2' }"/>
+										</secondStatus>
+									</ObjectListItem>
+								</items>
+							</List>
+						</content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
-					<IconTabFilter id="tabfSuc" key="empl" icon="" iconColor="Positive" text="{i18n>viewIconTabFilterPerEmployee}" count="" design="Vertical" showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+					<IconTabFilter id="tabfSuc" key="empl" icon="" iconColor="Positive" text="{i18n>viewIconTabFilterPerEmployee}" count="" design="Vertical"
+						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content>
-                            <List id="list_emp" width="auto" class="sapFDynamicPageAlignContent" 
-                            items="{ path: '/Di_Employee', parameters: {expand: 'emp_template,worker'}, 
-                            sorter: { path: 'employee_number', descending: false }, groupHeaderFactory: '.createGroupHeader' }" 
-                            busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" 
-                            mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
-                            updateFinished=".onUpdateFinished" selectionChange=".onSelectionChangeEmpl">
-                                <headerToolbar>
-                                    <OverflowToolbar>
-                                        <SearchField id="searchField_emp" showRefreshButton="true" tooltip="{i18n>masterSearchTooltip}" search=".onSearchEmpl" width="auto">
-                                            <layoutData>
-                                                <OverflowToolbarLayoutData minWidth="150px" maxWidth="240px" shrinkable="true" priority="NeverOverflow"/>
-                                            </layoutData>
-                                        </SearchField>
-                                        <ToolbarSpacer/>
-                                        <Button id="sortButton_emp" text="{i18n>Sort}" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true" visible="true" iconDensityAware="false" press=".onOpenViewSettingsEmpl"/>
-                                        <Button id="filterButton_emp" text="{i18n>Filter}" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto" enabled="true" visible="true" iconDensityAware="false" press=".onOpenViewSettingsEmpl"/>
-                                    </OverflowToolbar>
-                                </headerToolbar>
-                                <infoToolbar>
-                                    <Toolbar active="true" id="filterBar_emp" visible="{masterView>/isFilterBarVisible}" press="onOpenViewSettings">
-                                        <Title id="filterBarLabel_emp" text="{masterView>/filterBarLabel}"/>
-                                    </Toolbar>
-                                </infoToolbar>
-                                <items>
-                                    <ObjectListItem type="Navigation" press=".onSelectionChangeEmpl" 
-                                    intro="{i18n>objectHeaderTitle}" title="{employee_number}" 
-                                    numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" icon="sap-icon://employee">
-                                        <attributes>
-                                            <ObjectAttribute text="{ path:'uuid', formatter: '.formatter.worker_id'}" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ path:'worker/firstname', formatter: '.formatter.worker_firstname'}" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ path:'worker/lastname', formatter: '.formatter.worker_lastname'}" active="false" visible="true"/>
-                                        </attributes>
-                                        <firstStatus>
-                                            <ObjectStatus text="{ path: 'status', formatter: '.formatter.ItemStatus2' }" state="{ path: 'status', formatter: '.formatter.IntegStatus' }"/>
-                                        </firstStatus>
-                                    </ObjectListItem>
-                                </items>
-                            </List>
-				        </content>
+							<List id="list_emp" width="auto" class="sapFDynamicPageAlignContent"
+								items="{ path: '/Di_Employee', parameters: {expand: 'emp_template,worker'}, sorter: { path: 'employee_number', descending: false }, groupHeaderFactory: '.createGroupHeader' }"
+								busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}"
+								mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" updateFinished=".onUpdateFinished"
+								selectionChange=".onSelectionChangeEmpl">
+								<headerToolbar>
+									<OverflowToolbar>
+										<SearchField id="searchField_emp" showRefreshButton="true" tooltip="{i18n>masterSearchTooltip}" search=".onSearchEmpl" width="auto">
+											<layoutData>
+												<OverflowToolbarLayoutData minWidth="150px" maxWidth="240px" shrinkable="true" priority="NeverOverflow"/>
+											</layoutData>
+										</SearchField>
+										<ToolbarSpacer/>
+										<Button id="sortButton_emp" text="{i18n>Sort}" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true"
+											visible="true" iconDensityAware="false" press=".onOpenViewSettingsEmpl"/>
+										<Button id="filterButton_emp" text="{i18n>Filter}" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto" enabled="true"
+											visible="true" iconDensityAware="false" press=".onOpenViewSettingsEmpl"/>
+									</OverflowToolbar>
+								</headerToolbar>
+								<infoToolbar>
+									<Toolbar active="true" id="filterBar_emp" visible="{masterView>/isFilterBarVisible}" press="onOpenViewSettings">
+										<Title id="filterBarLabel_emp" text="{masterView>/filterBarLabel}"/>
+									</Toolbar>
+								</infoToolbar>
+								<items>
+									<ObjectListItem type="Navigation" press=".onSelectionChangeEmpl" intro="{i18n>objectHeaderTitle}" title="{employee_number}"
+										numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" icon="sap-icon://employee" class="colorIntro colorIcon">
+										<attributes>
+											<ObjectAttribute text="{ path:'uuid', formatter: '.formatter.worker_id'}" active="false" visible="true"/>
+											<ObjectAttribute text="{ path:'worker/firstname', formatter: '.formatter.worker_firstname'}" active="false" visible="true"/>
+											<ObjectAttribute text="{ path:'worker/lastname', formatter: '.formatter.worker_lastname'}" active="false" visible="true"/>
+										</attributes>
+										<firstStatus>
+											<ObjectStatus text="{ path: 'status', formatter: '.formatter.ItemStatus2' }" state="{ path: 'status', formatter: '.formatter.IntegStatus' }"/>
+										</firstStatus>
+									</ObjectListItem>
+								</items>
+							</List>
+						</content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
-					<IconTabFilter id="tabfErr" key="temp" icon="" iconColor="Critical" text="{i18n>viewIconTabFilterPerTemplate}" count="" design="Vertical" showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
+					<IconTabFilter id="tabfErr" key="temp" icon="" iconColor="Critical" text="{i18n>viewIconTabFilterPerTemplate}" count="" design="Vertical"
+						showAll="false" textDirection="Inherit" enabled="true" visible="true" iconDensityAware="false">
 						<content>
-                            <List id="list_tem" width="auto" class="sapFDynamicPageAlignContent" 
-                            items="{ path: '/Di_Template',
-                            sorter: [
-                            { path: 'template_id', descending: true },
-                            { path: 'template_version', descending: true }],
-                            groupHeaderFactory: '.createGroupHeader' 
-                            }" 
-                            busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}" 
-                            mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
-                            updateFinished=".onUpdateFinished" selectionChange=".onSelectionChangeTemp">
-                                <headerToolbar>
-                                    <OverflowToolbar>
-                                        <SearchField id="searchField_tem" showRefreshButton="true" tooltip="{i18n>masterSearchTooltip}" search=".onSearchTemp" width="auto">
-                                            <layoutData>
-                                                <OverflowToolbarLayoutData minWidth="150px" maxWidth="240px" shrinkable="true" priority="NeverOverflow"/>
-                                            </layoutData>
-                                        </SearchField>
-                                        <ToolbarSpacer/>
-                                        <Button id="sortButton_tem" text="{i18n>Sort}" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true" visible="true" iconDensityAware="false" press=".onOpenViewSettingsTemp"/>
-                                        <Button id="filterButton_tem" text="{i18n>Filter}" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto" enabled="true" visible="true" iconDensityAware="false" press=".onOpenViewSettingsTemp"/>
-                                    </OverflowToolbar>
-                                </headerToolbar>
-                                <infoToolbar>
-                                    <Toolbar active="true" id="filterBar_tem" visible="{masterView>/isFilterBarVisible}" press="onOpenViewSettings">
-                                        <Title id="filterBarLabel_tem" text="{masterView>/filterBarLabel}"/>
-                                    </Toolbar>
-                                </infoToolbar>
-                                <items>
-                                    <ObjectListItem type="Navigation" press=".onSelectionChangeTemp" number="{ path: 'numberOfItems'}" 
-                                    numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }" intro="{i18n>objectHeaderTitle}" 
-                                    title="{template_id}" numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" icon="sap-icon://documents">
-                                        <attributes>
-                                            <ObjectAttribute text="{ path:'uuid', formatter: '.formatter.tempUUID' }" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ path:'doc_title', formatter: '.formatter.temptitle' }" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ path:'doc_type_id', formatter: '.formatter.temptype' }" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ path:'language', formatter: '.formatter.templanguage' }" active="false" visible="true"/>
-                                            <ObjectAttribute text="{ path:'template_version', formatter: '.formatter.tempversion' }" active="false" visible="true"/>
-                                        </attributes>
-                                        <firstStatus>
-                                            <ObjectStatus text="{ path: 'status', formatter: '.formatter.ItemStatus2' }" state="{ path: 'status', formatter: '.formatter.IntegStatus' }"/>
-                                        </firstStatus>
-                                    </ObjectListItem>
-                                </items>
-                            </List>
-				        </content>
+							<List id="list_tem" width="auto" class="sapFDynamicPageAlignContent"
+								items="{ path: '/Di_Template', sorter: [ { path: 'template_id', descending: true }, { path: 'template_version', descending: true }], groupHeaderFactory: '.createGroupHeader' }"
+								busyIndicatorDelay="{masterView>/delay}" noDataText="{masterView>/noDataText}"
+								mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}" updateFinished=".onUpdateFinished"
+								selectionChange=".onSelectionChangeTemp">
+								<headerToolbar>
+									<OverflowToolbar>
+										<SearchField id="searchField_tem" showRefreshButton="true" tooltip="{i18n>masterSearchTooltip}" search=".onSearchTemp" width="auto">
+											<layoutData>
+												<OverflowToolbarLayoutData minWidth="150px" maxWidth="240px" shrinkable="true" priority="NeverOverflow"/>
+											</layoutData>
+										</SearchField>
+										<ToolbarSpacer/>
+										<Button id="sortButton_tem" text="{i18n>Sort}" type="Transparent" icon="sap-icon://sort" iconFirst="true" width="auto" enabled="true"
+											visible="true" iconDensityAware="false" press=".onOpenViewSettingsTemp"/>
+										<Button id="filterButton_tem" text="{i18n>Filter}" type="Transparent" icon="sap-icon://filter" iconFirst="true" width="auto" enabled="true"
+											visible="true" iconDensityAware="false" press=".onOpenViewSettingsTemp"/>
+									</OverflowToolbar>
+								</headerToolbar>
+								<infoToolbar>
+									<Toolbar active="true" id="filterBar_tem" visible="{masterView>/isFilterBarVisible}" press="onOpenViewSettings">
+										<Title id="filterBarLabel_tem" text="{masterView>/filterBarLabel}"/>
+									</Toolbar>
+								</infoToolbar>
+								<items>
+									<ObjectListItem type="Navigation" press=".onSelectionChangeTemp" number="{ path: 'numberOfItems'}"
+										numberUnit="{ path: 'numberOfItems', formatter: '.formatter.IntegUnits' }" intro="{i18n>objectHeaderTitle}" title="{template_id}"
+										numberState="{ path: 'status', formatter: '.formatter.IntegStatus' }" icon="sap-icon://documents" class="colorIntro colorIcon">
+										<attributes>
+											<ObjectAttribute text="{ path:'uuid', formatter: '.formatter.tempUUID' }" active="false" visible="true"/>
+											<ObjectAttribute text="{ path:'doc_title', formatter: '.formatter.temptitle' }" active="false" visible="true"/>
+											<ObjectAttribute text="{ path:'doc_type_id', formatter: '.formatter.temptype' }" active="false" visible="true"/>
+											<ObjectAttribute text="{ path:'language', formatter: '.formatter.templanguage' }" active="false" visible="true"/>
+											<ObjectAttribute text="{ path:'template_version', formatter: '.formatter.tempversion' }" active="false" visible="true"/>
+										</attributes>
+										<firstStatus>
+											<ObjectStatus text="{ path: 'status', formatter: '.formatter.ItemStatus2' }" state="{ path: 'status', formatter: '.formatter.IntegStatus' }"/>
+										</firstStatus>
+									</ObjectListItem>
+								</items>
+							</List>
+						</content>
 					</IconTabFilter>
 					<IconTabSeparator icon="" iconDensityAware="false"/>
 				</items>
-				<content>
-				</content>
-			</IconTabBar>  
+				<content></content>
+			</IconTabBar>
 		</semantic:content>
 	</semantic:SemanticPage>
 </mvc:View>

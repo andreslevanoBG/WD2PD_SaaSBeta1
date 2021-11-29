@@ -167,15 +167,20 @@ sap.ui.define([
 			var itemsModel = this.getView().getModel("items");
 			var that = this;
 			oViewModel.refresh();
-			oModel.read(sPath, {
+			var sPath2 = sPath + "/integ_items"           
+			oModel.read(sPath2, {
 				urlParameters: {
-					"$expand": "integ_items/error,integ_items/organization"
+					"$skip": 0,
+					"$top": 100,
+					//"$expand": "integ_items/error,integ_items/worker"
+					"$expand": "error,organization"
 				},
 				success: function (oData, oResponse) {
-					var results = oData.integ_items.results;
+					var results = oData.results;
 					delete oData.__metadata;
 					var scount = 0;
 					var ecount = 0;
+					var dcount = 0;
 					that.reprocesses = [];
 					results.forEach(function (entry) {
 						delete entry.__metadata;
@@ -187,6 +192,8 @@ sap.ui.define([
 						}
 						if (entry.status_code == "S") {
 							scount++;
+						} else if (entry.status_code == "D") {
+							dcount++;
 						} else {
 							ecount++;
 						}
@@ -212,9 +219,9 @@ sap.ui.define([
 					} else {
 						that.getView().byId("reproc").setVisible(false);
 					}
-
 					that.getView().byId("tabfSuc").setCount(scount);
 					that.getView().byId("tabfErr").setCount(ecount);
+					that.getView().byId("tabfDisc").setCount(dcount);
 				},
 				error: function (oError) {
 					oViewModel.setProperty("/busy", false);
@@ -298,6 +305,10 @@ sap.ui.define([
 			var itemsModel = this.getView().getModel("items");
 			var sPath2 = sPath + "/organization/external_id";
 			var org = itemsModel.getProperty(sPath2);
+			var sPath4 = sPath + "/organization/uuid";
+			var orguuid = itemsModel.getProperty(sPath4);
+			var sPath5 = sPath + "/item_id";
+			var item_id = itemsModel.getProperty(sPath5);
 			var text = this.getView().getModel("i18n").getResourceBundle().getText("repOrg");
 			text = " " + text + org + "?";
 			var that = this;
@@ -314,71 +325,187 @@ sap.ui.define([
 				beginButton: new sap.m.Button({
 					text: yes,
 					press: function () {
-						var now = new Date();
-						var utc_now = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
-							now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()));
-						var effective = JSON.parse(JSON.stringify(utc_now));
-						effective = effective.slice(0, -5);
-						var data = {
-							"test_mode": "False",
-							"algorithm": "B-U",
-							"transaction_log": {
-								"time_zone": "UTC",
-								"effective_from": "1900-01-01T00:00:01",
-								"effective_to": effective,
-							},
-							"organizations": {
-								"reference_id": "Organization_Reference_ID",
-								"mapping_organizations_top_level": mappings,
-								"organizations_list": [org]
-							}
-						};
-						var datajson = JSON.stringify(data);
-						var url = "/CPI-WD2PD_Dest/md/organizations_sync/ondemand";
-						if (that.getOwnerComponent().settings) {
-							var cuscode = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
-							var cusclientid = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
-							var cusscope = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
-							var settings = {
-								"url": url,
-								"headers": {
-									"Content-Type": "application/json",
-									"Accept": "application/json",
-									"Customer-Code": cuscode.value,
-									"Customer-Client_Id": cusclientid.value,
-									"Customer-Scope": cusscope.value,
-								},
-								"method": "POST",
-								"data": datajson
-							};
-							$.ajax(settings).done(function (data, textStatus, jqXHR) {
-									var a = data;
-									var b = textStatus;
-									var c = jqXHR;
-									if (textStatus == "success") {
-										var sPath4 = sPath + "/action";
-										itemsModel.setProperty(sPath4, "");
-										itemsModel.refresh();
-										var items = itemsModel.getData().integ_items;
-										that.reprocesses = [];
-										for (var i = 0; i < items.length; i++) {
-											if (items[i].action == "X") {
-												that.reprocesses.push(items[i].organization.original_external_id);
-											}
+						var oModel = that.getOwnerComponent().getModel();
+						var path = "/Organizations(guid'" + orguuid + "')";
+						oModel.read(path, {
+							success: function (oData, oResponse) {
+								var lastnow = oData.last_item_id;
+								if (lastnow == item_id) {
+									var now = new Date();
+									var utc_now = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+										now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()));
+									var effective = JSON.parse(JSON.stringify(utc_now));
+									effective = effective.slice(0, -5);
+									var data = {
+										"test_mode": "False",
+										"algorithm": "B-U",
+										"transaction_log": {
+											"time_zone": "UTC",
+											"effective_from": "1900-01-01T00:00:01",
+											"effective_to": effective,
+										},
+										"organizations": {
+											"reference_id": "Organization_Reference_ID",
+											"mapping_organizations_top_level": mappings,
+											"organizations_list": [org]
 										}
-										var text1 = that.getView().getModel("i18n").getResourceBundle().getText("Organization");
-										var text2 = that.getView().getModel("i18n").getResourceBundle().getText("Reprocessed");
-										var texto = text1 + " " + org + " " + text2;
-										sap.m.MessageToast.show(texto);
+									};
+									var datajson = JSON.stringify(data);
+									var url = "/CPI-WD2PD_Dest/md/organizations_sync/ondemand";
+									if (that.getOwnerComponent().settings) {
+										var cuscode = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
+										var cusclientid = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
+										var cusscope = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
+										var settings = {
+											"url": url,
+											"headers": {
+												"Content-Type": "application/json",
+												"Accept": "application/json",
+												"Customer-Code": cuscode.value,
+												"Customer-Client_Id": cusclientid.value,
+												"Customer-Scope": cusscope.value,
+											},
+											"method": "POST",
+											"data": datajson
+										};
+										$.ajax(settings).done(function (data, textStatus, jqXHR) {
+												var a = data;
+												var b = textStatus;
+												var c = jqXHR;
+												if (textStatus == "success") {
+													var sPath4 = sPath + "/action";
+													itemsModel.setProperty(sPath4, "");
+													itemsModel.refresh();
+													var items = itemsModel.getData().integ_items;
+													that.reprocesses = [];
+													for (var i = 0; i < items.length; i++) {
+														if (items[i].action == "X") {
+															that.reprocesses.push(items[i].organization.original_external_id);
+														}
+													}
+													var text1 = that.getView().getModel("i18n").getResourceBundle().getText("Organization");
+													var text2 = that.getView().getModel("i18n").getResourceBundle().getText("Reprocessed");
+													var texto = text1 + " " + org + " " + text2;
+													sap.m.MessageToast.show(texto);
+												}
+											})
+											.fail(function (jqXHR, textStatus, errorThrown) {
+												var d = jqXHR;
+												var e = textStatus;
+												var f = errorThrown;
+											});
 									}
-								})
-								.fail(function (jqXHR, textStatus, errorThrown) {
-									var d = jqXHR;
-									var e = textStatus;
-									var f = errorThrown;
-								});
-						}
+									dialog.close();
+
+								} else {
+									var text1 = that.getView().getModel("i18n").getResourceBundle().getText("noLastExec");
+									sap.m.MessageToast.show(text1);
+									var sPath6 = sPath + "/action";
+									itemsModel.setProperty(sPath6, "");
+									itemsModel.refresh()
+									dialog.close();
+								}
+							},
+							error: function (oError) {}
+						});
+					}
+				}),
+				endButton: new sap.m.Button({
+					text: no,
+					press: function () {
 						dialog.close();
+					}
+				}),
+				afterClose: function () {
+					dialog.destroy();
+				}
+			});
+			dialog.open();
+		},
+
+		/* Al ejecutar la acción de cancelar reprocesamiento */
+		noRepro: function (oEvent) {
+			var sPath = oEvent.getSource().getParent().getBindingContext("items").getPath();
+			var itemsModel = this.getView().getModel("items");
+			var sPath2 = sPath + "/item_id";
+			var item_id = itemsModel.getProperty(sPath2);
+			var sPath4 = sPath + "/organization/uuid";
+			var orguuid = itemsModel.getProperty(sPath4);
+			var sPath5 = sPath + "/item_id";
+			var item_id = itemsModel.getProperty(sPath5);
+			var text = this.getView().getModel("i18n").getResourceBundle().getText("norepOrg");
+			//	text = " " + text + " " + worker + "?";
+			var that = this;
+			var tit = this.getResourceBundle().getText("Confirmation");
+			var yes = this.getResourceBundle().getText("Yes");
+			var no = this.getResourceBundle().getText("No");
+			var oModel = that.getOwnerComponent().getModel();
+			var dialog = new sap.m.Dialog({
+				title: tit,
+				type: 'Message',
+				content: new sap.m.Text({
+					text: text
+				}),
+				beginButton: new sap.m.Button({
+					text: yes,
+					press: function () {
+						var oModel = that.getOwnerComponent().getModel();
+						var path = "/Organizations(guid'" + orguuid + "')";
+						oModel.read(path, {
+							success: function (oData, oResponse) {
+								var lastnow = oData.last_item_id;
+								if (lastnow == item_id) {
+									var sPath3 = "/Integration_Items(guid'" + item_id + "')";
+									var oUpdatePayload = {
+										status_code: "D"
+									};
+									oModel.sDefaultUpdateMethod = sap.ui.model.odata.UpdateMethod.Merge;
+									oModel.update(sPath3, oUpdatePayload, {
+										headers: {
+											"Content-Type": "application/json",
+											'Accept': 'application/json'
+										},
+										success: function (oData, response) {
+											var sPath4 = sPath + "/status_code";
+											itemsModel.setProperty(sPath4, "D");
+											var sPath5 = sPath + "/action";
+											itemsModel.setProperty(sPath5, "");
+											var sPath6 = sPath + "/external_id";
+											var external_id = itemsModel.getProperty(sPath6);
+											var i = that.reprocesses.indexOf(external_id);
+											if (i !== -1) {
+												that.reprocesses.splice(i, 1);
+											}
+											if (that.reprocesses.length > 0) {
+												that.getView().byId("reproc").setVisible(true);
+											} else {
+												that.getView().byId("reproc").setVisible(false);
+											}
+											var num_err = that.getView().byId("tabfErr").getCount();
+											var num_dis = that.getView().byId("tabfDisc").getCount();
+											num_err--;
+											num_dis++;
+											that.getView().byId("tabfErr").setCount(num_err);
+											that.getView().byId("tabfDisc").setCount(num_dis);
+											itemsModel.refresh();
+										},
+										error: function (oError) {
+											var text = that.getResourceBundle().getText("error");
+											sap.m.MessageToast.show(text);
+										}
+									});
+									dialog.close();
+								} else {
+									var text1 = that.getView().getModel("i18n").getResourceBundle().getText("noLastExec");
+									sap.m.MessageToast.show(text1);
+									var sPath6 = sPath + "/action";
+									itemsModel.setProperty(sPath6, "");
+									itemsModel.refresh()
+									dialog.close();
+								}
+							},
+							error: function (oError) {}
+						});
 					}
 				}),
 				endButton: new sap.m.Button({
@@ -400,6 +527,15 @@ sap.ui.define([
 			var text = this.getResourceBundle().getText("reproAll");
 			var that = this;
 			var mappings = this.getOwnerComponent().oMappings;
+			var aFilters = [new Filter([
+				new Filter("external_id", FilterOperator.EQ, that.reprocesses[0])
+			], false)];
+			for (var i = 1; i < that.reprocesses.length; i++) {
+				aFilters[0].aFilters.push(new Filter("external_id", FilterOperator.EQ, that.reprocesses[i]));
+			}
+			var oModel = that.getOwnerComponent().getModel();
+			var path = "/Organizations";
+			var update = "";
 			var tit = this.getResourceBundle().getText("Confirmation");
 			var yes = this.getResourceBundle().getText("Yes");
 			var no = this.getResourceBundle().getText("No");
@@ -412,70 +548,98 @@ sap.ui.define([
 				beginButton: new sap.m.Button({
 					text: yes,
 					press: function () {
-						var now = new Date();
-						var utc_now = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
-							now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()));
-						var effective = JSON.parse(JSON.stringify(utc_now));
-						effective = effective.slice(0, -5);
-						var data = {
-							"test_mode": "False",
-							"algorithm": "B-U",
-							"transaction_log": {
-								"time_zone": "UTC",
-								"effective_from": "1900-01-01T00:00:01",
-								"effective_to": effective,
-							},
-							"organizations": {
-								"reference_id": "Organization_Reference_ID",
-								"mapping_organizations_top_level": mappings,
-								"organizations_list": that.reprocesses
-							}
-						};
-						var oViewModel = that.getModel("detailView");
-						var datajson = JSON.stringify(data);
-						var url = "/CPI-WD2PD_Dest/md/organizations_sync/ondemand";
-						if (that.getOwnerComponent().settings) {
-							var cuscode = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
-							var cusclientid = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
-							var cusscope = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
-							var settings = {
-								"url": url,
-								"method": "POST",
-								"headers": {
-									"Content-Type": "application/json",
-									"Accept": "application/json",
-									"Customer-Code": cuscode.value,
-									"Customer-Client_Id": cusclientid.value,
-									"Customer-Scope": cusscope.value,
-								},
-								"data": datajson
-							};
-							$.ajax(settings).done(function (data, textStatus, jqXHR) {
-									var a = data;
-									var b = textStatus;
-									var c = jqXHR;
-									if (textStatus == "success") {
-										var dataItems = itemsModel.getData();
-										var items = dataItems.integ_items;
-										that.reprocesses = [];
-										for (var i = 0; i < items.length; i++) {
-											items[i].action = "";
+						oModel.read(path, {
+							filters: aFilters,
+							success: function (oData, oResponse) {
+								for (var i = 0; i < oData.results.length; i++) {
+									var item_check = items.find(item => item.external_id == oData.results[i].external_id);
+									if (item_check) {
+										if (item_check.item_id != oData.results[i].last_item_id) {
+											update = "X";
+											break;
 										}
-										dataItems.integ_items = items;
-										itemsModel.setData(dataItems);
-										itemsModel.refresh();
-										that.getView().byId("reproc").setVisible(false);
-										var texto = "All Organizations reprocessed.";
-										sap.m.MessageToast.show(texto);
+									} else {
+										update = "X";
+										break;
 									}
-								})
-								.fail(function (jqXHR, textStatus, errorThrown) {
-									var d = jqXHR;
-									var e = textStatus;
-									var f = errorThrown;
-								});
-						}
-						dialog.close();
+								}
+								if (update == "") {
+									var now = new Date();
+									var utc_now = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+										now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()));
+									var effective = JSON.parse(JSON.stringify(utc_now));
+									effective = effective.slice(0, -5);
+									var data = {
+										"test_mode": "False",
+										"algorithm": "B-U",
+										"transaction_log": {
+											"time_zone": "UTC",
+											"effective_from": "1900-01-01T00:00:01",
+											"effective_to": effective,
+										},
+										"organizations": {
+											"reference_id": "Organization_Reference_ID",
+											"mapping_organizations_top_level": mappings,
+											"organizations_list": that.reprocesses
+										}
+									};
+									var oViewModel = that.getModel("detailView");
+									var datajson = JSON.stringify(data);
+									var url = "/CPI-WD2PD_Dest/md/organizations_sync/ondemand";
+									if (that.getOwnerComponent().settings) {
+										var cuscode = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
+										var cusclientid = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
+										var cusscope = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
+										var settings = {
+											"url": url,
+											"method": "POST",
+											"headers": {
+												"Content-Type": "application/json",
+												"Accept": "application/json",
+												"Customer-Code": cuscode.value,
+												"Customer-Client_Id": cusclientid.value,
+												"Customer-Scope": cusscope.value,
+											},
+											"data": datajson
+										};
+										$.ajax(settings).done(function (data, textStatus, jqXHR) {
+												var a = data;
+												var b = textStatus;
+												var c = jqXHR;
+												if (textStatus == "success") {
+													var dataItems = itemsModel.getData();
+													var items = dataItems.integ_items;
+													that.reprocesses = [];
+													for (var i = 0; i < items.length; i++) {
+														items[i].action = "";
+													}
+													dataItems.integ_items = items;
+													itemsModel.setData(dataItems);
+													itemsModel.refresh();
+													that.getView().byId("reproc").setVisible(false);
+													var texto = "All Organizations reprocessed.";
+													sap.m.MessageToast.show(texto);
+												}
+											})
+											.fail(function (jqXHR, textStatus, errorThrown) {
+												var d = jqXHR;
+												var e = textStatus;
+												var f = errorThrown;
+											});
+									}
+									dialog.close();
+								} else {
+									var text1 = that.getView().getModel("i18n").getResourceBundle().getText("noLastExec2");
+									sap.m.MessageToast.show(text1);
+									dialog.close();
+								}
+							},
+							error: function (oError) {
+								var text1 = that.getView().getModel("i18n").getResourceBundle().getText("noLastExec2");
+								sap.m.MessageToast.show(text1);
+								dialog.close();
+							}
+						});
 					}
 				}),
 				endButton: new sap.m.Button({

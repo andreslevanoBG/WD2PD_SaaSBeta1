@@ -25,11 +25,15 @@ sap.ui.define([], function () {
 				return false;
 			}
 		},
-		ActionButEnabled: function (sValue, sValue2) {
-			if (sValue == "X" && sValue2 == "E") {
-				return true;
-			} else {
-				return false;
+		ItemStatus2: function (sValue) {
+			if (sValue == "S") {
+				return "Success";
+			} else if (sValue == "E") {
+				return "Error";
+			} else if (sValue == "R") {
+				return "Warning";
+			} else if (sValue == "D") {
+				return "Discarded";
 			}
 		},
 		VisError: function (sValue, sValue2) {
@@ -37,6 +41,26 @@ sap.ui.define([], function () {
 				return true;
 			} else {
 				return false;
+			}
+		},
+
+		ItemStatus2Tex: function (sValue) {
+			if (sValue == "I") {
+				return "Incremental";
+			} else if (sValue == "R") {
+				return "Reprocessing";
+			} else if (sValue == "O") {
+				return "On Demand";
+			}
+		},
+
+		IntegStatus2: function (sValue) {
+			if (sValue == "I") {
+				return "Indication07";
+			} else if (sValue == "R") {
+				return "Indication01";
+			} else if (sValue == "O") {
+				return "Indication06";
 			}
 		},
 
@@ -59,11 +83,52 @@ sap.ui.define([], function () {
 			}
 		},
 
-		duration: function (sValue) {
-			var text = "Duration: " + sValue + " secs";
-			var text1 = text.toString().replace(".", ",");
-			return text1;
+		duration: function (sValue, sValue2) {
+			var oFormatOptions = {
+				groupingEnabled: true
+			};
+			var local = sap.ui.getCore().getConfiguration().getLocale();
+			var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance(oFormatOptions, local);
+			if (sValue == "0") {
+				var date1 = new Date();
+				var date2 = new Date(sValue2);
+				var diff = (date1.getTime() - date2.getTime()) / 1000;
+				var diff2 = oFloatFormat.format(diff);
+				var text = "Duration: " + diff2 + " secs";
+				//var text1 = text.toString().replace(".", ",");
+				return text;
+			}
+			var sVal = oFloatFormat.format(sValue);
+			var text2 = "Duration: " + sVal + " secs";
+			//var text3 = text2.toString().replace(".", ",");
+			return text2;
 		},
+
+		numberInt: function (sValue) {
+			var oFormatOptions = {
+				groupingEnabled: true
+			};
+			var local = sap.ui.getCore().getConfiguration().getLocale();
+			var oIntegFormat = sap.ui.core.format.NumberFormat.getIntegerInstance(oFormatOptions, local);
+			return oIntegFormat.format(sValue);
+		},
+
+		IntegStatusInv: function (sValue) {
+			if (sValue == "S" || sValue == "W" || sValue == "E") {
+				return true;
+			} else if (sValue == "R") {
+				return false;
+			}
+		},
+
+		IntegStatusIcon: function (sValue) {
+			if (sValue == "S" || sValue == "W" || sValue == "E") {
+				return "";
+			} else if (sValue == "R") {
+				return "sap-icon://goalseek";
+			}
+		},
+
 		Startdate: function (t1, status) {
 			var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				pattern: "YYYY-MM-dd HH:mm:ss"
@@ -117,10 +182,13 @@ sap.ui.define([], function () {
 				return "Success";
 			} else if (sValue == "E") {
 				return "Error";
-			} else if (sValue == "R" || sValue == "W") {
+			} else if (sValue == "W") {
 				return "Warning";
+			} else if (sValue == "R") {
+				return "Information";
 			}
 		},
+
 		ItemStatusTex: function (sValue) {
 			if (sValue == "S") {
 				return "Success";
@@ -159,6 +227,27 @@ sap.ui.define([], function () {
 				return "sap-icon://message-error";
 			} else {
 				return "";
+			}
+		},
+		ActionButEnabled: function (sValue, sValue2) {
+			if (sValue == "X" && sValue2 == "E") {
+				return true;
+			} else {
+				return false;
+			}
+		},
+		ActionButVisible1: function (sValue) {
+			if (sValue == "D") {
+				return false;
+			} else {
+				return true;
+			}
+		},
+		ActionButVisible2: function (sValue) {
+			if (sValue == "D") {
+				return true;
+			} else {
+				return false;
 			}
 		},
 		ItemStatus: function (sValue) {

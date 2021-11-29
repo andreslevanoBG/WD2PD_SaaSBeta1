@@ -30,6 +30,13 @@
 							<SegmentedButtonItem text="{i18n>no}" key="I"/>
 						</items>
 					</SegmentedButton>
+					<Label id="labFutChanges" labelFor="FutChanges" text="{i18n>withFuture}"/>
+					<SegmentedButton id="FutChanges">
+						<items>
+							<SegmentedButtonItem text="{i18n>yes}" key="A"/>
+							<SegmentedButtonItem text="{i18n>no}" key="I"/>
+						</items>
+					</SegmentedButton>
 				</f:content>
 			</f:SimpleForm>
 		</VBox>

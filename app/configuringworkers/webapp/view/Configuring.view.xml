@@ -29,7 +29,7 @@
 												<form:fields>
 													<RadioButtonGroup
 														id="sap_uxap_ObjectPageLayout_0-sections-sap_uxap_ObjectPageSection-1-subSections-sap_uxap_ObjectPageSubSection-1-blocks-build_simple_form_Form-1600070272249-formContainers-build_simple_form_FormContainer-1-formElements-build_simple_form_FormElement-2-fields-sap_m_RadioButtonGroup-1600077158601"
-														columns="8" selectedIndex="0" valueState="None" width="auto" editable="true" enabled="true" textDirection="Inherit"
+														columns="2" selectedIndex="0" valueState="None" width="auto" editable="true" enabled="true" textDirection="Inherit"
 														select="_onRadioButtonGroupSelect">
 														<buttons>
 															<RadioButton id="rb001" text="{i18n>viewTextYes}" editable="true" enabled="true" visible="true" width="auto" valueState="None"
@@ -47,7 +47,7 @@
 												<form:fields>
 													<RadioButtonGroup
 														id="sap_uxap_ObjectPageLayout_0-sections-sap_uxap_ObjectPageSection-1-subSections-sap_uxap_ObjectPageSubSection-1-blocks-build_simple_form_Form-1600070272249-formContainers-build_simple_form_FormContainer-1-formElements-build_simple_form_FormElement-1600077208298-fields-sap_m_RadioButtonGroup-1"
-														columns="8" selectedIndex="0" valueState="None" width="auto" editable="true" enabled="true" textDirection="Inherit"
+														columns="2" selectedIndex="0" valueState="None" width="auto" editable="true" enabled="true" textDirection="Inherit"
 														select="_onRadioButtonGroupSelect1">
 														<buttons>
 															<RadioButton id="rb003" text="{i18n>viewTextYes}" editable="true" enabled="true" visible="true" width="auto" valueState="None"
@@ -65,7 +65,7 @@
 												<form:fields>
 													<RadioButtonGroup
 														id="sap_uxap_ObjectPageLayout_0-sections-sap_uxap_ObjectPageSection-1-subSections-sap_uxap_ObjectPageSubSection-1-blocks-build_simple_form_Form-1600070272249-formContainers-build_simple_form_FormContainer-1-formElements-build_simple_form_FormElement-1600251652154-fields-sap_m_RadioButtonGroup-1"
-														columns="8" selectedIndex="0" valueState="None" width="auto" editable="true" enabled="true" textDirection="Inherit"
+														columns="2" selectedIndex="0" valueState="None" width="auto" editable="true" enabled="true" textDirection="Inherit"
 														select="_onRadioButtonGroupSelect2">
 														<buttons>
 															<RadioButton id="rb005" text="{i18n>viewTextYes}" editable="true" enabled="true" visible="true" width="auto" valueState="None"
@@ -81,9 +81,77 @@
 											<core:Title text="{i18n>formContainerTitle1}" level="H4" icon="sap-icon://filter"/>
 										</form:title>
 									</form:FormContainer>
+									<form:FormContainer id="container7_1632732472108">
+										<form:formElements>
+											<form:FormElement label="Label" id="element3_1632732472107">
+												<form:label>
+													<Label text="{i18n>viewLabel5}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+												</form:label>
+												<form:fields>
+													<RadioButtonGroup xmlns="sap.m" columns="2" id="group0_1632738530611" width="auto">
+														<buttons>
+															<RadioButton text="{i18n>viewTextYes}" id="button24"
+																selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/response_include_data/rg_organization', formatter:'.booleanTrans'}"/>
+															<RadioButton text="{i18n>viewTextNo}" id="button25"
+																selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/response_include_data/rg_organization', formatter:'.booleanTransOp'}"/>
+														</buttons>
+													</RadioButtonGroup>
+												</form:fields>
+											</form:FormElement>
+											<form:FormElement label="Label" id="element3_1632738569113">
+												<form:label>
+													<Label text="{i18n>viewLabel6}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+												</form:label>
+												<form:fields>
+													<RadioButtonGroup xmlns="sap.m" columns="2" id="group1" width="auto">
+														<buttons>
+															<RadioButton text="{i18n>viewTextYes}" id="button26"
+																selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/response_include_data/rg_compensation', formatter:'.booleanTrans'}"/>
+															<RadioButton text="{i18n>viewTextNo}" id="button27"
+																selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/response_include_data/rg_compensation', formatter:'.booleanTransOp'}"/>
+														</buttons>
+													</RadioButtonGroup>
+												</form:fields>
+											</form:FormElement>
+											<form:FormElement label="Label" id="element4">
+												<form:label>
+													<Label text="{i18n>viewLabel7}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+												</form:label>
+												<form:fields>
+													<RadioButtonGroup xmlns="sap.m" columns="2" id="group2" width="auto">
+														<buttons>
+															<RadioButton text="{i18n>viewTextYes}" id="button28"
+																selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/response_include_data/rg_additional_jobs', formatter:'.booleanTrans'}"/>
+															<RadioButton text="{i18n>viewTextNo}" id="button29"
+																selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/response_include_data/rg_additional_jobs', formatter:'.booleanTransOp'}"/>
+														</buttons>
+													</RadioButtonGroup>
+												</form:fields>
+											</form:FormElement>
+											<form:FormElement label="Label" id="element5_1632738610269">
+												<form:label>
+													<Label text="{i18n>viewLabel8}" design="Standard" width="100%" required="false" textAlign="Begin" textDirection="Inherit" visible="true"/>
+												</form:label>
+												<form:fields>
+													<RadioButtonGroup xmlns="sap.m" columns="2" id="group3" width="auto">
+														<buttons>
+															<RadioButton text="{i18n>viewTextYes}" id="button30"
+																selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/response_include_data/custom_fields_is', formatter:'.booleanTrans'}"/>
+															<RadioButton text="{i18n>viewTextNo}" id="button31"
+																selected="{path:'ModelJSON>/global_configuration/global_parameters/ws_get_workers/response_include_data/custom_fields_is', formatter:'.booleanTransOp'}"/>
+														</buttons>
+													</RadioButtonGroup>
+												</form:fields>
+											</form:FormElement>
+										</form:formElements>
+										<form:title>
+											<core:Title text="{i18n>formContainerTitle1A}" level="H4" icon="sap-icon://add-coursebook"/>
+										</form:title>
+									</form:FormContainer>
 								</form:formContainers>
 								<form:layout>
-									<form:ResponsiveGridLayout adjustLabelSpan="false" columnsL="2" labelSpanL="3" columnsM="1" labelSpanM="2" labelSpanS="12"/>
+									<form:ResponsiveGridLayout labelSpanXL="6" labelSpanL="6" labelSpanM="6" labelSpanS="12" adjustLabelSpan="true" emptySpanXL="0"
+										emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="2" singleContainerFullSize="false"/>
 								</form:layout>
 							</form:Form>
 						</uxap:blocks>
@@ -440,8 +508,8 @@
 												<form:formElements>
 													<form:FormElement id="element5">
 														<form:fields>
-															<Table items="{ path: 'CustomFields>/', sorter: { path: 'label', descending: false }}"
-                            								noDataText="{i18n>viewTextNoData}" id="table0_1605526253660">
+															<Table items="{ path: 'CustomFields>/', sorter: { path: 'label', descending: false }}" noDataText="{i18n>viewTextNoData}"
+																id="table0_1605526253660">
 																<!--<Table  noDataText="{i18n>viewTextNoData}" id="table0_1605526253660">-->
 																<headerToolbar>
 																	<Toolbar>

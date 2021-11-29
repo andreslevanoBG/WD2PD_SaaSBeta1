@@ -2,9 +2,12 @@
 	<ViewSettingsDialog id="viewSettingsDialogDetail" confirm=".searchFilters" cancel="handleCancel" sortDescending="true"
 		resetFilters=".handleResetFilters">
 		<sortItems>
-			<ViewSettingsItem text="{i18n>Worker}" key="pernr" selected="true"/>
+		<!--	<ViewSettingsItem text="{i18n>Worker}" key="pernr" selected="true"/>
 			<ViewSettingsItem text="{i18n>firstName}" key="firstname" selected="false"/>
-			<ViewSettingsItem text="{i18n>lastName}" key="lastname" selected="false"/>
+			<ViewSettingsItem text="{i18n>lastName}" key="lastname" selected="false"/>-->
+			<ViewSettingsItem text="{i18n>Worker}" key="worker/employee_number" selected="true"/>
+			<ViewSettingsItem text="{i18n>firstName}" key="worker/firstname" selected="false"/>
+			<ViewSettingsItem text="{i18n>lastName}" key="worker/lastname" selected="false"/>
 		</sortItems>
 		<filterItems>
 			<ViewSettingsCustomItem id="idCustomFilterItem" text="{i18n>Work}" key="pernr">

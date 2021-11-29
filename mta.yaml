@@ -4,8 +4,8 @@
 # ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ #
 #
 _schema-version: "3.2"
-ID: wd2pdsaas
-version: 1.0.0
+ID: wd2pdsaasdev
+version: 1.0.1
 parameters:
   # deploy_mode: html5-repo #no está
   enable-parallel-deployments: true
@@ -28,7 +28,7 @@ modules:
   #   ║               CAP SERVICE             ║   #
   #   ╚═══════════════════════════════════════╝   #
   #
-  - name: wd2pdsaas-srv
+  - name: wd2pdsaasdev-srv
     type: nodejs
     path: gen/srv
     parameters:
@@ -39,12 +39,12 @@ modules:
       SAP_JWT_TRUST_ACL: '[{"clientid":"*","identityzone":"sap-provisioning"}]'
       EXIT: 1
     requires:
-      - name: wd2pdsaas-uaa
-      - name: wd2pdsaas-theming
-      - name: wd2pdsaas-registry
-      - name: wd2pdsaas-sm
-      - name: wd2pdsaas_portal
-      - name: wd2pdsaas_destination
+      - name: wd2pdsaasdev-uaa
+      - name: wd2pdsaasdev-theming
+      - name: wd2pdsaasdev-registry
+      - name: wd2pdsaasdev-sm
+      - name: wd2pdsaasdev_portal
+      - name: wd2pdsaasdev_destination
     provides:
       - name: srv_api
         properties:
@@ -56,20 +56,21 @@ modules:
     #   ║               APP ROUTER              ║   #
     #   ╚═══════════════════════════════════════╝   #
     #
-  - name: wd2pdsaas
+  - name: wd2pdsaasdev
     type: approuter.nodejs
     path: wd2pd-approuter
     properties:
       #  TENANT_HOST_PATTERN: '^(.*)-shapeinsubs-${app-name}.cfapps.eu10.hana.ondemand.com'
       TENANT_HOST_PATTERN: ^(.*)-${space}-${app-name}.${default-domain}
+      #TENANT_HOST_PATTERN: bigcoreshapeinlabssaasproviderdev-dev-${app-name}.${default-domain}
     #  TENANT_HOST_PATTERN: '^(.*)-shapeinsolutionsdev-${app-name}.cfapps.eu20.hana.ondemand.com'
     requires:
-      - name: wd2pdsaas-uaa
-      - name: wd2pdsaas-theming
-      - name: wd2pdsaas_destination
-      - name: wd2pdsaas_portal
-      - name: wd2pdsaas_html5_repo_runtime
-      - name: wd2pdsaas-registry
+      - name: wd2pdsaasdev-uaa
+      - name: wd2pdsaasdev-theming
+      - name: wd2pdsaasdev_destination
+      - name: wd2pdsaasdev_portal
+      - name: wd2pdsaasdev_html5_repo_runtime
+      - name: wd2pdsaasdev-registry
       - name: srv_api
         group: destinations
         properties:
@@ -240,11 +241,11 @@ modules:
     #   ║            HTML5 DEPLOYER             ║   #
     #   ╚═══════════════════════════════════════╝   #
     #
-  - name: wd2pdsaas-app-content
+  - name: wd2pdsaasdev-app-content
     type: com.sap.application.content
     path: html5-deployer
     requires:
-      - name: wd2pdsaas-repo-host
+      - name: wd2pdsaasdev-repo-host
         parameters:
           content-target: true
     build-parameters:
@@ -319,16 +320,16 @@ modules:
       config:
       #  TENANT_HOST_PATTERN: '^(.*)-shapeinsubs-${app-name}.${default-domain}'
     requires:
-      - name: wd2pdsaas_portal
+      - name: wd2pdsaasdev_portal
         parameters:
           content-target: true
           service-key:
             config:
               content-endpoint: developer
             name: content-deploy-key
-      - name: wd2pdsaas-uaa
-      - name: wd2pdsaas-repo-host
-      - name: wd2pdsaas-registry
+      - name: wd2pdsaasdev-uaa
+      - name: wd2pdsaasdev-repo-host
+      - name: wd2pdsaasdev-registry
 
 #
 # ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ #
@@ -341,7 +342,7 @@ resources:
   #   │            DESTINATIONS             │   #
   #   └─────────────────────────────────────┘   #
   #
-  - name: wd2pdsaas_destination
+  - name: wd2pdsaasdev_destination
     type: org.cloudfoundry.managed-service
     parameters:
       service: destination
@@ -352,7 +353,7 @@ resources:
     #   │           SERVICE MANAGER           │   #
     #   └─────────────────────────────────────┘   #
     #
-  - name: wd2pdsaas-sm
+  - name: wd2pdsaasdev-sm
     type: org.cloudfoundry.managed-service
     parameters:
       config:
@@ -362,13 +363,13 @@ resources:
       service: service-manager
       service-plan: container
     requires:
-      - name: wd2pdsaas-uaa
+      - name: wd2pdsaasdev-uaa
     #
     #   ┌─────────────────────────────────────┐   #
     #   │                XSUAA                │   #
     #   └─────────────────────────────────────┘   #
     #
-  - name: wd2pdsaas-uaa
+  - name: wd2pdsaasdev-uaa
     type: org.cloudfoundry.managed-service
     parameters:
       config:
@@ -389,31 +390,33 @@ resources:
     #   │                SAAS                 │   #
     #   └─────────────────────────────────────┘   #
     #
-  - name: wd2pdsaas-registry
+  - name: wd2pdsaasdev-registry
     type: org.cloudfoundry.managed-service
     parameters:
       config:
-        appName: wd2pdsaas
+        appName: wd2pdsaasdev
+        category: 'SHAPEiN Solutions'
+        description: 'Workday - UKG HR Service Delivery Integration'
+        displayName: 'WD2UKGHRSD Integration App DEV'
         appUrls:
-        #  getDependencies: https://bigcore-shapeinlabs-shapeinsubs-wd2pdsaas-srv.cfapps.eu10.hana.ondemand.com/mtx/v1/provisioning/dependencies
-          getDependencies: https://${org}-${space}-wd2pdsaas-srv.${default-domain}/mtx/v1/provisioning/dependencies
-        #    onSubscription: https://bigcore-shapeinlabs-shapeinsubs-wd2pdsaas-srv.cfapps.eu10.hana.ondemand.com/mtx/v1/provisioning/tenant/{tenantId}
-          onSubscription: https://${org}-${space}-wd2pdsaas-srv.${default-domain}/mtx/v1/provisioning/tenant/{tenantId}
-          category: 'SHAPEiN Solutions'
-          description: 'Workday - UKG HR Service Delivery Integration'
-          displayName: 'WD2UKGHRSD Integration App'
-        xsappname: ~{wd2pdsaas-uaa/XSAPPNAME}
+        #  getDependencies: https://bigcore-shapeinlabs-shapeinsubs-wd2pdsaasdev-srv.cfapps.eu10.hana.ondemand.com/mtx/v1/provisioning/dependencies
+          getDependencies: https://${org}-${space}-wd2pdsaasdev-srv.${default-domain}/mtx/v1/provisioning/dependencies
+        #  getDependencies: https://bigcoreshapeinlabssaasproviderdev-dev-wd2pdsaasdev-srv.${default-domain}/mtx/v1/provisioning/dependencies
+        #    onSubscription: https://bigcore-shapeinlabs-shapeinsubs-wd2pdsaasdev-srv.cfapps.eu10.hana.ondemand.com/mtx/v1/provisioning/tenant/{tenantId}
+          onSubscription: https://${org}-${space}-wd2pdsaasdev-srv.${default-domain}/mtx/v1/provisioning/tenant/{tenantId}
+        #  onSubscription: https://bigcoreshapeinlabssaasproviderdev-dev-wd2pdsaasdev-srv.${default-domain}/mtx/v1/provisioning/tenant/{tenantId}
+        xsappname: ~{wd2pdsaasdev-uaa/XSAPPNAME}
       service: saas-registry
       service-plan: application
     requires:
-      - name: wd2pdsaas-uaa
+      - name: wd2pdsaasdev-uaa
 
     #
     #   ┌─────────────────────────────────────┐   #
     #   │            HTML5 RUNTIME            │   #
     #   └─────────────────────────────────────┘   #
     #
-  - name: wd2pdsaas_html5_repo_runtime
+  - name: wd2pdsaasdev_html5_repo_runtime
     type: org.cloudfoundry.managed-service
     parameters:
       service-plan: app-runtime
@@ -424,11 +427,11 @@ resources:
     #   │              HTML5 HOST             │   #
     #   └─────────────────────────────────────┘   #
     #
-  - name: wd2pdsaas-repo-host
+  - name: wd2pdsaasdev-repo-host
     type: org.cloudfoundry.managed-service
     parameters:
       service: html5-apps-repo
-      service-name: wd2pdsaas-html5-srv
+      service-name: wd2pdsaasdev-html5-srv
       service-plan: app-host
       config:
         sizeLimit: 2
@@ -438,7 +441,7 @@ resources:
     #   │            PORTAL SERVICE           │   #
     #   └─────────────────────────────────────┘   #
     #
-  - name: wd2pdsaas_portal
+  - name: wd2pdsaasdev_portal
     type: org.cloudfoundry.managed-service
     parameters:
       service: portal
@@ -448,7 +451,7 @@ resources:
     #   │            THEME                    │   #
     #   └─────────────────────────────────────┘   #
     #
-  - name: wd2pdsaas-theming
+  - name: wd2pdsaasdev-theming
     type: org.cloudfoundry.managed-service
     parameters:
       service: theming

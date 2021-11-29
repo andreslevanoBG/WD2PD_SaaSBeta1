@@ -89,6 +89,11 @@ sap.ui.define([
 			this.setModel(oModel21, "BProcessWD");
 			var oModel22 = new JSONModel();
 			this.setModel(oModel22, "LValues");
+			var oModel23 = new JSONModel();
+			oModel23.setData({
+				pages: []
+			});
+			this.setModel(oModel23, "pages");
 			var oRawModel = new JSONModel();
 			this.setModel(oRawModel, "RawModel");
 

@@ -85,7 +85,7 @@
 						</Table>
 					</IconTabFilter>
 					<IconTabSeparator icon=""/>
-					<IconTabFilter id="icontabData" key="datas" icon="sap-icon://provision">
+					<IconTabFilter id="icontabData" key="datas" visible="{path:'processing_type', formatter: '.formatter.processTypeVis' }" icon="sap-icon://provision">
 						<Bar id="bar">
 							<contentRight>
 								<Button id="edit" text="{i18n>edit}" enabled="false" press="handleEditPress"/>

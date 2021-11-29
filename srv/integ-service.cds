@@ -8,13 +8,13 @@ using {shapein.integrations as my} from '../db/schema';
 @path            : '/integration'
 @requires        : 'Service'
 service IntegrationService {
-    // entity Integrations as projection on my.Integrations;
-    entity Integrations                      as
-        select from my.Integrations {
-            *,
-            0 as numberOfItems   : Integer,
-            0 as numberOfSeconds : Decimal
-        };
+     entity Integrations as projection on my.Integrations;
+ //   entity Integrations                      as
+ //       select from my.Integrations {
+ //           *,
+ //           0 as numberOfItems   : Integer,
+ //           0 as numberOfSeconds : Decimal
+ //       };
 
     entity Status                            as projection on my.Status;
     entity Integration_Items                 as projection on my.Integration_Items;
@@ -60,13 +60,13 @@ service IntegrationService {
     entity Di_Parser_Xsd                     as projection on my.Di_Parser_Xsd;
     entity Di_Parser_Xsd_Definition          as projection on my.Di_Parser_Xsd_Definition;
 
-    //   entity Di_Generation_Processes        as projection on my.Di_Generation_Processes;
-    entity Di_Generation_Processes           as
-        select from my.Di_Generation_Processes {
-            *,
-            0 as numberOfItems   : Integer,
-            0 as numberOfSeconds : Decimal
-        };
+    entity Di_Generation_Processes        as projection on my.Di_Generation_Processes;
+   // entity Di_Generation_Processes           as
+   //     select from my.Di_Generation_Processes {
+   //         *,
+   //         0 as numberOfItems   : Integer,
+   //         0 as numberOfSeconds : Decimal
+   //     };
 
     entity Di_Generation_Processes_Doc       as projection on my.Di_Generation_Processes_Doc;
     entity Di_Messages                       as projection on my.Di_Messages;
@@ -81,8 +81,11 @@ service IntegrationService {
     entity Di_Template_Mapping_Sources_Types as projection on my.Di_Template_Mapping_Sources_Types;
     entity Di_Template_Mapping_Types         as projection on my.Di_Template_Mapping_Types;
     entity Di_List_Values                    as projection on my.Di_List_Values;
+
+    @cds.query.limit : 6
     entity Di_Template_Page_Content          as projection on my.Di_Template_Page_Content;
-    entity Organization_Types               as projection on my.Organization_Types;
+
+    entity Organization_Types                as projection on my.Organization_Types;
 
     event deleteInteg : {
         integ_id : String(32);
@@ -135,7 +138,26 @@ service IntegrationService {
         type      : String;
         type_text : String;
         subtype   : String;
-        metadata     : String;
+        metadata  : String;
+    }
+
+    type pack_pages {
+        next_pack   : Integer;
+        uuidtemp    : String(36);
+        pages       : array of {
+            page    : Integer;
+            content : LargeString;
+        };
+    }
+
+    type tileinfo {
+        number : Integer;
+    }
+
+    type countersInteg {
+        countS: Integer;
+        countE: Integer;
+        countD: Integer;
     }
 
     function set_user_future_changes(uuid : String(32), date : Date) returns String;
@@ -151,5 +173,12 @@ service IntegrationService {
     function di_business_process_type_master_delete_all() returns String;
     function delete_list_values(lvaid : String(20)) returns String;
     function delete_complete_template(uuid : String(36)) returns String;
-    function get_organization_types(text : Boolean, metadata: Boolean) returns organization_type;
+    function get_organization_types(text : Boolean, metadata : Boolean) returns organization_type;
+    function get_pages(uuidtemp : String(36), pack: Integer) returns pack_pages;
+    function counterIntWorkers() returns tileinfo;
+    function counterIntUsers() returns tileinfo;
+    function counterIntOrgs() returns tileinfo;
+    function counterIntProc() returns tileinfo;
+    function updateCalculatedFields(id: String(32)) returns String;
+    function getCountersInteg(id: String(32)) returns countersInteg;
 }

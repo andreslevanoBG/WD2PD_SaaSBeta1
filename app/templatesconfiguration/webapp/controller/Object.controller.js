@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/routing/History"
 ], function (BaseController, JSONModel, XMLModel, formatter, xml2json, Fragment, History) {
-    "use strict";
+	"use strict";
 	var oIndex = 1;
 	var oQuery;
 
@@ -33,6 +33,7 @@ sap.ui.define([
 			this.selectedVarMeta = "";
 			this.selectedAttr = "";
 			this.description = "";
+			this.pages_pre = [];
 			this.oldBP = "";
 			this.partiallySel = false;
 			this.partiallySelMeta = false;
@@ -118,7 +119,8 @@ sap.ui.define([
 				oPlanModelRep = this.getModel("planningRep"),
 				oSignatureModel = this.getModel("signature"),
 				oGlobalVar = this.getModel("globalVar"),
-				oDocTypesModel = this.getModel("doctypes");
+				oDocTypesModel = this.getModel("doctypes"),
+				oPagesModel = this.getModel("pages");
 			var templates = oTempModel.getData();
 			var act_version = String(version);
 			var temp = templates.find(template => template.id === sObjectId && template.active_version == act_version);
@@ -146,6 +148,20 @@ sap.ui.define([
 					var results = oData.results[0];
 					delete oData.__metadata;
 					if (results) {
+						that.byId("carouselContainer").setBusy(true);
+						that.byId("carouselContainer").setShowPageIndicator(false);
+						that.pages_pre = [];
+						oModel.callFunction(
+							"/get_pages", {
+								method: "GET",
+								urlParameters: {
+									uuidtemp: results.uuid,
+									pack: 0
+								},
+								success: that.successGetPages.bind(that),
+								error: that.errorGetPages.bind(that)
+							});
+
 						var sPath1 = sPath + "(guid'" + results.uuid + "')"
 						head.uuid = results.uuid;
 						head.id = results.template_id;
@@ -176,8 +192,9 @@ sap.ui.define([
 						oHeaderModel.refresh();
 						oModel.read(sPath1, {
 							urlParameters: {
-								"$expand": "business_process,pages,mappings,sign_cfg,planning/integs_plan_d,planning/adata,planning_rep/integs_plan_d,planning_rep/adata,attributes/values_attr"
+								"$expand": "business_process,mappings,sign_cfg,planning/integs_plan_d,planning/adata,planning_rep/integs_plan_d,planning_rep/adata,attributes/values_attr"
 							},
+							//groupId: "hoadkldfla", 
 							success: function (oData2, oResponse2) {
 								var results2 = oData2;
 								var planning = results2.planning;
@@ -415,7 +432,6 @@ sap.ui.define([
 							var cuscode = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
 							var cusclientid = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
 							var cusscope = that.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
-
 							jQuery.ajax({
 								url: url,
 								beforeSend: function (xhr) {
@@ -429,19 +445,30 @@ sap.ui.define([
 								success: function (results) {
 									oDocTypesModel.setData(results.employee_doctypes_assigned);
 									oDocTypesModel.refresh();
+									var pages_pre = [];
 									if (results.pages_preview) {
 										for (var i = 0; i < results.pages_preview.length; i++) {
-											results.pages_preview[i].base64 = "data:image/png;base64," + results.pages_preview[i].base64;
+											var item = {};
+											item.content = "data:image/png;base64," + results.pages_preview[i].base64;
+											item.page = results.pages_preview[i].page;
+											//results.pages_preview[i].base64 = "data:image/png;base64," + results.pages_preview[i].base64;
+											pages_pre.push(item);
 										}
+										delete results.pages_preview;
 									} else {
-										results.pages_preview = [];
+										//	results.pages_preview = [];
 									}
-									for (var j = 0; j < results.variables.length; j++) {
-										results.variables[j].path = "";
-										results.variables[j].map = "";
-										results.variables[j].type = "";
-										results.variables[j].source = "";
-										results.variables[j].metadata = "";
+									if (results.variables && Array.isArray(results.variables)) {
+										for (var j = 0; j < results.variables.length; j++) {
+											results.variables[j].path = "";
+											results.variables[j].map = "";
+											results.variables[j].type = "";
+											results.variables[j].source = "";
+											results.variables[j].metadata = "";
+										}
+										var scount = results.variables.length;
+									} else {
+										var scount = 0;
 									}
 									results.id = temp.id;
 									results.description = temp.description;
@@ -449,10 +476,14 @@ sap.ui.define([
 									results.updated_at = temp.updated_at;
 									results.deprecated = temp.deprecated;
 									results.base64 = "";
+									var pag = {
+										pages: pages_pre
+									};
+									oPagesModel.setData(pag);
+									oPagesModel.refresh();
 									oDataModel.setData(results);
 									oDataModel.refresh();
 									oViewModel.setProperty("/busy", false);
-									var scount = results.variables.length;
 									that.getView().byId("tabMap").setCount(scount);
 									that.configNewTemp();
 								},
@@ -469,6 +500,66 @@ sap.ui.define([
 					oViewModel.setProperty("/busy", false);
 				}
 			});
+		},
+
+		successGetPages: function (oData) {
+			var nextPack = oData.get_pages.next_pack;
+			var uuidtemp = oData.get_pages.uuidtemp;
+			var oModel = this.getOwnerComponent().getModel();
+			var oPagesModel = this.getModel("pages");
+			var that = this;
+			if (nextPack == 0) {
+				var pages_pre = oData.get_pages.pages;
+				var pages_load = oPagesModel.getData();
+				if (that.pages_pre.length == 0) {
+					var pages_load = {};
+					pages_load.pages = pages_pre;
+					that.pages_pre = pages_pre;
+				} else {
+					that.pages_pre = that.pages_pre.concat(pages_pre);
+					var pages_load = {};
+					pages_load.pages = that.pages_pre;
+				}
+				pages_load.pages.sort(function (a, b) {
+					return a.page - b.page
+				});
+				oPagesModel.setData(pages_load);
+				oPagesModel.refresh();
+				that.byId("carouselContainer").setBusy(false);
+				that.byId("carouselContainer").setShowPageIndicator(true);
+			} else {
+				var pages_pre = oData.get_pages.pages;
+				//var pages_load = oPagesModel.getData();
+				if (that.pages_pre.length == 0) {
+					var pages_load = {};
+					pages_load.pages = pages_pre;
+					that.pages_pre = pages_pre;
+					oPagesModel.setData(pages_load);
+					oPagesModel.refresh();
+				} else {
+					//	var new_pages = pages_load.pages.concat(pages_pre);
+					that.pages_pre = that.pages_pre.concat(pages_pre);
+					//pages_load.pages = new_pages;
+				}
+				//	pages_load.pages.sort(function (a, b) {
+				//		return a.page - b.page
+				//	});
+
+				oModel.callFunction(
+					"/get_pages", {
+						method: "GET",
+						urlParameters: {
+							uuidtemp: uuidtemp,
+							pack: nextPack
+						},
+						success: that.successGetPages.bind(that),
+						error: that.errorGetPages.bind(that)
+					});
+			}
+		},
+
+		errorGetPages: function (oData) {
+
 		},
 
 		/* Al refrescar los objetos asociadas a la template */
@@ -491,7 +582,7 @@ sap.ui.define([
 			var sPath1 = sPath + "(guid'" + uuidTemp + "')"
 			oModel.read(sPath1, {
 				urlParameters: {
-					"$expand": "business_process,pages,mappings,sign_cfg,planning/integs_plan_d,planning/adata,planning_rep/integs_plan_d,planning_rep/adata,attributes/values_attr"
+					"$expand": "business_process,mappings,sign_cfg,planning/integs_plan_d,planning/adata,planning_rep/integs_plan_d,planning_rep/adata,attributes/values_attr"
 				},
 				success: function (oData2, oResponse2) {
 					var results2 = oData2;
@@ -882,18 +973,20 @@ sap.ui.define([
 					error: function (error) {
 						var variables = ckeckMapData;
 						var mappings = [];
-						for (var i = 0; i < variables.length; i++) {
-							if (variables[i].path != "") {
-								var item = {
-									variable: variables[i].variable,
-									error: "C",
-									path: variables[i].path,
-									source: variables[i].source,
-									metadata: variables[i].metadata,
-									type: variables[i].type,
-									value: ""
+						if (variables && Array.isArray(variables)) {
+							for (var i = 0; i < variables.length; i++) {
+								if (variables[i].path != "") {
+									var item = {
+										variable: variables[i].variable,
+										error: "C",
+										path: variables[i].path,
+										source: variables[i].source,
+										metadata: variables[i].metadata,
+										type: variables[i].type,
+										value: ""
+									}
+									mappings.push(item);
 								}
-								mappings.push(item);
 							}
 						}
 						checkMapModel.setData(mappings);
@@ -909,12 +1002,15 @@ sap.ui.define([
 
 		/* Recuperamos de PeopleDoc las templates activas y las cruzamos con las templates
 		configuradas en persistencia */
-		call_Template_details: function (resultsPers, temp, mapCop, metaCop, uuidTemp) {
+		call_Template_details: function (resultsPers, temp, mapCop, metaCop, uuidTemp, newTemp) {
 			var oViewModel = this.getModel("objectView"),
 				oDataModel = this.getModel("template"),
 				oHeaderModel = this.getModel("header"),
 				oDocTypesModel = this.getModel("doctypes"),
 				oSignTypesModel = this.getModel("signtypes");
+			if (newTemp == "X") {
+				this.pages_pre = Object.assign({}, oDataModel.getData().pages_preview);
+			}
 			var that = this;
 			var head = oHeaderModel.getData();
 			var url = "/CPI-WD2PD_Dest/di/templates/template/detail";
@@ -923,13 +1019,15 @@ sap.ui.define([
 			url = url + "?Template-Id=" + temp.id + "&Template-Version=" + temp.active_version + "&Template-Language=" + langu;
 			if (this.getOwnerComponent().settings) {
 				var sendPage = false;
-				if (resultsPers.pages.results) {
-					if (resultsPers.pages.results.length == 0) {
-						sendPage = true;
-					}
-				} else {
-					sendPage = true;
-				}
+				// if (newTemp != "X") {
+				// 	if (resultsPers.pages.results) {
+				// 		if (resultsPers.pages.results.length == 0) {
+				// 			sendPage = true;
+				// 		}
+				// 	} else {
+				// 		sendPage = true;
+				// 	}
+				// }
 				var cuscode = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Code");
 				var cusclientid = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Client_Id");
 				var cusscope = this.getOwnerComponent().settings.find(setting => setting.code === "Customer-Scope");
@@ -979,71 +1077,85 @@ sap.ui.define([
 						}
 						results.metadata = metadata;
 						oDocTypesModel.refresh();
-						if (sendPage) {
-							if (results.pages_preview) {
-								for (var i = 0; i < results.pages_preview.length; i++) {
-									results.pages_preview[i].base64 = "data:image/png;base64," + results.pages_preview[i].base64;
-								}
-							} else {
-								results.pages_preview = [];
-							}
-						} else {
-							if (resultsPers.pages.results) {
-								results.pages_preview = resultsPers.pages.results;
-								results.pages_preview.sort(function (a, b) {
-									return a.page - b.page
-								});
-								if (results.pages_preview) {
-									for (var i = 0; i < results.pages_preview.length; i++) {
-										results.pages_preview[i].base64 = results.pages_preview[i].content;
-										delete results.pages_preview[i].content;
-									}
-								} else {
-									results.pages_preview = [];
-								}
-							}
-						}
+						//if (newTemp === "X") {
+						//	var pages = that.getModel("template").getData().pages_preview;
+						//	results.pages_preview = that.pages_pre;
+						//}
+						// if (sendPage) {
+						// 	if (results.pages_preview) {
+						// 		for (var i = 0; i < results.pages_preview.length; i++) {
+						// 			results.pages_preview[i].base64 = "data:image/png;base64," + results.pages_preview[i].base64;
+						// 		}
+						// 	} else {
+						// 		results.pages_preview = [];
+						// 	}
+						// } else if (newTemp === "X") {
+						// 	//var pages = that.getModel("template").getData().pages_preview;
+						// 	results.pages_preview = that.pages_pre;
+						// } else {
+						// 	if (resultsPers.pages.results) {
+						// 		results.pages_preview = resultsPers.pages.results;
+						// 		results.pages_preview.sort(function (a, b) {
+						// 			return a.page - b.page
+						// 		});
+						// 		if (results.pages_preview) {
+						// 			for (var i = 0; i < results.pages_preview.length; i++) {
+						// 				results.pages_preview[i].base64 = results.pages_preview[i].content;
+						// 				delete results.pages_preview[i].content;
+						// 			}
+						// 		} else {
+						// 			results.pages_preview = [];
+						// 		}
+						// 	}
+						// }
 						if (resultsPers.mappings) {
-							for (var j = 0; j < results.variables.length; j++) {
-								var variablePers = resultsPers.mappings.find(mapping => mapping.variable === results.variables[j].slug);
-								if (variablePers) {
-									results.variables[j].source = variablePers.source;
-									results.variables[j].type = variablePers.mapping_type;
-									results.variables[j].metadata = variablePers.metadata;
-									results.variables[j].path = variablePers.mapping;
-									if (results.variables[j].path === "") {
-										results.variables[j].map = "";
+							if (results.variables && Array.isArray(results.variables)) {
+								for (var j = 0; j < results.variables.length; j++) {
+									var variablePers = resultsPers.mappings.find(mapping => mapping.variable === results.variables[j].slug);
+									if (variablePers) {
+										results.variables[j].source = variablePers.source;
+										results.variables[j].type = variablePers.mapping_type;
+										results.variables[j].metadata = variablePers.metadata;
+										results.variables[j].path = variablePers.mapping;
+										if (results.variables[j].path === "") {
+											results.variables[j].map = "";
+										} else {
+											results.variables[j].map = "X";
+										}
 									} else {
-										results.variables[j].map = "X";
+										results.variables[j].path = "";
+										results.variables[j].map = "";
+										results.variables[j].source = "";
+										results.variables[j].type = "";
+										results.variables[j].metadata = "";
 									}
-								} else {
-									results.variables[j].path = "";
-									results.variables[j].map = "";
-									results.variables[j].source = "";
-									results.variables[j].type = "";
-									results.variables[j].metadata = "";
 								}
+								var scount = results.variables.length;
+							} else {
+								var scount = 0;
 							}
 						}
 						if (resultsPers.metadata) {
-							for (var j = 0; j < results.metadata.length; j++) {
-								var metadataPers = resultsPers.metadata.find(meta => meta.variable === results.metadata[j].code);
-								if (metadataPers) {
-									results.metadata[j].source = metadataPers.source;
-									results.metadata[j].type = metadataPers.mapping_type;
-									results.metadata[j].metadata = metadataPers.metadata;
-									results.metadata[j].path = metadataPers.mapping;
-									if (results.metadata[j].path === "") {
-										results.metadata[j].map = "";
+							if (results.metadata && Array.isArray(results.metadata)) {
+								for (var j = 0; j < results.metadata.length; j++) {
+									var metadataPers = resultsPers.metadata.find(meta => meta.variable === results.metadata[j].code);
+									if (metadataPers) {
+										results.metadata[j].source = metadataPers.source;
+										results.metadata[j].type = metadataPers.mapping_type;
+										results.metadata[j].metadata = metadataPers.metadata;
+										results.metadata[j].path = metadataPers.mapping;
+										if (results.metadata[j].path === "") {
+											results.metadata[j].map = "";
+										} else {
+											results.metadata[j].map = "X";
+										}
 									} else {
-										results.metadata[j].map = "X";
+										results.metadata[j].path = "";
+										results.metadata[j].map = "";
+										results.metadata[j].source = "";
+										results.metadata[j].type = "";
+										results.metadata[j].metadata = "";
 									}
-								} else {
-									results.metadata[j].path = "";
-									results.metadata[j].map = "";
-									results.metadata[j].source = "";
-									results.metadata[j].type = "";
-									results.metadata[j].metadata = "";
 								}
 							}
 						}
@@ -1056,7 +1168,6 @@ sap.ui.define([
 						oDataModel.setData(results);
 						oDataModel.refresh();
 						oViewModel.setProperty("/busy", false);
-						var scount = results.variables.length;
 						that.getView().byId("tabMap").setCount(scount);
 						if (mapCop === "X") {
 							that.deleteOldMappingsCreateMappings(uuidTemp, "X");
@@ -1213,19 +1324,21 @@ sap.ui.define([
 			var variables = oDataModel.getData().variables;
 			var mappings = [];
 			var that = this;
-			for (var i = 0; i < variables.length; i++) {
-				//	if (variables[i].path != "" && variables[i].type != "CTE") {
-				if (variables[i].path != "") {
-					var item = {
-						variable: variables[i].slug,
-						path: variables[i].path,
-						source: variables[i].source,
-						type: variables[i].type,
-						metadata: variables[i].metadata,
-						error: "C",
-						value: ""
+			if (variables && Array.isArray(variables)) {
+				for (var i = 0; i < variables.length; i++) {
+					//	if (variables[i].path != "" && variables[i].type != "CTE") {
+					if (variables[i].path != "") {
+						var item = {
+							variable: variables[i].slug,
+							path: variables[i].path,
+							source: variables[i].source,
+							type: variables[i].type,
+							metadata: variables[i].metadata,
+							error: "C",
+							value: ""
+						}
+						mappings.push(item);
 					}
-					mappings.push(item);
 				}
 			}
 			checkMapModel.setData(mappings);
@@ -1561,7 +1674,7 @@ sap.ui.define([
 			var metadataGV = null;
 			if (type === "XPATH") {
 				sourceGV = this.byId("Source_GV").getValue();
-				if(sourceGV == ""){
+				if (sourceGV == "") {
 					sourceGV = null;
 				}
 				var typeGV = editData.type;
@@ -1673,7 +1786,7 @@ sap.ui.define([
 			var metadataGV = null;
 			if (type === "XPATH") {
 				sourceGV = this.byId("Source_GV").getValue();
-				if(sourceGV == ""){
+				if (sourceGV == "") {
 					sourceGV = null;
 				}
 				var typeGV = oGlobalVariData.type;
@@ -1957,6 +2070,14 @@ sap.ui.define([
 
 		/* Inicialización de los modelos asociados una template */
 		initModels: function (oEvent) {
+			var paginas = this.byId("carouselContainer").getPages();
+			if (paginas[0]) {
+				this.byId("carouselContainer").setActivePage(paginas[0]);
+			}
+			this.getView().getModel("pages").setData({
+				pages: []
+			});
+			this.getView().getModel("pages").refresh();
 			this.getView().getModel("template").setData();
 			this.getView().getModel("template").refresh();
 			this.getView().getModel("header").setData();
@@ -3574,7 +3695,7 @@ sap.ui.define([
 								oPlanModel.refresh();
 								oPlanModelRep.setData(planning);
 								oPlanModelRep.refresh();
-								that.call_Template_details(results, temp);
+								that.call_Template_details(results, temp, "", "", "", "X");
 								that.createPagesBatch(head.uuid);
 								var text = that.getResourceBundle().getText("tempConfCrea");
 								sap.m.MessageToast.show(text);
@@ -4798,26 +4919,91 @@ sap.ui.define([
 		createPagesBatch: function (uuidTemp) {
 			var sPath = "/Di_Template_Page_Content";
 			var oModel = this.getOwnerComponent().getModel();
-			oModel.setDeferredGroups(["createPages"]);
+			oModel.setDeferredGroups([]);
 			var that = this;
-			var pages = this.getModel("template").getData().pages_preview;
-			for (var i = 0; i < pages.length; i++) {
-				var item = {};
-				item.template_uuid = uuidTemp;
-				item.page = i + 1;
-				item.content = pages[i].base64;
-				oModel.create(sPath, item, {
-					groupId: "createPages"
-				});
+			var idGroup = uuidTemp + "-";
+			var pages = this.getModel("pages").getData().pages;
+			if (pages && Array.isArray(pages)) {
+				var total = 0;
+				var pack = 0;
+				var mas_env = false;
+				var pages_env = [];
+				var idGroupN = idGroup + pack;
+				oModel.setDeferredGroups(oModel.getDeferredGroups().concat([idGroupN]));
+				for (var i = 0; i < pages.length; i++) {
+					var size = new Blob([pages[i].content]).size;
+					total = total + size;
+					var item = {};
+					item.template_uuid = uuidTemp;
+					item.page = pages[i].page;
+					item.content = pages[i].content;
+					oModel.create(sPath, item, {
+						groupId: idGroupN
+					});
+					if (total > 40000000) {
+						total = 0;
+						pack++;
+						if (i < pages.length - 1) {
+							var idGroupN = idGroup + pages[i].page;
+							oModel.setDeferredGroups(oModel.getDeferredGroups().concat([idGroupN]));
+						}
+					}
+				}
 			}
+
+			// while (pages.length > 0)
+			// 	groupPages.push(pages.splice(0, size));
+
+			// for (var i = 0; i < groupPages.length; i++) {
+			// 	var idGroupN = idGroup + i;
+			// 	oModel.setDeferredGroups(oModel.getDeferredGroups().concat([idGroupN]));
+			// 	for (var j = 0; j < groupPages[i].length; j++) {
+			// 		var item = {};
+			// 		item.template_uuid = uuidTemp;
+			// 		item.page = groupPages[i][j].page;
+			// 		item.content = groupPages[i][j].content;
+			// 		oModel.create(sPath, item, {
+			// 			groupId: idGroupN
+			// 		});
+			// 	}
+			// }
 			oModel.submitChanges({
-				groupId: "createPages",
+				groupId: oModel.getDeferredGroups()[0],
 				success: this.successCreatePages.bind(that),
 				error: this.errorCreatePages.bind(that)
 			});
+
 		},
 		successCreatePages: function (oData) {
 			var a = 0;
+			var that = this;
+			var oModel = this.getOwnerComponent().getModel();
+			var groups = oModel.getDeferredGroups();
+			if (oData.__batchResponses) {
+				var num_page = oData.__batchResponses[0].__changeResponses[0].data.page;
+				var uuidTemp = oData.__batchResponses[0].__changeResponses[0].data.template_uuid;
+				//var group = Math.floor(num_page / 5) + 1;
+				//var idGroup = groups[group];
+				for (var i = 0; i < groups.length; i++) {
+					var aux = oData.__batchResponses[0].__changeResponses.length - 1;
+					var lastpage = String(oData.__batchResponses[0].__changeResponses[aux].data.page);
+					var long = -lastpage.length;
+					var comp = groups[i].slice(long);
+					if (comp == lastpage) {
+						var idGroup = groups[i];
+						break;
+					}
+				}
+				if (idGroup) {
+					oModel.submitChanges({
+						groupId: idGroup,
+						success: this.successCreatePages.bind(that),
+						error: this.errorCreatePages.bind(that)
+					});
+				} else {
+
+				}
+			}
 		},
 
 		errorCreatePages: function (error) {
